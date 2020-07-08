@@ -1,7 +1,7 @@
 module.exports = {
 	apps : [
 		{
-			name: "nextjs",
+			name: "easyedi",
 			script: './node_modules/next/dist/bin/next',
 			args: "start --port=80",
 			watch: true,
