@@ -1,6 +1,6 @@
 {
-  "name": "jointown_edi",
-  "version": "0.1.0",
+  "name": "easy_edi",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

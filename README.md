@@ -1,4 +1,4 @@
-# Jointown EDI 前端工具.
+# Easy EDI.
 
 ## Getting Started
 

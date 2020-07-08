@@ -232,9 +232,9 @@ export default class extends Component {
 
     return <SiteLayout>
       <Head>
-        <title>{label} - Jointown EDI 前端工具</title>
+        <title>{label} - Easy EDI</title>
       </Head>
-      <h1>{label}</h1>
+      <h2>{label}</h2>
       <Tabs className="jt-edi-tabs" activeKey={this.state.type} tabPosition="left" onChange={ this.tabOnchange.bind(this) }>
         {
           SUPPORTED_INPUT_LIST.map((code, index) => {
