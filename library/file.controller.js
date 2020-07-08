@@ -114,6 +114,21 @@ function uploadFile(tempPath, name, type) {
 	fs.unlinkSync(tempPath);
 }
 
+function deleteFile(fileName, type) {
+	const realPath = getRealPath(fileName, type);
+
+	if (!fs.existsSync(realPath)) {
+		return false;
+	}
+
+	try {
+		fs.unlinkSync(realPath);
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
+
 function getRealPath(fileName, type) {
 	const typeDir = TYPE_MAPPING[type];
 	const typeFullPath = `${EDI_PATH}${typeDir}`;
@@ -125,4 +140,5 @@ module.exports = {
 	loadFiles,
 	uploadFile,
 	getRealPath,
+	deleteFile,
 };

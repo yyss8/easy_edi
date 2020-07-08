@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Router from 'next/router';
 import Head from 'next/head'
 import Link from 'next/link';
-import { Tabs, Table, message, Button, Upload, Row, Col, Select, Input } from 'antd';
+import { Tabs, Table, message, Button, Upload, Row, Col, Select, Input, Modal } from 'antd';
 import { InboxOutlined, ArrowUpOutlined, SyncOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import qs from 'qs';
@@ -176,6 +176,34 @@ export default class extends Component {
     }
   }
 
+  handleFileDelete(name) {
+    Modal.confirm({
+      title: '确认删除该文件? 该操作将无法恢复',
+      onOk: () => {
+        return new Promise(finished => {
+          axios.get(`/api/delete/${this.state.type}/${name}`)
+            .then(response => {
+              const { data } = response;
+
+              if (data.status === 'ok' && data.result.deleted === 1) {
+                message.success("文件删除成功");
+                this.onRefresh();
+              } else {
+                message.error('文件删除出错');
+              }
+
+              finished();
+            })
+            .catch(rejected => {
+              message.error('文件删除请求出错');
+              console.log(rejected);
+              finished();
+            });
+        });
+      }
+    });
+  }
+
   render() {
     const selectedType = SUPPORTED_INPUT_LIST.find(item => item.code === this.state.type);
     const label = this.getLabel(selectedType);
@@ -204,7 +232,9 @@ export default class extends Component {
         title: '操作',
         render: (text, record, index) => {
           return <span>
-            { selectedType.type === 'download' && <Button size="small" onClick={ () => document.querySelector(`#list-item-${index}`).click() }>下载文件</Button> }
+            <Button size="small" onClick={ () => document.querySelector(`#list-item-${index}`).click() }>下载文件</Button>
+            &nbsp;&nbsp;
+            <Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>
           </span>
         },
       }
