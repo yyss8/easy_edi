@@ -1,4 +1,4 @@
-const EDI_PATH = 'F:\\tmp\\test';
+const EDI_PATH = process.env.EDI_DIR;
 const fs = require('fs');
 const moment = require('moment');
 require('moment-timezone');

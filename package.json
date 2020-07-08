@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "pm2:start:prod": "next build && pm2 start ecosystem.config.js --env production"
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
@@ -19,5 +20,8 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "sass": "^1.26.9"
+  },
+  "devDependencies": {
+    "pm2": "^4.4.0"
   }
 }

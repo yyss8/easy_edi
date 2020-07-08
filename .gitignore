@@ -24,3 +24,5 @@ test/**/next-env.d.ts
 
 # Editors
 **/.idea
+
+.env.local
