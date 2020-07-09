@@ -7,11 +7,12 @@ import axios from 'axios';
 import qs from 'qs';
 
 import SiteLayout from '../components/layout/SiteLayout';
-import EdiDownloadTab from "../components/layout/EdiDownloadTab/EdiDownloadTab";
-import EdiUploadTab from "../components/layout/EdiUploadTab/EdiUploadTab";
+import EdiDownloadTab from "../components/edi/EdiDownloadTab/EdiDownloadTab";
+import EdiUploadTab from "../components/edi/EdiUploadTab/EdiUploadTab";
 
 const { TabPane } = Tabs;
 
+// 现有类型数据.
 const SUPPORTED_INPUT_LIST = [
   {
     code: '850',
@@ -70,14 +71,19 @@ const SUPPORTED_INPUT_LIST = [
   },
 ];
 
+/**
+ * EDI工具页面.
+ */
 export default class extends Component {
 
+  /** @inheritdoc */
   static async getInitialProps({query}) {
     return {
       query,
     };
   }
 
+  /** @inheritdoc */
   constructor(props) {
     super(props);
 
@@ -100,12 +106,16 @@ export default class extends Component {
     this.fetchFiles = this.fetchFiles.bind(this);
   }
 
+  /** @inheritdoc */
   componentDidMount() {
     if (typeof this.props.preload === 'undefined' && this.state.shouldInitFetch) {
       this.fetchFiles();
     }
   }
 
+  /**
+   * 获取文件列表.
+   */
   fetchFiles() {
     const queryObject = {
       sorting: this.state.sorting,
@@ -191,6 +201,12 @@ export default class extends Component {
 
   /**
    * 获取当前类型标签名称.
+   *
+   * @param {Object} typeObject
+   *   当前选择的类型object.
+   *
+   * @return {string}
+   *   标签名称.
    */
   getLabel(typeObject) {
     return `${typeObject.name}${typeObject.hideCode !== true ? ` (${typeObject.code})` : ''}`;
@@ -198,6 +214,12 @@ export default class extends Component {
 
   /**
    * 获取文件大小单位.
+   *
+   * @param {Number} size
+   *   文件大小
+   *
+   * @return {string}
+   *   带有单位的文件大小.
    */
   getFileSize(size) {
     const sizeUnit = ['Bytes', 'kb', 'mb', 'gb'];
@@ -210,6 +232,12 @@ export default class extends Component {
     return `${Math.round(size * 100) / 100} ${sizeUnit[i]}`;
   }
 
+  /**
+   * 删除文件.
+   *
+   * @param {string} name
+   *   文件名.
+   */
   handleFileDelete(name) {
     Modal.confirm({
       title: '确认删除该文件? 该操作将无法恢复',
@@ -238,6 +266,12 @@ export default class extends Component {
     });
   }
 
+  /**
+   * 获取当前筛选条件的query.
+   *
+   * @return {Object}
+   *   query.
+   */
   buildPushQuery() {
     const query = {};
 
@@ -260,6 +294,12 @@ export default class extends Component {
     return query;
   }
 
+  /**
+   * 归档文件。
+   *
+   * @param {string} name
+   *   文件名
+   */
   archiveFile(name) {
     Modal.confirm({
       title: '确认归档该文件?',
@@ -281,10 +321,14 @@ export default class extends Component {
     });
   }
 
+  /**
+   * 搜索同文件名的链接并模拟点击下载.
+   */
   downloadFile(name) {
     document.querySelector(`[data-file-name="${name}"]`).click();
   }
 
+  /** @inheritdoc */
   render() {
     const selectedType = SUPPORTED_INPUT_LIST.find(item => item.code === this.state.type);
     const label = this.getLabel(selectedType);
@@ -329,7 +373,7 @@ export default class extends Component {
       <Tabs className="jt-edi-tabs" activeKey={this.state.type} tabPosition="left" onChange={ this.tabOnchange.bind(this) }>
         {
           SUPPORTED_INPUT_LIST.map((code, index) => {
-            return <TabPane key={ code.code } disable={code.disabled} tab={ <span>{this.getLabel(code)} <ArrowUpOutlined className={ code.type } /></span> }>
+            return <TabPane key={ code.code } tab={ <span>{this.getLabel(code)} <ArrowUpOutlined className={ code.type } /></span> }>
               {
                 code.type === 'download' && <EdiDownloadTab fileType={this.state.fileType}
                                                             sorting={this.state.sorting}
