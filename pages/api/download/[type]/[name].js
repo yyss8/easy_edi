@@ -1,8 +1,18 @@
-import { getRealPath } from "../../../../library/file.controller";
+import { getRealPath, getArchivePath } from "../../../../library/file.controller";
 import fs from 'fs';
 
 export default (req, res) => {
-	const filePath = getRealPath(req.query.name, req.query.type);
+	let filePath;
+
+	switch (req.query.fileType) {
+		case 'archive':
+			filePath = getArchivePath(req.query.type, req.query.name);
+			break;
+
+		case 'edi':
+		default:
+			filePath = getRealPath(req.query.type, req.query.name);
+	}
 
 	if (!fs.existsSync(filePath)) {
 		res.statusCode = 404
@@ -12,7 +22,8 @@ export default (req, res) => {
 
 	res.writeHead(200, {
 		"Content-Type": "application/octet-stream",
-		"Content-Disposition": "attachment; filename=" + req.query.name
+		// 文件名需要URL encode处理否则会报错.
+		"Content-Disposition": "attachment; filename=" + encodeURI(req.query.name),
 	});
 	fs.createReadStream(filePath).pipe(res);
 };

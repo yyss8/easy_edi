@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Router from 'next/router';
 import Head from 'next/head'
 import Link from 'next/link';
-import { Tabs, Table, message, Button, Upload, Row, Col, Select, Input, Modal } from 'antd';
+import { Tabs, Table, message, Button, Upload, Row, Col, Select, Input, Modal, Radio } from 'antd';
 import { InboxOutlined, ArrowUpOutlined, SyncOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import qs from 'qs';
@@ -68,21 +68,27 @@ export default class extends Component {
   constructor(props) {
     super(props);
 
+    const { query } = props;
     const hasPreload = Boolean(props.preload);
+    const defaultType = query.type || '850';
+    const defaultTypeObject = SUPPORTED_INPUT_LIST.find(o => o.code === defaultType);
 
     this.state = {
-      type: props.query.type || '850',
+      type: defaultType,
       tabLoading: !hasPreload,
       files: hasPreload ? props.preload.files : [],
-      sorting: 'name_ASC',
+      fileType: Boolean(query.fileType) ? query.fileType : defaultTypeObject.type === 'download' ?  'edi' : 'upload',
+      sorting: 'created_DESC',
       keyword: '',
+      // 只有在下载界面或上传的归纳界面时才加载文件列表.
+      shouldInitFetch: defaultTypeObject.type === 'download' || (defaultTypeObject.type === 'upload' && query.fileType === 'archive'),
     };
 
     this.fetchFiles = this.fetchFiles.bind(this);
   }
 
   componentDidMount() {
-    if (typeof this.props.preload === 'undefined') {
+    if (typeof this.props.preload === 'undefined' && this.state.shouldInitFetch) {
       this.fetchFiles();
     }
   }
@@ -100,9 +106,9 @@ export default class extends Component {
       queryObject.keyword = this.state.keyword;
     }
 
-    axios.get(`/api/files/${this.state.type}?${qs.stringify(queryObject)}`)
+    axios.get(`/api/files/${this.state.fileType}/${this.state.type}?${qs.stringify(queryObject)}`)
       .then(response => {
-        this.setState({files: response.data.files.map((f, k) => ({...f, key: `file-${k}`})), tabLoading: false});
+        this.setState({files: response.data.result.files.map((f, k) => ({...f, key: `file-${k}`})), tabLoading: false});
       })
       .catch(rejected => {
         message.error('获取文件出错');
@@ -116,19 +122,16 @@ export default class extends Component {
    * @param key 所选key.
    */
   tabOnchange(key) {
-    this.setState({type: key, tabLoading: true, sorting: 'name_ASC', keyword: ''}, () => {
-      this.fetchFiles();
-
-      const pushState = {
-        pathname : '/',
-        query: {},
-      };
-
-      if (this.state.type !== '850') {
-        pushState.query.type = this.state.type;
+    const selectedTypeObject = SUPPORTED_INPUT_LIST.find(o => o.code === key);
+    this.setState({type: key, tabLoading: true, sorting: 'name_ASC', keyword: '', fileType: selectedTypeObject.type === 'download' ? 'edi' : 'upload'}, () => {
+      if (selectedTypeObject.type === 'download') {
+        this.fetchFiles();
       }
 
-      Router.push(pushState);
+      Router.push({
+        pathname : '/',
+        query: this.buildPushQuery(),
+      });
     });
   }
 
@@ -138,7 +141,21 @@ export default class extends Component {
         return;
       }
 
-      this.setState({tabLoading: true, files: []}, this.fetchFiles);
+      this.setState({tabLoading: true, files: []}, () => {
+        if (field === 'fileType') {
+          Router.push({
+            pathname : '/',
+            query: this.buildPushQuery(),
+          });
+
+          // 上传界面无需获取文件.
+          if (value === 'upload') {
+            return;
+          }
+        }
+
+        this.fetchFiles();
+      });
     });
   }
 
@@ -181,7 +198,7 @@ export default class extends Component {
       title: '确认删除该文件? 该操作将无法恢复',
       onOk: () => {
         return new Promise(finished => {
-          axios.get(`/api/delete/${this.state.type}/${name}`)
+          axios.post(`/api/delete/${this.state.type}/${name}`)
             .then(response => {
               const { data } = response;
 
@@ -204,13 +221,52 @@ export default class extends Component {
     });
   }
 
+  buildPushQuery() {
+    const query = {};
+
+    if (this.state.type !== '850') {
+      query.type = this.state.type;
+    }
+
+    if (this.state.fileType !== 'edi') {
+      query.fileType = this.state.fileType;
+    }
+
+    return query;
+  }
+
+  archiveFile(name) {
+    Modal.confirm({
+      title: '确认归纳该文件?',
+      onOk: () => {
+        return new Promise(finished => {
+          axios.post(`/api/archive/${this.state.type}/${name}`)
+            .then(response => {
+              message.success('文件归纳成功');
+              this.onRefresh();
+              finished();
+            })
+            .catch(rejected => {
+              message.error('文件归纳请求出错');
+              console.log(rejected);
+              finished();
+            });
+        });
+      }
+    });
+  }
+
+  downloadFile(name) {
+    document.querySelector(`[data-file-name="${name}"]`).click();
+  }
+
   render() {
     const selectedType = SUPPORTED_INPUT_LIST.find(item => item.code === this.state.type);
     const label = this.getLabel(selectedType);
     const fileColumns = [
       {
         title: '文件名',
-        render: (text, record, index) => <a href={ `/api/download/${this.state.type}/${record.name}` } id={ `list-item-${index}` } title="点击下载" download>{record.name}</a>,
+        render: (text, record) => <a href={ `/api/download/${this.state.type}/${record.name}` } data-file-name={ record.name } title="点击下载" download>{record.name}</a>,
         key: 'name',
       },
       {
@@ -230,11 +286,11 @@ export default class extends Component {
       },
       {
         title: '操作',
-        render: (text, record, index) => {
+        render: (text, record) => {
           return <span>
-            <Button size="small" onClick={ () => document.querySelector(`#list-item-${index}`).click() }>下载文件</Button>
-            &nbsp;&nbsp;
-            <Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>
+            <Button size="small" title="点击下载" onClick={ () => this.downloadFile(record.name) }>下载文件</Button>
+            { this.state.fileType === 'edi' && <Button style={ {marginLeft: 8} } size="small" onClick={ () => this.archiveFile(record.name) }>归档</Button> }
+            {/*<Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>*/}
           </span>
         },
       }
@@ -275,11 +331,19 @@ export default class extends Component {
                     <Col span={ 18 }>
                       <Row>
                         <Col span={ 4 }>
+                          <Radio.Group value={this.state.fileType} onChange={ e => this.filterOnchange(e.target.value, 'fileType') }>
+                            <Radio.Button value="edi">EDI</Radio.Button>
+                            <Radio.Button value="archive">归纳</Radio.Button>
+                          </Radio.Group>
+                        </Col>
+                        <Col span={ 4 }>
                           <Select style={ {width: '100%'} } title="排序方式" value={this.state.sorting} onChange={ value => this.filterOnchange(value, 'sorting') }>
-                            <Select.Option value="name_ASC">文件名 (a-z)</Select.Option>
-                            <Select.Option value="name_DESC">文件名 (z-a)</Select.Option>
                             <Select.Option value="created_DESC">创建时间 (新到旧)</Select.Option>
                             <Select.Option value="created_ASC">创建时间 (旧到新)</Select.Option>
+                            <Select.Option value="modified_DESC">编辑时间 (新到旧)</Select.Option>
+                            <Select.Option value="modified_ASC">编辑时间 (旧到新)</Select.Option>
+                            <Select.Option value="name_ASC">文件名 (a-z)</Select.Option>
+                            <Select.Option value="name_DESC">文件名 (z-a)</Select.Option>
                           </Select>
                         </Col>
                         <Col offset={ 1 } span={ 4 }>
@@ -295,14 +359,52 @@ export default class extends Component {
                 </React.Fragment>
               }
               { code.type === 'upload' && <React.Fragment>
-                { this.getUploadDescription.call(this) }
-                <Dragger {...uploadProps}>
-                  <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                  </p>
-                  <p className="ant-upload-text">点击此处或拖拽Excel文件开始上传</p>
-                  <p className="ant-upload-text">支持多文件上传</p>
-                </Dragger>
+                <Row style={{marginBottom: 10}}>
+                  <Col span={ 18 }>
+                    <Row>
+                      <Col span={ 4 }>
+                        <Radio.Group value={this.state.fileType} onChange={ e => this.filterOnchange(e.target.value, 'fileType') }>
+                          <Radio.Button value="upload">上传</Radio.Button>
+                          <Radio.Button value="archive">归纳</Radio.Button>
+                        </Radio.Group>
+                      </Col>
+                      {
+                        this.state.fileType === 'archive' && <React.Fragment>
+                          <Col span={ 4 }>
+                            <Select style={ {width: '100%'} } title="排序方式" value={this.state.sorting} onChange={ value => this.filterOnchange(value, 'sorting') }>
+                              <Select.Option value="created_DESC">创建时间 (新到旧)</Select.Option>
+                              <Select.Option value="created_ASC">创建时间 (旧到新)</Select.Option>
+                              <Select.Option value="modified_DESC">编辑时间 (新到旧)</Select.Option>
+                              <Select.Option value="modified_ASC">编辑时间 (旧到新)</Select.Option>
+                              <Select.Option value="name_ASC">文件名 (a-z)</Select.Option>
+                              <Select.Option value="name_DESC">文件名 (z-a)</Select.Option>
+                            </Select>
+                          </Col>
+                          <Col offset={ 1 } span={ 4 }>
+                            <Input.Search placeholder="搜索文件名" title="输入文件名关键字" onSearch={this.onRefresh.bind(this)} value={ this.state.keyword } onChange={e => this.filterOnchange(e.target.value, 'keyword', false)} />
+                          </Col>
+                        </React.Fragment>
+                      }
+                    </Row>
+                  </Col>
+                  {
+                    this.state.fileType === 'archive' && <Col style={{textAlign: 'right'}} span={ 6 }>
+                      <Button icon={ <SyncOutlined /> } onClick={this.onRefresh.bind(this)} title="刷新文件" />
+                    </Col>
+                  }
+                </Row>
+                {
+                  this.state.fileType === 'upload' ? <div>
+                    { this.getUploadDescription.call(this) }
+                    <Dragger {...uploadProps}>
+                      <p className="ant-upload-drag-icon">
+                        <InboxOutlined />
+                      </p>
+                      <p className="ant-upload-text">点击此处或拖拽Excel文件开始上传</p>
+                      <p className="ant-upload-text">支持多文件上传</p>
+                    </Dragger>
+                  </div> : <Table loading={this.state.tabLoading} dataSource={this.state.files} columns={fileColumns} />
+                }
               </React.Fragment> }
             </TabPane>;
           })

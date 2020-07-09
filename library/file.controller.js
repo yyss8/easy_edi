@@ -1,5 +1,6 @@
 const EDI_PATH = process.env.EDI_DIR;
 const fs = require('fs');
+const path = require('path');
 const moment = require('moment');
 require('moment-timezone');
 const MOMENT_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
@@ -19,9 +20,30 @@ const TYPE_MAPPING = {
 	'error': '\\错误信息',
 };
 
+/**
+ * 加载文件
+ *
+ * @param {string} type
+ *   目录类型.
+ * @param {Object} params
+ *   加载参数.
+ *
+ * @return {Object[]}
+ *   指定类型目录下的文件数组.
+ */
 function loadFiles(type, params = {}) {
-	const typeDir = TYPE_MAPPING[type];
-	const typeFullPath = `${EDI_PATH}${typeDir}`;
+	let typeFullPath;
+
+	switch (params.fileType) {
+		case 'archive':
+			typeFullPath = getArchivePath(type);
+			break;
+
+		case 'edi':
+		default:
+			typeFullPath = getRealPath(type);
+	}
+
 	if (!fs.existsSync(typeFullPath)) {
 		return [];
 	}
@@ -48,8 +70,13 @@ function loadFiles(type, params = {}) {
 /**
  * 排序文件
  *
- * @param {Array} files - 文件
- * @param {string} sorting - 排序方式.
+ * @param {Object[]} files
+ *   文件数组.
+ * @param {string} sorting
+ *   排序方式.
+ *
+ * @return {Object[]}
+ *   排序后的文件.
  */
 function sortFiles(files, sorting = 'name_ASC') {
 	const parts = sorting.split('_');
@@ -83,6 +110,15 @@ function sortFiles(files, sorting = 'name_ASC') {
 	});
 }
 
+/**
+ * 筛选文件.
+ *
+ * @param {Object[]} files
+ * @param {Object} params
+ *
+ * @return {Object[]}
+ *   筛选后的文件.
+ */
 function filterFiles(files, params) {
 	const filteredFiles = [];
 
@@ -102,20 +138,69 @@ function filterFiles(files, params) {
 /**
  * 上传文件并检查是否被EDI处理.
  *
- * @param tempPath
- * @param name
- * @param type
- * @return {Promise<unknown>}
+ * @param {string} tempPath
+ *   上传后的临时文件路径.
+ * @param {string} name
+ *   文件名
+ * @param {string} type
+ *   文件所属类型.
  */
 function uploadFile(tempPath, name, type) {
-	const realPath = getRealPath(name, type);
+	const realPath = getRealPath(type);
+
+	if (!fs.existsSync(realPath)) {
+		fs.mkdirSync(realPath);
+	}
+
 	// 不允许跨硬盘移动, 先复制再删除.
-	fs.copyFileSync(tempPath, realPath);
+	fs.copyFileSync(tempPath, `${realPath}\\${name}`);
+
+	// 创建归纳文件作为上传记录.
+	const archivePath = getArchivePath(type);
+	if (!fs.existsSync(archivePath)) {
+		fs.mkdirSync(archivePath);
+	}
+
+	const archiveFilePath = `${archivePath}\\${name}`;
+	const copyingArchiveFilePath = getUniqueArchiveFilePath(archiveFilePath);
+	fs.copyFileSync(tempPath, copyingArchiveFilePath);
+
+	// 删除tmp文件.
 	fs.unlinkSync(tempPath);
 }
 
+/**
+ * 介于归纳文件可能会重名, 加入时间防止重名.
+ *
+ * @param {string} archiveFilePath
+ *   原归纳文件路径.
+ *
+ * @return {string}
+ *   归纳文件路径.
+ */
+function getUniqueArchiveFilePath(archiveFilePath) {
+	if (!fs.existsSync(archiveFilePath)) {
+		return archiveFilePath;
+	}
+
+	const parsedArchiveFile = path.parse(archiveFilePath);
+
+	return `${parsedArchiveFile.dir}\\${parsedArchiveFile.name}-${moment().tz(MOMENT_TIMEZONE).format('YYYYMMDD-HHmmss')}${parsedArchiveFile.ext}`;
+}
+
+/**
+ * 删除文件.
+ *
+ * @param {string} fileName
+ *   文件名
+ * @param {string} type
+ *   文件所属类型.
+ *
+ * @return {boolean}
+ *   是否删除成功.
+ */
 function deleteFile(fileName, type) {
-	const realPath = getRealPath(fileName, type);
+	const realPath = getRealPath(type, fileName);
 
 	if (!fs.existsSync(realPath)) {
 		return false;
@@ -129,16 +214,81 @@ function deleteFile(fileName, type) {
 	}
 }
 
-function getRealPath(fileName, type) {
+/**
+ * 获取EDI文件路径.
+ *
+ * @param {string} type
+ *   文件类型
+ * @param {string} fileName
+ *   文件名
+ *
+ * @return {string}
+ *   路径.
+ */
+function getRealPath(type, fileName = '') {
 	const typeDir = TYPE_MAPPING[type];
 	const typeFullPath = `${EDI_PATH}${typeDir}`;
+
+	if (!fileName || fileName === '') {
+		return typeFullPath;
+	}
 
 	return `${typeFullPath}\\${fileName}`;
 }
 
+/**
+ * 获取archive路径.
+ *
+ * @param {string} type
+ *   文件类型.
+ * @param {string} fileName
+ *   文件名.
+ *
+ * @return {string}
+ */
+function getArchivePath(type, fileName = '') {
+	const archiveDir = `${EDI_PATH}\\archive\\${type}`;
+
+	if (!fileName || fileName === '') {
+		return archiveDir;
+	}
+
+	return `${archiveDir}\\${fileName}`;
+}
+
+/**
+ * 归纳文件.
+ *
+ * @param {string} fileName
+ *   文件名
+ * @param {string} type
+ *   文件所属类型.
+ * @param {boolean} deleteOrg
+ *   是否删除源文件.
+ */
+function archiveFile(fileName, type, deleteOrg = false) {
+	const typeArchiveDirectory = getArchivePath(type);
+
+	// 如果目录不存在则创建.
+	if (!fs.existsSync(typeArchiveDirectory)) {
+		fs.mkdirSync(typeArchiveDirectory);
+	}
+
+	const realPath = getRealPath(type, fileName);
+
+	fs.copyFileSync(realPath, getUniqueArchiveFilePath(`${typeArchiveDirectory}\\${fileName}`));
+
+	// 删除原文件.
+	if (deleteOrg) {
+		fs.unlinkSync(realPath);
+	}
+}
+
 module.exports = {
+	archiveFile,
 	loadFiles,
 	uploadFile,
 	getRealPath,
 	deleteFile,
+	getArchivePath,
 };
