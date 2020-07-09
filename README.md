@@ -1,24 +1,20 @@
-# Easy EDI.
+# Easy EDI v1.1.0
 
-## Getting Started
+### 本地开发部署:
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
+创建`.env.local`文件并添加EDI主目录, 比如:
 ```
+EDI_DIR=F:\tmp\test
+```
+- `git clone` 复制该repo.
+- `npm install` 安装依赖.
+- `npm run dev` 启动程序.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+访问[http://localhost:3000](http://localhost:3000)查看工具页面.
 
-You can start editing the page by modifying `pages/index.jsx`. The page auto-updates as you edit the file.
+### 生产模式部署:
+- `git pull origin master`
+- `npm run pm2:start:prod` 或 `pm2:restart:prod`.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### 备注:
+- 生产模式默认端口为`80`.
