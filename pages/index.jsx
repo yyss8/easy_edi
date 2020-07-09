@@ -93,7 +93,7 @@ export default class extends Component {
       fileType: Boolean(query.fileType) ? query.fileType : defaultTypeObject.type === 'download' ?  'edi' : 'upload',
       sorting: query.sort || 'created_DESC',
       keyword: query.keyword || '',
-      // 只有在下载界面或上传的归纳界面时才加载文件列表.
+      // 只有在下载界面或上传的归档界面时才加载文件列表.
       shouldInitFetch: defaultTypeObject.type === 'download' || (defaultTypeObject.type === 'upload' && query.fileType === 'archive'),
     };
 
@@ -262,17 +262,17 @@ export default class extends Component {
 
   archiveFile(name) {
     Modal.confirm({
-      title: '确认归纳该文件?',
+      title: '确认归档该文件?',
       onOk: () => {
         return new Promise(finished => {
           axios.post(`/api/archive/${this.state.type}/${name}`)
             .then(response => {
-              message.success('文件归纳成功');
+              message.success('文件归档成功');
               this.onRefresh();
               finished();
             })
             .catch(rejected => {
-              message.error('文件归纳请求出错');
+              message.error('文件归档请求出错');
               console.log(rejected);
               finished();
             });

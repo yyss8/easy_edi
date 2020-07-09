@@ -11,7 +11,7 @@ export default props => {
 					<Col span={ 4 }>
 						<Radio.Group value={props.fileType} onChange={ e => props.filterOnchange(e.target.value, 'fileType') }>
 							<Radio.Button value="edi">EDI</Radio.Button>
-							<Radio.Button value="archive">归纳</Radio.Button>
+							<Radio.Button value="archive">归档</Radio.Button>
 						</Radio.Group>
 					</Col>
 					{ <EdiTableFilters sorting={props.sorting} keyword={props.keyword} onRefresh={props.onRefresh} filterOnchange={props.filterOnchange} /> }

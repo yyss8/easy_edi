@@ -35,7 +35,7 @@ export default props => {
 					<Col span={ 4 }>
 						<Radio.Group value={props.fileType} onChange={ e => props.filterOnchange(e.target.value, 'fileType') }>
 							<Radio.Button value="upload">上传</Radio.Button>
-							<Radio.Button value="archive">归纳</Radio.Button>
+							<Radio.Button value="archive">归档</Radio.Button>
 						</Radio.Group>
 					</Col>
 					{

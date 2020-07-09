@@ -155,7 +155,7 @@ function uploadFile(tempPath, name, type) {
 	// 不允许跨硬盘移动, 先复制再删除.
 	fs.copyFileSync(tempPath, `${realPath}\\${name}`);
 
-	// 创建归纳文件作为上传记录.
+	// 创建归档文件作为上传记录.
 	const archivePath = getArchivePath(type);
 	if (!fs.existsSync(archivePath)) {
 		fs.mkdirSync(archivePath);
@@ -170,13 +170,13 @@ function uploadFile(tempPath, name, type) {
 }
 
 /**
- * 介于归纳文件可能会重名, 加入时间防止重名.
+ * 介于归档文件可能会重名, 加入时间防止重名.
  *
  * @param {string} archiveFilePath
- *   原归纳文件路径.
+ *   原归档文件路径.
  *
  * @return {string}
- *   归纳文件路径.
+ *   归档文件路径.
  */
 function getUniqueArchiveFilePath(archiveFilePath) {
 	if (!fs.existsSync(archiveFilePath)) {
@@ -257,7 +257,7 @@ function getArchivePath(type, fileName = '') {
 }
 
 /**
- * 归纳文件.
+ * 归档文件.
  *
  * @param {string} fileName
  *   文件名
