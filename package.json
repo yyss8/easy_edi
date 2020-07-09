@@ -1,7 +1,7 @@
 {
   "name": "easy_edi",
   "author": "schen",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,8 +13,11 @@
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
     "antd": "^4.4.0",
+    "archiver": "^4.0.1",
     "axios": "^0.19.2",
     "formidable": "^1.2.2",
+    "immutability-helper": "^3.1.1",
+    "js-file-download": "^0.4.12",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
     "next": "9.4.4",

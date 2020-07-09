@@ -26,3 +26,7 @@ test/**/next-env.d.ts
 **/.idea
 
 .env.local
+
+# 测试或临时目录.
+tmp
+test

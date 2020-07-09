@@ -18,9 +18,10 @@ export default props => {
 				</Row>
 			</Col>
 			<Col style={{textAlign: 'right'}} span={ 6 }>
-				<Button icon={ <SyncOutlined /> } onClick={props.onRefresh} title="刷新文件" />
+				<Button onClick={props.bulkDownload} title="下载所选文件">批量下载</Button>
+				<Button style={{marginLeft: 10}} icon={ <SyncOutlined /> } onClick={props.onRefresh} title="刷新文件" />
 			</Col>
 		</Row>
-		<Table loading={props.tabLoading} dataSource={props.files} columns={props.fileColumns} />
+		<Table loading={props.tabLoading} dataSource={props.files} columns={props.fileColumns} rowSelection={ props.tableRowSelection } />
 	</React.Fragment>;
 };

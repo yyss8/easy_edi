@@ -25,5 +25,6 @@ export default (req, res) => {
 		// 文件名需要URL encode处理否则会报错.
 		"Content-Disposition": "attachment; filename=" + encodeURI(req.query.name),
 	});
+
 	fs.createReadStream(filePath).pipe(res);
 };

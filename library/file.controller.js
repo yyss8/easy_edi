@@ -2,6 +2,8 @@ const EDI_PATH = process.env.EDI_DIR;
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
+const archiver = require('archiver');
+
 require('moment-timezone');
 const MOMENT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const MOMENT_TIMEZONE = 'America/New_York';
@@ -65,6 +67,37 @@ function loadFiles(type, params = {}) {
 	scannedFiles = filterFiles(scannedFiles, params);
 
 	return scannedFiles;
+}
+
+/**
+ *
+ * @param dirType
+ * @param fileType
+ * @param fileNames
+ *
+ * @return {Archiver}
+ */
+function getZipWriteStream(dirType, fileType, fileNames) {
+	const archive = archiver('zip', {
+		zlib: { level: 9 },
+	});
+
+	const files = loadFiles(dirType, {
+		fileType,
+	});
+
+	files.forEach(file => {
+		if (fileNames.indexOf(file.name) === -1) {
+			return;
+		}
+
+		const filePath = fileType === 'edi' ? getRealPath(dirType, file.name) : getArchivePath(dirType, file.name);
+		archive.file(filePath, {
+			name: file.name,
+		});
+	});
+
+	return archive;
 }
 
 /**
@@ -291,4 +324,5 @@ module.exports = {
 	getRealPath,
 	deleteFile,
 	getArchivePath,
+	getZipWriteStream,
 };

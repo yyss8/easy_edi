@@ -5,6 +5,10 @@ import { Tabs, message, Button, Modal } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import qs from 'qs';
+import updater from 'immutability-helper';
+import jsFileDownload from 'js-file-download';
+import 'moment-timezone';
+import moment from 'moment';
 
 import SiteLayout from '../components/layout/SiteLayout';
 import EdiDownloadTab from "../components/edi/EdiDownloadTab/EdiDownloadTab";
@@ -101,6 +105,7 @@ export default class extends Component {
       keyword: query.keyword || '',
       // 只有在下载界面或上传的归档界面时才加载文件列表.
       shouldInitFetch: defaultTypeObject.type === 'download' || (defaultTypeObject.type === 'upload' && query.fileType === 'archive'),
+      selectedRowKeys: [],
     };
 
     this.fetchFiles = this.fetchFiles.bind(this);
@@ -127,7 +132,11 @@ export default class extends Component {
 
     axios.get(`/api/files/${this.state.fileType}/${this.state.type}?${qs.stringify(queryObject)}`)
       .then(response => {
-        this.setState({files: response.data.result.files.map((f, k) => ({...f, key: `file-${k}`})), tabLoading: false});
+        this.setState({
+          files: response.data.result.files.map((f, k) => ({...f, key: `file-${k}`})),
+          tabLoading: false,
+          selectedRowKeys: []
+        });
       })
       .catch(rejected => {
         message.error('获取文件出错');
@@ -148,7 +157,7 @@ export default class extends Component {
       return;
     }
 
-    this.setState({type: key, tabLoading: true, sorting: 'created_DESC', keyword: '', fileType: selectedTypeObject.type === 'download' ? 'edi' : 'upload'}, () => {
+    this.setState({type: key, tabLoading: true, sorting: 'created_DESC', keyword: '', fileType: selectedTypeObject.type === 'download' ? 'edi' : 'upload', files: []}, () => {
       if (selectedTypeObject.type === 'download') {
         this.fetchFiles();
       }
@@ -321,11 +330,79 @@ export default class extends Component {
     });
   }
 
+  onSelectItemChange(selectedRowKeys) {
+    this.setState({selectedRowKeys});
+  }
+
+  onSelectFile(record, selected) {
+    const index = this.state.files.findIndex((data) => data.name === record.name);
+    const files = updater(this.state.files, {
+      [index]: {
+        isSelected: { $set: selected },
+      },
+    });
+
+    this.setState({ files });
+  }
+
+  onSelectAllFiles(isSelected, selectedRows) {
+    const updating = {};
+
+    selectedRows.forEach(row => {
+      const index = this.state.files.findIndex((data) => data.name === row.name);
+      updating[index] = {
+        isSelected: { $set: isSelected}
+      };
+    });
+
+    this.setState({
+      files: updater(this.state.files, updating),
+    });
+  }
+
   /**
    * 搜索同文件名的链接并模拟点击下载.
    */
   downloadFile(name) {
     document.querySelector(`[data-file-name="${name}"]`).click();
+  }
+
+  bulkDownload() {
+    const selectedLength = this.state.selectedRowKeys.length;
+    if (selectedLength === 0) {
+      message.error('尚未选择任何文件.');
+      return;
+    }
+
+    Modal.confirm({
+      title: `确认下载所选${selectedLength}个文件?`,
+      onOk: () => {
+        return new Promise(finished => {
+          axios.post(`/api/bulk/download/${this.state.type}`, {
+            fileType: this.state.fileType,
+            fileNames: this.state.files.filter(file => file.isSelected).map(file => file.name)
+          }, {
+            responseType: 'arraybuffer',
+          })
+            .then(response => {
+              jsFileDownload(response.data, `${this.state.type}-${moment().tz('America/New_York').format('YYYYMMDD-HHmmss')}.zip`);
+              this.setState({
+                files: this.state.files.map(file => updater(file, {
+                  $unset: ['isSelected'],
+                })),
+                selectedRowKeys: [],
+              });
+              message.success('文件下载成功');
+              finished();
+            })
+            .catch(rejected => {
+              console.log(rejected);
+              message.error('批量下载请求出错, 请稍候再试...');
+              finished();
+            });
+        });
+      },
+    });
   }
 
   /** @inheritdoc */
@@ -365,6 +442,27 @@ export default class extends Component {
       }
     ];
 
+    const tableRowSelection = {
+      onSelect: this.onSelectFile.bind(this),
+      onSelectAll: this.onSelectAllFiles.bind(this),
+      onChange: this.onSelectItemChange.bind(this),
+      selectedRowKeys: this.state.selectedRowKeys,
+      getCheckboxProps: (record) => ({ selectedRowKeys: record.isSelected }),
+    };
+
+    const commonProps = {
+      fileColumns,
+      tableRowSelection,
+      files: this.state.files,
+      tabLoading: this.state.tabLoading,
+      sorting: this.state.sorting,
+      keyword: this.state.keyword,
+      fileType: this.state.fileType,
+      filterOnchange: this.filterOnchange.bind(this),
+      onRefresh: this.onRefresh.bind(this),
+      bulkDownload: this.bulkDownload.bind(this),
+    };
+
     return <SiteLayout>
       <Head>
         <title>{label} - Easy EDI</title>
@@ -375,24 +473,9 @@ export default class extends Component {
           SUPPORTED_INPUT_LIST.map((code, index) => {
             return <TabPane key={ code.code } tab={ <span>{this.getLabel(code)} <ArrowUpOutlined className={ code.type } /></span> }>
               {
-                code.type === 'download' && <EdiDownloadTab fileType={this.state.fileType}
-                                                            sorting={this.state.sorting}
-                                                            keyword={this.state.keyword}
-                                                            tabLoading={this.state.tabLoading}
-                                                            files={this.state.files}
-                                                            fileColumns={fileColumns}
-                                                            filterOnchange={this.filterOnchange.bind(this)}
-                                                            onRefresh={this.onRefresh.bind(this)} />
+                code.type === 'download' && <EdiDownloadTab {...commonProps} />
               }
-              { code.type === 'upload' && <EdiUploadTab type={this.state.type}
-                                                        fileType={this.state.fileType}
-                                                        sorting={this.state.sorting}
-                                                        keyword={this.state.keyword}
-                                                        tabLoading={this.state.tabLoading}
-                                                        files={this.state.files}
-                                                        fileColumns={fileColumns}
-                                                        filterOnchange={this.filterOnchange.bind(this)}
-                                                        onRefresh={this.onRefresh.bind(this)} /> }
+              { code.type === 'upload' && <EdiUploadTab type={this.state.type} {...commonProps} /> }
             </TabPane>;
           })
         }
