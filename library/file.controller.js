@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
 require('moment-timezone');
-const MOMENT_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
+const MOMENT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const MOMENT_TIMEZONE = 'America/New_York';
 
 const TYPE_MAPPING = {
