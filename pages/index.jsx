@@ -14,8 +14,14 @@ const { Dragger } = Upload;
 const SUPPORTED_INPUT_LIST = [
   {
     code: '850',
-    name: '订单确认',
+    name: '订单信息',
     type: 'download'
+  },
+  {
+    code: '855',
+    name: '订单确认',
+    type: 'upload',
+    disabled: true,
   },
   {
     code: '753',
@@ -43,6 +49,12 @@ const SUPPORTED_INPUT_LIST = [
     code: '856',
     name: '发货通知',
     type: 'upload',
+  },
+  {
+    code: '810',
+    name: '发送发票',
+    type: 'upload',
+    disabled: true,
   },
   {
     code: '997',
@@ -78,8 +90,8 @@ export default class extends Component {
       tabLoading: !hasPreload,
       files: hasPreload ? props.preload.files : [],
       fileType: Boolean(query.fileType) ? query.fileType : defaultTypeObject.type === 'download' ?  'edi' : 'upload',
-      sorting: 'created_DESC',
-      keyword: '',
+      sorting: query.sort || 'created_DESC',
+      keyword: query.keyword || '',
       // 只有在下载界面或上传的归纳界面时才加载文件列表.
       shouldInitFetch: defaultTypeObject.type === 'download' || (defaultTypeObject.type === 'upload' && query.fileType === 'archive'),
     };
@@ -119,10 +131,16 @@ export default class extends Component {
   /**
    * 更新tab内容.
    *
-   * @param key 所选key.
+   * @param {string} key 所选key.
    */
   tabOnchange(key) {
     const selectedTypeObject = SUPPORTED_INPUT_LIST.find(o => o.code === key);
+
+    if (selectedTypeObject.disabled === true) {
+      message.warning(`本地EDI系统暂不支持该类型 - ${selectedTypeObject.name} (${selectedTypeObject.code})`);
+      return;
+    }
+
     this.setState({type: key, tabLoading: true, sorting: 'name_ASC', keyword: '', fileType: selectedTypeObject.type === 'download' ? 'edi' : 'upload'}, () => {
       if (selectedTypeObject.type === 'download') {
         this.fetchFiles();
@@ -135,6 +153,16 @@ export default class extends Component {
     });
   }
 
+  /**
+   * 筛选内容改动.
+   *
+   * @param {T} value
+   *   筛选内容.
+   * @param {string} field
+   *   筛选字段名.
+   * @param {boolean} shouldUpdate
+   *   是否要刷新文件列表.
+   */
   filterOnchange(value, field, shouldUpdate = true) {
     this.setState({[field]: value}, () => {
       if (!shouldUpdate) {
@@ -142,16 +170,14 @@ export default class extends Component {
       }
 
       this.setState({tabLoading: true, files: []}, () => {
-        if (field === 'fileType') {
-          Router.push({
-            pathname : '/',
-            query: this.buildPushQuery(),
-          });
+        Router.push({
+          pathname : '/',
+          query: this.buildPushQuery(),
+        });
 
-          // 上传界面无需获取文件.
-          if (value === 'upload') {
-            return;
-          }
+        // 上传界面无需获取文件.
+        if (field === 'fileType' && value === 'upload') {
+          return;
         }
 
         this.fetchFiles();
@@ -230,6 +256,14 @@ export default class extends Component {
 
     if (this.state.fileType !== 'edi') {
       query.fileType = this.state.fileType;
+    }
+
+    if (Boolean(this.state.keyword)) {
+      query.keyword = this.state.keyword;
+    }
+
+    if (this.state.sorting !== 'created_DESC') {
+      query.sort = this.state.sorting;
     }
 
     return query;
@@ -324,7 +358,7 @@ export default class extends Component {
       <Tabs className="jt-edi-tabs" activeKey={this.state.type} tabPosition="left" onChange={ this.tabOnchange.bind(this) }>
         {
           SUPPORTED_INPUT_LIST.map((code, index) => {
-            return <TabPane key={ code.code } tab={ <span>{this.getLabel(code)} <ArrowUpOutlined className={ code.type } /></span> }>
+            return <TabPane key={ code.code } disable={code.disabled} tab={ <span>{this.getLabel(code)} <ArrowUpOutlined className={ code.type } /></span> }>
               {
                 code.type === 'download' && <React.Fragment>
                   <Row style={{marginBottom: 10}}>

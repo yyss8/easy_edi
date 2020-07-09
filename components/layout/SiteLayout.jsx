@@ -35,9 +35,12 @@ export default class extends Component {
 
 	render() {
 		return <Layout className="layout">
-			{ !this.state.user && <Head>
-				<title>Easy EDI</title>
-			</Head> }
+			<Head>
+				{ !this.state.user && <title>Easy EDI</title> }
+				{/* 防止爬虫以及搜索引擎. */}
+				<meta name="robots" content="noindex" />
+				<meta name="googlebot" content="noindex" />
+			</Head>
 			<SiteHeader isLoggedIn={Boolean(this.state.user)} userOnchange={this.userOnchange.bind(this)} />
 			<Content className="main-content" id="main">
 				<div className="main-content-inner">
