@@ -19,6 +19,7 @@ export default props => {
 			</Col>
 			<Col style={{textAlign: 'right'}} span={ 6 }>
 				<Button onClick={props.bulkDownload} title="下载所选文件">批量下载</Button>
+				{ props.fileType === 'edi' && <Button style={{marginLeft: 10}} onClick={props.bulkArchive} title="归档所选文件">批量归档</Button> }
 				<Button style={{marginLeft: 10}} icon={ <SyncOutlined /> } onClick={props.onRefresh} title="刷新文件" />
 			</Col>
 		</Row>

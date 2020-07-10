@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
 const archiver = require('archiver');
+const ExcelParser = require('./ExcelParser');
 
 require('moment-timezone');
 const MOMENT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
@@ -51,20 +52,33 @@ function loadFiles(type, params = {}) {
 	}
 
 	const files = fs.readdirSync(typeFullPath);
+	const hasParser = typeof ExcelParser[`parse${type}`] === 'function';
 	let scannedFiles = [];
 
 	files.forEach(file => {
-		const stat = fs.statSync(`${typeFullPath}\\${file}`);
-		scannedFiles.push({
+		const filePath = `${typeFullPath}\\${file}`;
+		const stat = fs.statSync(filePath);
+		const fileData = {
 			name: file,
 			modified: moment(stat.mtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
 			created: moment(stat.birthtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
 			size: stat.size,
-		});
+		};
+
+		if (params.getDetail === true && hasParser) {
+			scannedFiles.push(ExcelParser[`parse${type}`](filePath, fileData));
+		} else {
+			scannedFiles.push(fileData);
+		}
 	});
 
-	scannedFiles = sortFiles(scannedFiles, params.sorting);
-	scannedFiles = filterFiles(scannedFiles, params);
+	if (params.shouldSort !== false) {
+		scannedFiles = sortFiles(scannedFiles, params.sorting);
+	}
+
+	if (params.shouldFilter !== false) {
+		scannedFiles = filterFiles(scannedFiles, params);
+	}
 
 	return scannedFiles;
 }

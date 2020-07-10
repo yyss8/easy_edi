@@ -380,7 +380,7 @@ export default class extends Component {
         return new Promise(finished => {
           axios.post(`/api/bulk/download/${this.state.type}`, {
             fileType: this.state.fileType,
-            fileNames: this.state.files.filter(file => file.isSelected).map(file => file.name)
+            fileNames: this.state.files.filter(file => file.isSelected).map(file => file.name),
           }, {
             responseType: 'arraybuffer',
           })
@@ -405,11 +405,96 @@ export default class extends Component {
     });
   }
 
+  show854ProductTable() {
+
+  }
+
+  getColumnsByType(type) {
+    switch (type) {
+      case '850':
+        return [
+          {
+            title: 'PO#',
+            key: 'po_number',
+            dataIndex: 'po_number',
+          },
+          {
+            title: 'PO日期',
+            key: 'po_date',
+            render: (text, record) => record.date !== '' ? moment(record.date, 'YYYYMMDD').format('YYYY/MM/DD') : '无',
+          },
+          {
+            title: 'Shipping Window',
+            key: 'shipping_window',
+            render: (text, {shipping_window}) => {
+              const start = shipping_window && shipping_window.start !== '' ? moment(shipping_window.start, 'YYYYMMDD').format('YYYY/MM/DD') : '无';
+              const end = shipping_window && shipping_window.end !== '' ? moment(shipping_window.end, 'YYYYMMDD').format('YYYY/MM/DD') : '无';
+
+              return <span>{start} - {end}</span>;
+            }
+          },
+          {
+            title: 'Ship To',
+            key: 'ship_to',
+            dataIndex: 'ship_to',
+          },
+        ];
+      case '754':
+        return [
+          {
+            title: 'PO#',
+            key: 'po_number',
+            dataIndex: 'po_number',
+          },
+          {
+            title: 'ARN',
+            key: 'arn',
+            dataIndex: 'arn',
+          },
+          {
+            title: 'Carrier',
+            key: 'carrier',
+            dataIndex: 'carrier',
+          },
+        ];
+    }
+
+    return [];
+  }
+
+  bulkArchive() {
+    Modal.confirm({
+      title: '确认归档所选文件?',
+      onOk:() => {
+        return new Promise(finished => {
+          axios.post(`/api/bulk/archive/${this.state.type}`, {
+            fileNames: this.state.files.filter(file => file.isSelected).map(file => file.name),
+          })
+            .then(response => {
+              message.success(`成功归档${response.data.result.archived}个文件.`);
+              this.setState({
+                files: this.state.files.map(file => updater(file, {
+                  $unset: ['isSelected'],
+                })),
+                selectedRowKeys: [],
+              }, this.fetchFiles);
+              finished();
+            })
+            .catch(rejected => {
+              console.log(rejected);
+              message.error('批量下载请求出错, 请稍候再试...');
+              finished();
+            });
+        });
+      }
+    });
+  }
+
   /** @inheritdoc */
   render() {
     const selectedType = SUPPORTED_INPUT_LIST.find(item => item.code === this.state.type);
     const label = this.getLabel(selectedType);
-    const fileColumns = [
+    const defaultFileColumns = [
       {
         title: '文件名',
         render: (text, record) => <a href={ `/api/download/${this.state.type}/${record.name}` } data-file-name={ record.name } title="点击下载" download>{record.name}</a>,
@@ -440,6 +525,11 @@ export default class extends Component {
           </span>
         },
       }
+    ];
+    const fileColumns = [
+      defaultFileColumns.shift(),
+      ...this.getColumnsByType(this.state.type),
+      ...defaultFileColumns,
     ];
 
     const tableRowSelection = {
@@ -473,7 +563,7 @@ export default class extends Component {
           SUPPORTED_INPUT_LIST.map((code, index) => {
             return <TabPane key={ code.code } tab={ <span>{this.getLabel(code)} <ArrowUpOutlined className={ code.type } /></span> }>
               {
-                code.type === 'download' && <EdiDownloadTab {...commonProps} />
+                code.type === 'download' && <EdiDownloadTab bulkArchive={this.bulkArchive.bind(this)} {...commonProps} />
               }
               { code.type === 'upload' && <EdiUploadTab type={this.state.type} {...commonProps} /> }
             </TabPane>;
