@@ -532,7 +532,7 @@ export default class extends Component {
     const defaultFileColumns = [
       {
         title: '文件名',
-        render: (text, record) => <a href={ `/api/download/${this.state.type}/${record.name}` } data-file-name={ record.name } title="点击下载" download>{record.name}</a>,
+        render: (text, record) => <a href={ `/api/download/${this.state.fileType}/${this.state.type}/${record.name}` } data-file-name={ record.name } title="点击下载" download>{record.name}</a>,
         key: 'name',
       },
       {

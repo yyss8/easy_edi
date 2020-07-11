@@ -1,10 +1,10 @@
-import { getRealPath, getArchivePath } from "../../../../library/file.controller";
+import { getRealPath, getArchivePath } from '../../../../../library/file.controller';
 import fs from 'fs';
 
 export default (req, res) => {
 	let filePath;
 
-	switch (req.query.fileType) {
+	switch (req.query.dirType) {
 		case 'archive':
 			filePath = getArchivePath(req.query.type, req.query.name);
 			break;
