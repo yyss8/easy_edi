@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Router from 'next/router';
 import Head from 'next/head'
-import { Tabs, message, Button, Modal } from 'antd';
+import { Tabs, message, Button, Modal, Table } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import qs from 'qs';
@@ -95,6 +95,7 @@ export default class extends Component {
     const hasPreload = Boolean(props.preload);
     const defaultType = query.type || '850';
     const defaultTypeObject = SUPPORTED_INPUT_LIST.find(o => o.code === defaultType);
+    const poDate = Boolean(query.poDate) ? moment(query.poDate, 'YYYY-MM-DD') : null;
 
     this.state = {
       type: defaultType,
@@ -103,12 +104,16 @@ export default class extends Component {
       fileType: Boolean(query.fileType) ? query.fileType : defaultTypeObject.type === 'download' ?  'edi' : 'upload',
       sorting: query.sort || 'created_DESC',
       keyword: query.keyword || '',
+      poKeyword: query.poKeyword || '',
+      poDate: moment.isMoment(poDate) && poDate.isValid() ? poDate : null,
       // 只有在下载界面或上传的归档界面时才加载文件列表.
       shouldInitFetch: defaultTypeObject.type === 'download' || (defaultTypeObject.type === 'upload' && query.fileType === 'archive'),
       selectedRowKeys: [],
     };
 
     this.fetchFiles = this.fetchFiles.bind(this);
+    this.getTableColumns = this.getTableColumns.bind(this);
+    this.getSubTableRenderer = this.getSubTableRenderer.bind(this);
   }
 
   /** @inheritdoc */
@@ -128,6 +133,14 @@ export default class extends Component {
 
     if (Boolean(this.state.keyword)) {
       queryObject.keyword = this.state.keyword;
+    }
+
+    if (Boolean(this.state.poKeyword)) {
+      queryObject.poKeyword = this.state.poKeyword;
+    }
+
+    if (moment.isMoment(this.state.poDate)) {
+      queryObject.poDate = this.state.poDate.format('YYYYMMDD');
     }
 
     axios.get(`/api/files/${this.state.fileType}/${this.state.type}?${qs.stringify(queryObject)}`)
@@ -157,7 +170,13 @@ export default class extends Component {
       return;
     }
 
-    this.setState({type: key, tabLoading: true, sorting: 'created_DESC', keyword: '', fileType: selectedTypeObject.type === 'download' ? 'edi' : 'upload', files: []}, () => {
+    this.setState({
+      type: key,
+      tabLoading: true,
+      fileType: selectedTypeObject.type === 'download' ? 'edi' : 'upload',
+      files: [],
+      ...this.getDefaultFilters(),
+    }, () => {
       if (selectedTypeObject.type === 'download') {
         this.fetchFiles();
       }
@@ -199,6 +218,15 @@ export default class extends Component {
         this.fetchFiles();
       });
     });
+  }
+
+  getDefaultFilters() {
+    return {
+      sorting: 'created_DESC',
+      keyword: '',
+      poDate: null,
+      poKeyword: '',
+    };
   }
 
   /**
@@ -298,6 +326,14 @@ export default class extends Component {
 
     if (this.state.sorting !== 'created_DESC') {
       query.sort = this.state.sorting;
+    }
+
+    if (Boolean(this.state.poKeyword)) {
+      query.poKeyword = this.state.poKeyword;
+    }
+
+    if (moment.isMoment(this.state.poDate)) {
+      query.poDate = this.state.poDate.format('YYYY-MM-DD');
     }
 
     return query;
@@ -405,10 +441,6 @@ export default class extends Component {
     });
   }
 
-  show854ProductTable() {
-
-  }
-
   getColumnsByType(type) {
     switch (type) {
       case '850':
@@ -463,6 +495,12 @@ export default class extends Component {
   }
 
   bulkArchive() {
+    const selectedLength = this.state.selectedRowKeys.length;
+    if (selectedLength === 0) {
+      message.error('尚未选择任何文件.');
+      return;
+    }
+
     Modal.confirm({
       title: '确认归档所选文件?',
       onOk:() => {
@@ -490,20 +528,12 @@ export default class extends Component {
     });
   }
 
-  /** @inheritdoc */
-  render() {
-    const selectedType = SUPPORTED_INPUT_LIST.find(item => item.code === this.state.type);
-    const label = this.getLabel(selectedType);
+  getTableColumns() {
     const defaultFileColumns = [
       {
         title: '文件名',
         render: (text, record) => <a href={ `/api/download/${this.state.type}/${record.name}` } data-file-name={ record.name } title="点击下载" download>{record.name}</a>,
         key: 'name',
-      },
-      {
-        title: '文件大小',
-        render: (text, record) => <span>{this.getFileSize(record.size)}</span>,
-        key: 'size',
       },
       {
         title: '更新日期',
@@ -526,13 +556,61 @@ export default class extends Component {
         },
       }
     ];
-    const fileColumns = [
+
+    return [
       defaultFileColumns.shift(),
       ...this.getColumnsByType(this.state.type),
       ...defaultFileColumns,
     ];
+  }
 
-    const tableRowSelection = {
+  getSubTableRenderer() {
+    switch (this.state.type) {
+      case '850':
+        return (record, index) => {
+          const products = record.products.map((p, i) => ({...p, key: `row-${index}-p-${i}`}));
+          const tableColumns850 = [
+            {
+              title: 'Quantity',
+              dataIndex: 'quantity',
+              key: 'quantity',
+            },
+            {
+              title: 'Unit',
+              dataIndex: 'unit',
+              key: 'unit',
+            },
+            {
+              title: 'Price',
+              dataIndex: 'price',
+              key: 'price',
+            },
+            {
+              title: 'Qualifier',
+              dataIndex: 'qualifier',
+              key: 'qualifier',
+            },
+            {
+              title: 'ID',
+              dataIndex: 'id',
+              key: 'id',
+            },
+          ];
+
+          return <Table size="small" title={() => '订单商品'} columns={tableColumns850} dataSource={products} pagination={false} />;
+        };
+      default:
+        return null;
+    }
+  }
+
+  /** @inheritdoc */
+  render() {
+    const selectedType = SUPPORTED_INPUT_LIST.find(item => item.code === this.state.type);
+    const label = this.getLabel(selectedType);
+
+    const fileColumns = this.state.fileType === 'upload' ? [] : this.getTableColumns();
+    const tableRowSelection = this.state.fileType === 'upload' ? {} : {
       onSelect: this.onSelectFile.bind(this),
       onSelectAll: this.onSelectAllFiles.bind(this),
       onChange: this.onSelectItemChange.bind(this),
@@ -548,6 +626,8 @@ export default class extends Component {
       sorting: this.state.sorting,
       keyword: this.state.keyword,
       fileType: this.state.fileType,
+      type: this.state.type,
+      poKeyword: this.state.poKeyword,
       filterOnchange: this.filterOnchange.bind(this),
       onRefresh: this.onRefresh.bind(this),
       bulkDownload: this.bulkDownload.bind(this),
@@ -563,9 +643,9 @@ export default class extends Component {
           SUPPORTED_INPUT_LIST.map((code, index) => {
             return <TabPane key={ code.code } tab={ <span>{this.getLabel(code)} <ArrowUpOutlined className={ code.type } /></span> }>
               {
-                code.type === 'download' && <EdiDownloadTab bulkArchive={this.bulkArchive.bind(this)} {...commonProps} />
+                code.type === 'download' && <EdiDownloadTab poDate={this.state.poDate} subTableRendered={this.getSubTableRenderer()} bulkArchive={this.bulkArchive.bind(this)} {...commonProps} />
               }
-              { code.type === 'upload' && <EdiUploadTab type={this.state.type} {...commonProps} /> }
+              { code.type === 'upload' && <EdiUploadTab {...commonProps} /> }
             </TabPane>;
           })
         }

@@ -60,7 +60,7 @@ export default props => {
 					<p className="ant-upload-text">点击此处或拖拽Excel文件开始上传</p>
 					<p className="ant-upload-text">支持多文件上传</p>
 				</Dragger>
-			</div> : <Table loading={props.tabLoading} dataSource={props.files} columns={props.fileColumns} rowSelection={ props.tableRowSelection } />
+			</div> : <Table loading={props.tabLoading} dataSource={props.files} columns={props.fileColumns} rowSelection={ props.tableRowSelection } size="middle" />
 		}
 	</React.Fragment>;
 }

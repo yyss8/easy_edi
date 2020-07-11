@@ -62,7 +62,6 @@ function loadFiles(type, params = {}) {
 			name: file,
 			modified: moment(stat.mtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
 			created: moment(stat.birthtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
-			size: stat.size,
 		};
 
 		if (params.getDetail === true && hasParser) {
@@ -170,8 +169,21 @@ function filterFiles(files, params) {
 	const filteredFiles = [];
 
 	files.forEach(file => {
+		// 关键字.
 		if (Boolean(params.keyword)) {
 			if (!file.name.includes(params.keyword)) {
+				return;
+			}
+		}
+
+		// PO日期.
+		if (Boolean(params.poDate) && params.poDate !== file.date) {
+			return;
+		}
+
+		// PO # (部分类型有效)
+		if (Boolean(params.poKeyword)) {
+			if (!file.po_number.includes(params.poKeyword)) {
 				return;
 			}
 		}

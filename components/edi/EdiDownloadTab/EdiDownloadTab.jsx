@@ -14,7 +14,7 @@ export default props => {
 							<Radio.Button value="archive">归档</Radio.Button>
 						</Radio.Group>
 					</Col>
-					{ <EdiTableFilters sorting={props.sorting} keyword={props.keyword} onRefresh={props.onRefresh} filterOnchange={props.filterOnchange} /> }
+					{ <EdiTableFilters {...props} /> }
 				</Row>
 			</Col>
 			<Col style={{textAlign: 'right'}} span={ 6 }>
@@ -23,6 +23,8 @@ export default props => {
 				<Button style={{marginLeft: 10}} icon={ <SyncOutlined /> } onClick={props.onRefresh} title="刷新文件" />
 			</Col>
 		</Row>
-		<Table loading={props.tabLoading} dataSource={props.files} columns={props.fileColumns} rowSelection={ props.tableRowSelection } />
+		<Table expandable={{
+			expandedRowRender: props.subTableRendered,
+		}} loading={props.tabLoading} dataSource={props.files} columns={props.fileColumns} rowSelection={ props.tableRowSelection } size="middle" />
 	</React.Fragment>;
 };
