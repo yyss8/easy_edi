@@ -6,7 +6,14 @@
   z-index: 20;
 
   h1 {
-    color: #CDD2D4;
     margin-bottom: 0;
+
+    a {
+      color: #CDD2D4;
+
+      &:hover {
+        color: darken(#CDD2D4, 20%);
+      }
+    }
   }
 }

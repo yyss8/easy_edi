@@ -4,6 +4,8 @@ const path = require('path');
 const moment = require('moment');
 const archiver = require('archiver');
 const ExcelParser = require('./ExcelParser');
+const ExcelGenerator = require('./ExcelGenerator');
+import { Duplex } from 'stream';
 
 require('moment-timezone');
 const MOMENT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
@@ -52,23 +54,13 @@ function loadFiles(type, params = {}) {
 	}
 
 	const files = fs.readdirSync(typeFullPath);
-	const hasParser = typeof ExcelParser[`parse${type}`] === 'function';
+	const getDetail = params.getDetail === true && typeof ExcelParser[`parse${type}`] === 'function';
 	let scannedFiles = [];
 
 	files.forEach(file => {
 		const filePath = `${typeFullPath}\\${file}`;
-		const stat = fs.statSync(filePath);
-		const fileData = {
-			name: file,
-			modified: moment(stat.mtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
-			created: moment(stat.birthtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
-		};
 
-		if (params.getDetail === true && hasParser) {
-			scannedFiles.push(ExcelParser[`parse${type}`](filePath, fileData));
-		} else {
-			scannedFiles.push(fileData);
-		}
+		scannedFiles.push(getFileData(file, filePath, type, getDetail));
 	});
 
 	if (params.shouldSort !== false) {
@@ -80,6 +72,21 @@ function loadFiles(type, params = {}) {
 	}
 
 	return scannedFiles;
+}
+
+function getFileData(fileName, filePath, type, getDetail = false) {
+	const stat = fs.statSync(filePath);
+	const fileData = {
+		name: fileName,
+		modified: moment(stat.mtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
+		created: moment(stat.birthtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
+	};
+
+	if (getDetail) {
+		return ExcelParser[`parse${type}`](filePath, fileData);
+	}
+
+	return fileData;
 }
 
 /**
@@ -343,6 +350,31 @@ function archiveFile(fileName, type, deleteOrg = false) {
 	}
 }
 
+function getFilePath(dirType, type, fileName = '') {
+	switch (dirType) {
+		case 'archive':
+			return getArchivePath(type, fileName);
+		case 'edi':
+		default:
+			return getRealPath(type, fileName);
+	}
+}
+
+/**
+ *
+ * @param fileData
+ * @param excelType
+ *
+ * @return {module:stream.internal.Duplex|boolean}
+ */
+function generateExcel(fileData, excelType) {
+	if (typeof ExcelGenerator[`generate${excelType}`] !== 'function') {
+		return false;
+	}
+
+	return ExcelGenerator[`generate${excelType}`](fileData);
+}
+
 module.exports = {
 	archiveFile,
 	loadFiles,
@@ -351,4 +383,7 @@ module.exports = {
 	deleteFile,
 	getArchivePath,
 	getZipWriteStream,
+	getFileData,
+	getFilePath,
+	generateExcel,
 };

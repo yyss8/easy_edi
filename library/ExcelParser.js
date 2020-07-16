@@ -1,4 +1,4 @@
-const xlsxParser = require('xlsx');
+const xlsx = require('xlsx');
 
 class ExcelParser {
 	static parse850(filePath, data = null) {
@@ -48,7 +48,7 @@ class ExcelParser {
 		const fetchingDataMap = {
 			'po_number': 'B1',
 			'arn': 'B2',
-			'ship_from': 'B3',
+			'ship_to': 'B3',
 			'carrier': 'B5',
 		};
 
@@ -61,7 +61,7 @@ class ExcelParser {
 	}
 
 	static parse(filePath, dataMap, assignCallback, data = null) {
-		const parsed = xlsxParser.readFile(filePath);
+		const parsed = xlsx.readFile(filePath);
 		const fetchedData = {};
 
 		const sheet = parsed.Sheets['Sheet1'];

@@ -31,3 +31,10 @@ body {
     }
   }
 }
+
+
+.login-view-loading-blur {
+  > .ant-spin-blur {
+    opacity: 0;
+  }
+}

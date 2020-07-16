@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Router from 'next/router';
 import Head from 'next/head'
-import { Tabs, message, Button, Modal, Table } from 'antd';
+import Link from 'next/link';
+import { Tabs, message, Button, Modal, Table, Menu, Dropdown } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import qs from 'qs';
@@ -13,6 +14,7 @@ import moment from 'moment';
 import SiteLayout from '../components/layout/SiteLayout';
 import EdiDownloadTab from "../components/edi/EdiDownloadTab/EdiDownloadTab";
 import EdiUploadTab from "../components/edi/EdiUploadTab/EdiUploadTab";
+import OrderProductTable from "../components/edi/EdiTable/OrderProductTable/OrderProductTable";
 
 const { TabPane } = Tabs;
 
@@ -211,7 +213,7 @@ export default class extends Component {
         });
 
         // 上传界面无需获取文件.
-        if (field === 'fileType' && value === 'upload') {
+        if (field === 'fileType' && (value === 'upload' || value === 'form')) {
           return;
         }
 
@@ -551,6 +553,9 @@ export default class extends Component {
           return <span>
             <Button size="small" title="点击下载" onClick={ () => this.downloadFile(record.name) }>下载文件</Button>
             { this.state.fileType === 'edi' && <Button style={ {marginLeft: 8} } size="small" onClick={ () => this.archiveFile(record.name) }>归档</Button> }
+            { this.state.fileType === 'edi' && this.state.type === '850' &&  <Link href={ `/form/850/${encodeURI(record.name)}?type=753` }>
+              <a title="生成753文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成</a>
+            </Link> }
             {/*<Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>*/}
           </span>
         },
@@ -569,35 +574,7 @@ export default class extends Component {
       case '850':
         return (record, index) => {
           const products = record.products.map((p, i) => ({...p, key: `row-${index}-p-${i}`}));
-          const tableColumns850 = [
-            {
-              title: 'Quantity',
-              dataIndex: 'quantity',
-              key: 'quantity',
-            },
-            {
-              title: 'Unit',
-              dataIndex: 'unit',
-              key: 'unit',
-            },
-            {
-              title: 'Price',
-              dataIndex: 'price',
-              key: 'price',
-            },
-            {
-              title: 'Qualifier',
-              dataIndex: 'qualifier',
-              key: 'qualifier',
-            },
-            {
-              title: 'ID',
-              dataIndex: 'id',
-              key: 'id',
-            },
-          ];
-
-          return <Table size="small" title={() => '订单商品'} columns={tableColumns850} dataSource={products} pagination={false} />;
+          return <OrderProductTable products={ products } />
         };
       default:
         return null;

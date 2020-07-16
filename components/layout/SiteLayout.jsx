@@ -44,7 +44,7 @@ export default class extends Component {
 			<SiteHeader isLoggedIn={Boolean(this.state.user)} userOnchange={this.userOnchange.bind(this)} />
 			<Content className="main-content" id="main">
 				<div className="main-content-inner">
-					{ this.state.user ? this.props.children : <Spin tip="加载中..." spinning={this.state.isLoading}>
+					{ this.state.user ? this.props.children : <Spin tip="加载中..." spinning={this.state.isLoading} wrapperClassName="login-view-loading-blur">
 						<LoginView userOnchange={this.userOnchange.bind(this)} />
 					</Spin> }
 				</div>
