@@ -202,7 +202,8 @@ export default class extends Component {
    */
   filterOnchange(value, field, shouldUpdate = true) {
     // 上传界面无需获取文件, 直接跳转至创建界面.
-    if (field === 'fileType' && (value === 'upload' || value === 'form')) {
+    const isFileTypeChanged = field === 'fileType';
+    if (isFileTypeChanged && value === 'form') {
       Router.push({
         pathname: `/form/${this.state.type}`,
       });
@@ -211,6 +212,10 @@ export default class extends Component {
 
     this.setState({[field]: value}, () => {
       if (!shouldUpdate) {
+        return;
+      }
+
+      if (isFileTypeChanged && value === 'upload') {
         return;
       }
 
@@ -371,6 +376,12 @@ export default class extends Component {
     });
   }
 
+  /**
+   * 处理表格已/未选.
+   *
+   * @param {Array} selectedRowKeys
+   *   已选择行.
+   */
   onSelectItemChange(selectedRowKeys) {
     this.setState({selectedRowKeys});
   }
@@ -386,6 +397,14 @@ export default class extends Component {
     this.setState({ files });
   }
 
+  /**
+   * 处理表格选择所有文件.
+   *
+   * @param {boolean} isSelected
+   *   是否被选择.
+   * @param {Array} selectedRows
+   *   已选择行.
+   */
   onSelectAllFiles(isSelected, selectedRows) {
     const updating = {};
 
@@ -408,6 +427,9 @@ export default class extends Component {
     document.querySelector(`[data-file-name="${name}"]`).click();
   }
 
+  /**
+   * 处理批量下载文件.
+   */
   bulkDownload() {
     const selectedLength = this.state.selectedRowKeys.length;
     if (selectedLength === 0) {
@@ -499,6 +521,9 @@ export default class extends Component {
     return [];
   }
 
+  /**
+   * 处理批量归档文件.
+   */
   bulkArchive() {
     const selectedLength = this.state.selectedRowKeys.length;
     if (selectedLength === 0) {
@@ -533,6 +558,9 @@ export default class extends Component {
     });
   }
 
+  /**
+   * 获取不同文档类型的表格列.
+   */
   getTableColumns() {
     const defaultFileColumns = [
       {
@@ -572,6 +600,9 @@ export default class extends Component {
     ];
   }
 
+  /**
+   * 获取不同表格类型的子表格内容.
+   */
   getSubTableRenderer() {
     switch (this.state.type) {
       case '850':

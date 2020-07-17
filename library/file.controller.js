@@ -11,6 +11,7 @@ require('moment-timezone');
 const MOMENT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const MOMENT_TIMEZONE = 'America/New_York';
 
+// 文档类型所属路径.
 const TYPE_MAPPING = {
 	// in
 	'850': '\\edi\\850-excel',
@@ -74,6 +75,20 @@ function loadFiles(type, params = {}) {
 	return scannedFiles;
 }
 
+/**
+ * 获取单个文件数据.
+ *
+ * @param {string} fileName
+ *   文件名.
+ * @param {string} filePath
+ *   文件路径.
+ * @param {string} type
+ *   文档类型。
+ * @param {boolean} getDetail
+ *   是否解析文件并获取更多数据.
+ *
+ * @return {{created: string, name: *, modified: string}|*}
+ */
 function getFileData(fileName, filePath, type, getDetail = false) {
 	const stat = fs.statSync(filePath);
 	const fileData = {
@@ -90,10 +105,14 @@ function getFileData(fileName, filePath, type, getDetail = false) {
 }
 
 /**
+ * 获取压缩打包后的文档stream.
  *
- * @param dirType
- * @param fileType
- * @param fileNames
+ * @param {string} dirType
+ *   目录类型 (edi/archive).
+ * @param {string} fileType
+ *   文档类型.
+ * @param {string[]} fileNames
+ *   要打包的文件.
  *
  * @return {Archiver}
  */
@@ -350,6 +369,19 @@ function archiveFile(fileName, type, deleteOrg = false) {
 	}
 }
 
+/**
+ * 通用获取文件路径.
+ *
+ * @param {string} dirType
+ *   目录类型 (edi/archive).
+ * @param {string} type
+ *   文档类型
+ * @param {string} fileName
+ *   文件名
+ *
+ * @return {string}
+ *   文件所属路径.
+ */
 function getFilePath(dirType, type, fileName = '') {
 	switch (dirType) {
 		case 'archive':
@@ -361,11 +393,14 @@ function getFilePath(dirType, type, fileName = '') {
 }
 
 /**
+ * 生成Excel文档.
  *
- * @param fileData
- * @param excelType
+ * @param {Object} fileData
+ *   相关数据.
+ * @param {string} excelType
+ *   文档类型.
  *
- * @return {module:stream.internal.Duplex|boolean}
+ * @return {ReadStream|boolean}
  */
 function generateExcel(fileData, excelType) {
 	if (typeof ExcelGenerator[`generate${excelType}`] !== 'function') {

@@ -1,6 +1,16 @@
 const xlsx = require('xlsx');
 
 class ExcelParser {
+	/**
+	 * 解析850文档.
+	 *
+	 * @param {string} filePath
+	 *   文件路径.
+	 * @param {Object} [data]
+	 *   已有文档数据.
+	 *
+	 * @return {{}}
+	 */
 	static parse850(filePath, data = null) {
 		const fetchingDataMap = {
 			'po_number': 'B1',
@@ -44,6 +54,16 @@ class ExcelParser {
 		}, data);
 	}
 
+	/**
+	 * 解析754文档.
+	 *
+	 * @param {string} filePath
+	 *   文件路径.
+	 * @param {Object} [data]
+	 *   已有文档数据.
+	 *
+	 * @return {{}}
+	 */
 	static parse754(filePath, data = null) {
 		const fetchingDataMap = {
 			'po_number': 'B1',
@@ -60,6 +80,20 @@ class ExcelParser {
 		}, data);
 	}
 
+	/**
+	 * 通用文档解析函数.
+	 *
+	 * @param {string} filePath
+	 *   文件路径.
+	 * @param {Object} dataMap
+	 *   文档数据位置map.
+	 * @param {function} assignCallback
+	 *   用于判断数据该如何赋值的回调.
+	 * @param {Object} [data]
+	 *   已有文档数据.
+	 *
+	 * @return {{}}
+	 */
 	static parse(filePath, dataMap, assignCallback, data = null) {
 		const parsed = xlsx.readFile(filePath);
 		const fetchedData = {};

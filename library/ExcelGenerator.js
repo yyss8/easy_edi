@@ -4,7 +4,18 @@ import path from 'path';
 const xlsx = require('xlsx');
 const moment = require('moment');
 
+/**
+ * Excel文档生成工具.
+ */
 class ExcelGenerator {
+	/**
+	 * 生成753文档
+	 *
+	 * @param {Object} data
+	 *   753文档数据.
+	 *
+	 * @return {ReadStream}
+	 */
 	static generate753(data) {
 		const fromAddress = [data.from_city, data.from_state, data.from_country].filter(Boolean).join(',');
 		const toAddress = [data.to_city, data.to_state, data.to_country].filter(Boolean).join(',');
@@ -25,6 +36,16 @@ class ExcelGenerator {
 		]);
 	}
 
+	/**
+	 * 通用生成函数.
+	 *
+	 * @param {string} title
+	 *   excel文件名.
+	 * @param {Object} data
+	 *   excel文档数据.
+	 *
+	 * @return {ReadStream}
+	 */
 	static generate(title, data) {
 		const wb = xlsx.utils.book_new();
 		wb.Props = {
