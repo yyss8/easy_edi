@@ -54,8 +54,6 @@ class ExcelGenerator {
 			type: 'binary',
 		});
 
-
-
 		const stream = fs.createReadStream(tmpFilePath);
 
 		stream.on('end', () => {

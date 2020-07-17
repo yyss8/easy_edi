@@ -8,6 +8,11 @@ import moment from 'moment';
 export default class extends FormBase {
 
 	handleFileGenerate(data) {
+		if (!this.props.file) {
+			message.error('请选择相关850文件.');
+			return;
+		}
+
 		data.freight_ready_date = data.freight_ready_date.format('YYYYMMDD');
 
 		axois.post(`/api/generate/edi/753/${this.props.file.name}`, data, {
@@ -35,25 +40,25 @@ export default class extends FormBase {
 				<Input placeholder="输入发货街道" />
 			</Form.Item>
 			<Row>
-				<Col offset={ 3 } span={ 6 }>
-					<Form.Item name="from_city" label="发货城市" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 12 } } >
+				<Col offset={ 3 } span={ 9 }>
+					<Form.Item name="from_city" label="发货城市" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
 						<Input placeholder="输入发货城市" />
 					</Form.Item>
 				</Col>
-				<Col span={ 5 }>
-					<Form.Item name="from_state" label="发货州/省" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 12} }>
+				<Col span={ 10 }>
+					<Form.Item name="from_state" label="发货州/省" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
 						<Input placeholder="输入发货州/省" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Row>
-				<Col offset={ 3 } span={ 6 }>
-					<Form.Item name="from_zipcode" label="发货邮编" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 12 } }>
+				<Col offset={ 3 } span={ 9 }>
+					<Form.Item name="from_zipcode" label="发货邮编" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
 						<Input placeholder="输入发货邮编" />
 					</Form.Item>
 				</Col>
-				<Col span={ 5 }>
-					<Form.Item name="from_country" label="发货国家" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 12 } }>
+				<Col span={ 10 }>
+					<Form.Item name="from_country" label="发货国家" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
 						<Input placeholder="输入发货国家" />
 					</Form.Item>
 				</Col>
@@ -62,25 +67,25 @@ export default class extends FormBase {
 				<Input placeholder="输入收货街道" />
 			</Form.Item>
 			<Row>
-				<Col offset={ 3 } span={ 6 }>
-					<Form.Item name="to_city" label="收货城市" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 12 } } >
+				<Col offset={ 3 } span={ 9 }>
+					<Form.Item name="to_city" label="收货城市" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
 						<Input placeholder="输入收货城市" />
 					</Form.Item>
 				</Col>
-				<Col span={ 5 }>
-					<Form.Item name="to_state" label="收货州/省" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 12} }>
+				<Col span={ 10 }>
+					<Form.Item name="to_state" label="收货州/省" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
 						<Input placeholder="输入收货州/省" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Row>
-				<Col offset={ 3 } span={ 6 }>
-					<Form.Item name="to_zipcode" label="收货邮编" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 12 } }>
+				<Col offset={ 3 } span={ 9 }>
+					<Form.Item name="to_zipcode" label="收货邮编" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
 						<Input placeholder="输入收货邮编" />
 					</Form.Item>
 				</Col>
-				<Col span={ 5 }>
-					<Form.Item name="to_country" label="收货国家" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 12 } }>
+				<Col span={ 10 }>
+					<Form.Item name="to_country" label="收货国家" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
 						<Input placeholder="输入收货国家" />
 					</Form.Item>
 				</Col>
