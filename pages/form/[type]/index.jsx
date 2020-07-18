@@ -1,5 +1,5 @@
 import React from 'react';
-import Router, { withRouter } from 'next/router';
+import { withRouter } from 'next/router';
 import Head from 'next/head';
 import { Descriptions, message, Spin, Row, Col, Button, Table, Modal } from 'antd';
 import Link from "next/link";
@@ -86,7 +86,7 @@ class EdiFormView extends React.Component {
 				const end = file.shipping_window && file.shipping_window.end !== '' ? moment(file.shipping_window.end, 'YYYYMMDD').format('YYYY/MM/DD') : '无';
 				const products = file.products.map((p, i) => ({...p, key: `row-p-${i}`}));
 
-				return <Descriptions layout="vertical" title="订单信息" bordered>
+				return <Descriptions size="middle" layout="vertical" title="订单信息" bordered>
 					<Descriptions.Item span={2} label="PO #"><b>{file.po_number}</b></Descriptions.Item>
 					<Descriptions.Item span={2} label="PO Date"><b>{moment(file.date, 'YYYYMMDD').format('YYYY-MM-DD')}</b></Descriptions.Item>
 					<Descriptions.Item span={2} label="Shipping Window"><b>{start} - {end}</b></Descriptions.Item>
