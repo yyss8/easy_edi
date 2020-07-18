@@ -202,20 +202,12 @@ export default class extends Component {
    */
   filterOnchange(value, field, shouldUpdate = true) {
     // 上传界面无需获取文件, 直接跳转至创建界面.
-    const isFileTypeChanged = field === 'fileType';
-    if (isFileTypeChanged && value === 'form') {
-      Router.push({
-        pathname: `/form/${this.state.type}`,
-      });
-      return;
-    }
-
     this.setState({[field]: value}, () => {
       if (!shouldUpdate) {
         return;
       }
 
-      if (isFileTypeChanged && value === 'upload') {
+      if (field === 'fileType' && value === 'upload') {
         return;
       }
 
@@ -585,7 +577,7 @@ export default class extends Component {
             <Button size="small" title="点击下载" onClick={ () => this.downloadFile(record.name) }>下载文件</Button>
             { this.state.fileType === 'edi' && <Button style={ {marginLeft: 8} } size="small" onClick={ () => this.archiveFile(record.name) }>归档</Button> }
             { this.state.fileType === 'edi' && this.state.type === '850' &&  <Link href={ `/form/753?fileName=${encodeURI(record.name)}` }>
-              <a title="生成753文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成</a>
+              <a title="生成753文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成753</a>
             </Link> }
             {/*<Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>*/}
           </span>

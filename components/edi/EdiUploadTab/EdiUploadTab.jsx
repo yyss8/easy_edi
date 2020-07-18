@@ -56,7 +56,6 @@ export default props => {
 					<Col span={ 6 }>
 						<Radio.Group value={props.fileType} onChange={ e => props.filterOnchange(e.target.value, 'fileType') }>
 							<Radio.Button value="upload">上传</Radio.Button>
-							{ props.type === '753' && <Radio.Button value="form">生成</Radio.Button> }
 							<Radio.Button value="archive">归档</Radio.Button>
 						</Radio.Group>
 					</Col>
