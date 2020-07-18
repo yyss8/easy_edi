@@ -33,6 +33,7 @@ export default class extends FormBase {
 			<Form.Item name="freight_ready_date" label="Freight Ready Date" rules={[{ required: true }]}>
 				<DatePicker size="small" />
 			</Form.Item>
+			<Form.Item label={ <b>Ship From</b> } rules={[{ required: true }]} />
 			<Form.Item name="from_code" label="Ship Code" rules={[{ required: true }]}>
 				<Input size="small" />
 			</Form.Item>
@@ -63,6 +64,10 @@ export default class extends FormBase {
 					</Form.Item>
 				</Col>
 			</Row>
+			<Form.Item label={ <b>Ship To</b> } rules={[{ required: true }]} />
+			{Boolean(this.props.file) && <Form.Item name="from_code" label="Ship Code" rules={[{ required: true }]}>
+				<span>{this.props.file.ship_to}</span>
+			</Form.Item>}
 			<Form.Item name="to_street" label="Street" rules={[{ required: true }]}>
 				<Input size="small" />
 			</Form.Item>

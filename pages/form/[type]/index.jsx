@@ -10,6 +10,7 @@ import SiteLayout from '../../../components/layout/SiteLayout';
 import EdiForm753 from "../../../components/edi/EdiForm/EdiForm753";
 import EdiFormLabel from "../../../components/edi/EdiForm/EdiFormLabel"
 import OrderProductTable from "../../../components/edi/EdiTable/OrderProductTable/OrderProductTable";
+import EdiDetails754 from "../../../components/edi/EdiDetails/EdiDetails754";
 
 class EdiFormView extends React.Component {
 	/** @inheritdoc */
@@ -98,11 +99,22 @@ class EdiFormView extends React.Component {
 						<OrderProductTable products={ products } withTitle={false} />
 					</Descriptions.Item>
 				</Descriptions>;
+
+			case 'label-excel':
+				return <EdiDetails754 file={this.state.file} />
 		}
 	}
 
 	fetchSingleFile() {
-		axios(`/api/file/edi/850/${this.state.fileName}`)
+		const typeMapper = {
+			'753': '850',
+			'label-excel': '754',
+			'856': '754',
+		};
+
+		const queryString = {};
+
+		axios(`/api/file/edi/${typeMapper[this.state.type]}/${this.state.fileName}`)
 			.then(response => {
 				this.setState({file: response.data.result.file, isLoading: false});
 			})

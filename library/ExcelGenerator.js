@@ -36,6 +36,22 @@ class ExcelGenerator {
 		]);
 	}
 
+	static generateLabelExcel(data) {
+		return this.generate(`754-label-${moment().format('MMDD')}-PO-${data.po_number}-${data.pallet_num}-${data.pallet_num_to}`, [
+			['PO', data.po_number],
+			['ARN', data.arn],
+			['SHIP FROM', data.from_code, 'Jointown', data.from_street, data.from_city, data.from_state, data.from_zipcode, data.from_country],
+			['SHIP TO', data.ship_to, data.receiver, data.to_street, data.to_city, data.to_state, data.to_zipcode, data.to_country],
+			['CARRIER', data.carrier, data.carrier_code],
+			['BOL', data.po_number],
+			['PRO', data.pro],
+			['ASIN', data.asin],
+			['TOTAL PALLET', data.total_pallet],
+			['PALLET NUMBER', data.pallet_num, data.pallet_num_to],
+			['PACKAGES IN PALLET', data.package_in_pallet]
+		]);
+	}
+
 	/**
 	 * 通用生成函数.
 	 *

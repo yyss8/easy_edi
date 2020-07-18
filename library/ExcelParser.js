@@ -68,8 +68,20 @@ class ExcelParser {
 		const fetchingDataMap = {
 			'po_number': 'B1',
 			'arn': 'B2',
-			'ship_to': 'B3',
+			'from_code': 'B3',
+			'from_street': 'D3',
+			'from_city': 'E3',
+			'from_state': 'F3',
+			'from_zipcode': 'G3',
+			'from_country': 'H3',
+			'receiver': 'C4',
+			'to_street': 'D4',
+			'to_city': 'E4',
+			'to_state': 'F4',
+			'to_zipcode': 'G4',
+			'to_country': 'H4',
 			'carrier': 'B5',
+			'carrier_code': 'C5',
 		};
 
 		return this.parse(filePath, fetchingDataMap, (key, position, sheet, lastRow) => {

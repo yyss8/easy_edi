@@ -3,6 +3,7 @@ import fs from 'fs';
 
 export default (req, res) => {
 	const filePath = getFilePath(req.query.dirType, req.query.type, req.query.fileName);
+
 	if (!fs.existsSync(filePath)) {
 		res
 			.status(404)

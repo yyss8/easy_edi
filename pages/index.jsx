@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Router from 'next/router';
 import Head from 'next/head'
 import Link from 'next/link';
-import { Tabs, message, Button, Modal, Table, Menu, Dropdown } from 'antd';
+import { Tabs, message, Button, Modal, Row, Col } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import qs from 'qs';
@@ -15,6 +15,7 @@ import SiteLayout from '../components/layout/SiteLayout';
 import EdiDownloadTab from "../components/edi/EdiDownloadTab/EdiDownloadTab";
 import EdiUploadTab from "../components/edi/EdiUploadTab/EdiUploadTab";
 import OrderProductTable from "../components/edi/EdiTable/OrderProductTable/OrderProductTable";
+import EdiDetails754 from "../components/edi/EdiDetails/EdiDetails754";
 
 const { TabPane } = Tabs;
 
@@ -579,6 +580,9 @@ export default class extends Component {
             { this.state.fileType === 'edi' && this.state.type === '850' &&  <Link href={ `/form/753?fileName=${encodeURI(record.name)}` }>
               <a title="生成753文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成753</a>
             </Link> }
+            { this.state.fileType === 'edi' && this.state.type === '754' &&  <Link href={ `/form/label-excel?fileName=${encodeURI(record.name)}` }>
+              <a title="生成标签文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成标签</a>
+            </Link> }
             {/*<Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>*/}
           </span>
         },
@@ -602,6 +606,14 @@ export default class extends Component {
           const products = record.products.map((p, i) => ({...p, key: `row-${index}-p-${i}`}));
           return <OrderProductTable products={ products } />
         };
+
+      case '754':
+        return (record) => <Row>
+          <Col offset={ 3 } span={ 14 }>
+            <EdiDetails754 file={record} />
+          </Col>
+        </Row>
+
       default:
         return null;
     }

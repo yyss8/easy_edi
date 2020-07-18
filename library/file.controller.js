@@ -403,6 +403,10 @@ function getFilePath(dirType, type, fileName = '') {
  * @return {ReadStream|boolean}
  */
 function generateExcel(fileData, excelType) {
+	if (excelType === 'label-excel') {
+		return ExcelGenerator.generateLabelExcel(fileData);
+	}
+
 	if (typeof ExcelGenerator[`generate${excelType}`] !== 'function') {
 		return false;
 	}
