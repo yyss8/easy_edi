@@ -31,83 +31,102 @@ export default class extends FormBase {
 	getFormItems() {
 		return <React.Fragment>
 			<Form.Item name="freight_ready_date" label="Freight Ready Date" rules={[{ required: true }]}>
-				<DatePicker placeholder="选择日期" />
+				<DatePicker size="small" />
 			</Form.Item>
-			<Form.Item name="from_code" label="发货地址编号" rules={[{ required: true }]}>
-				<Input placeholder="输入发货地址编号" />
+			<Form.Item name="from_code" label="Ship Code" rules={[{ required: true }]}>
+				<Input size="small" />
 			</Form.Item>
-			<Form.Item name="from_street" label="发货街道" rules={[{ required: true }]}>
-				<Input placeholder="输入发货街道" />
+			<Form.Item name="from_street" label="Street" rules={[{ required: true }]}>
+				<Input size="small" />
 			</Form.Item>
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="from_city" label="发货城市" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
-						<Input placeholder="输入发货城市" />
+					<Form.Item name="from_city" label="City" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 				<Col span={ 10 }>
-					<Form.Item name="from_state" label="发货州/省" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
-						<Input placeholder="输入发货州/省" />
+					<Form.Item name="from_state" label="State/Province" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="from_zipcode" label="发货邮编" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
-						<Input placeholder="输入发货邮编" />
+					<Form.Item name="from_zipcode" label="Zip Code" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 				<Col span={ 10 }>
-					<Form.Item name="from_country" label="发货国家" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
-						<Input placeholder="输入发货国家" />
+					<Form.Item name="from_country" label="Country" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
-			<Form.Item name="to_street" label="收货街道" rules={[{ required: true }]}>
-				<Input placeholder="输入收货街道" />
+			<Form.Item name="to_street" label="Street" rules={[{ required: true }]}>
+				<Input size="small" />
 			</Form.Item>
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="to_city" label="收货城市" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
-						<Input placeholder="输入收货城市" />
+					<Form.Item name="to_city" label="City" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 				<Col span={ 10 }>
-					<Form.Item name="to_state" label="收货州/省" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
-						<Input placeholder="输入收货州/省" />
+					<Form.Item name="to_state" label="State/Province" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="to_zipcode" label="收货邮编" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
-						<Input placeholder="输入收货邮编" />
+					<Form.Item name="to_zipcode" label="Zip Code" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 				<Col span={ 10 }>
-					<Form.Item name="to_country" label="收货国家" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
-						<Input placeholder="输入收货国家" />
+					<Form.Item name="to_country" label="Country" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
-			<Form.Item name="total_pallet" label="托盘总数" rules={[{ required: true }]}>
-				<InputNumber placeholder="输入托盘总数" />
-			</Form.Item>
-			<Form.Item name="total_carton" label="箱数" rules={[{ required: true }]}>
-				<InputNumber placeholder="输入箱数" />
-			</Form.Item>
-			<Form.Item name="weight_unit" label="重量单位" rules={[{ required: true }]}>
-				<Input placeholder="输入重量单位" />
-			</Form.Item>
-			<Form.Item name="weight" label="重量" rules={[{ required: true }]}>
-				<Input placeholder="输入重量" />
-			</Form.Item>
-			<Form.Item name="volume_unit" label="体积单位" rules={[{ required: true }]}>
-				<Input placeholder="输入体积单位" />
-			</Form.Item>
-			<Form.Item name="volume" label="体积" rules={[{ required: true }]}>
-				<InputNumber placeholder="输入体积" />
-			</Form.Item>
+			<Row>
+				<Col offset={ 3 } span={ 9 }>
+					<Form.Item name="total_pallet" label="# of Packages" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+						<InputNumber size="small" />
+					</Form.Item>
+				</Col>
+				<Col span={ 10 }>
+					<Form.Item name="total_carton" label="# of Cartons" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+						<InputNumber size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
+			<Row>
+				<Col offset={ 3 } span={ 9 }>
+					<Form.Item name="weight_unit" label="Weight Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+						<Input size="small" defaultValue="K" />
+					</Form.Item>
+				</Col>
+				<Col span={ 10 }>
+					<Form.Item name="weight" label="Weight" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
+
+			<Row>
+				<Col offset={ 3 } span={ 9 }>
+					<Form.Item name="volume_unit" label="Volume Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+						<Input size="small" defaultValue="E" />
+					</Form.Item>
+				</Col>
+				<Col span={ 10 }>
+					<Form.Item name="volume" label="Volume" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+						<InputNumber size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
 		</React.Fragment>
 	}
 }

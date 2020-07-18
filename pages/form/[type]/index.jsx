@@ -91,7 +91,10 @@ class EdiFormView extends React.Component {
 					<Descriptions.Item span={2} label="PO Date"><b>{moment(file.date, 'YYYYMMDD').format('YYYY-MM-DD')}</b></Descriptions.Item>
 					<Descriptions.Item span={2} label="Shipping Window"><b>{start} - {end}</b></Descriptions.Item>
 					<Descriptions.Item span={2} label="Ship To"><b>{file.ship_to}</b></Descriptions.Item>
-					<Descriptions.Item span={3 } label="订单商品">
+					<Descriptions.Item span={1} label="Freight Class">50</Descriptions.Item>
+					<Descriptions.Item span={1} label="Packaging Form Code">PLT</Descriptions.Item>
+					<Descriptions.Item span={1} label="Stackable">N</Descriptions.Item>
+					<Descriptions.Item span={3} label="Order Products">
 						<OrderProductTable products={ products } withTitle={false} />
 					</Descriptions.Item>
 				</Descriptions>;
