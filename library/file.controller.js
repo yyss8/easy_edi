@@ -61,7 +61,7 @@ function loadFiles(type, params = {}) {
 	files.forEach(file => {
 		const filePath = `${typeFullPath}\\${file}`;
 
-		scannedFiles.push(getFileData(file, filePath, type, getDetail));
+		scannedFiles.push(getFileData(file, params.fileType, type, getDetail));
 	});
 
 	if (params.shouldSort !== false) {
@@ -80,25 +80,46 @@ function loadFiles(type, params = {}) {
  *
  * @param {string} fileName
  *   文件名.
- * @param {string} filePath
- *   文件路径.
+ * @param {string} dirType
+ *   文件路径类型.
  * @param {string} type
  *   文档类型。
  * @param {boolean} getDetail
  *   是否解析文件并获取更多数据.
  *
- * @return {{created: string, name: *, modified: string}|*}
+ * @return {Object|null}
  */
-function getFileData(fileName, filePath, type, getDetail = false) {
+function getFileData(fileName, dirType, type, getDetail = false) {
+	const filePath = getFilePath(dirType, type, fileName);
+
+	if (!fs.existsSync(filePath)) {
+		return null;
+	}
+
 	const stat = fs.statSync(filePath);
-	const fileData = {
+	let fileData = {
 		name: fileName,
 		modified: moment(stat.mtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
 		created: moment(stat.birthtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
 	};
 
 	if (getDetail) {
-		return ExcelParser[`parse${type}`](filePath, fileData);
+		fileData = ExcelParser[`parse${type}`](filePath, fileData);
+	}
+
+	if (type === '754') {
+		// 部分数据需要从850调取.
+		const fileName850 = `${fileData.po_number}.xlsx`;
+		const path850 = getFilePath(dirType, '850', fileName850);
+
+		if (fs.existsSync(path850)) {
+			const data850 = getFileData(fileName850, dirType, '850', true) || {};
+
+			fileData = {
+				...data850,
+				...fileData,
+			};
+		}
 	}
 
 	return fileData;

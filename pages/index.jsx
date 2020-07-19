@@ -581,7 +581,7 @@ export default class extends Component {
               <a title="生成753文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成753</a>
             </Link> }
             { this.state.fileType === 'edi' && this.state.type === '754' &&  <Link href={ `/form/label-excel?fileName=${encodeURI(record.name)}` }>
-              <a title="生成标签文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成标签</a>
+              <a title="生成标签文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成标签文档</a>
             </Link> }
             {/*<Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>*/}
           </span>

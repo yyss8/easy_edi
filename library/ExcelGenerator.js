@@ -52,6 +52,10 @@ class ExcelGenerator {
 		]);
 	}
 
+	static generate856(data) {
+
+	}
+
 	/**
 	 * 通用生成函数.
 	 *

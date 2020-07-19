@@ -1,10 +1,9 @@
-import { generateExcel, getFileData, getFilePath } from '../../../../../library/file.controller';
+import { generateExcel, getFileData } from '../../../../../library/file.controller';
 
 export default (req, res) => {
 	switch (req.method.toLowerCase()) {
 		case 'post':
-			const orgPath = getFilePath(req.query.dirType, '850', req.query.fileName);
-			const orgData = getFileData(req.query.fileName, orgPath, '850', true);
+			const orgData = getFileData(req.query.fileName, req.query.dirType, '850', true);
 
 			const generatedExcel = generateExcel({
 				...orgData,

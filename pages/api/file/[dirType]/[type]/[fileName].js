@@ -18,7 +18,7 @@ export default (req, res) => {
 		.json({
 			status: 'ok',
 			result: {
-				file: getFileData(req.query.fileName, filePath, req.query.type,true),
+				file: getFileData(req.query.fileName, req.query.dirType, req.query.type,true),
 			}
 		});
 };

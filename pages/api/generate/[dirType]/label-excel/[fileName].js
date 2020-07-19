@@ -1,5 +1,4 @@
-import { generateExcel, getFileData, getFilePath } from '../../../../../library/file.controller';
-import fs from 'fs';
+import { generateExcel, getFileData } from '../../../../../library/file.controller';
 
 /**
  * 生成754 label接口。
@@ -7,19 +6,10 @@ import fs from 'fs';
 export default (req, res) => {
 	switch (req.method.toLowerCase()) {
 		case 'post':
-			const path754 = getFilePath(req.query.dirType, '754', req.query.fileName);
-			const data754 = getFileData(req.query.fileName, path754, '754', true);
-			let data850 = {};
-			const fileName850 = `${data754.po_number}.xlsx`;
-			const path850 = getFilePath(req.query.dirType, '850', fileName850);
-
-			if (fs.existsSync(path850)) {
-				data850 = getFileData(fileName850, path850, '850', true);
-			}
+			const data = getFileData(req.query.fileName, req.query.dirType, '754', true);
 
 			const generatedExcel = generateExcel({
-				...data850,
-				...data754,
+				...data,
 				...req.body,
 			}, 'label-excel');
 

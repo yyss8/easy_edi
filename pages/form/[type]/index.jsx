@@ -161,7 +161,34 @@ class EdiFormView extends React.Component {
 						key: 'actions',
 						render: (text, record) => {
 							return <span>
-						<Button onClick={() => this.handleFileSwitch(record)}>选择</Button>
+						<Button size="small" onClick={() => this.handleFileSwitch(record)}>选择</Button>
+					</span>
+						}
+					}
+				];
+			case 'label-excel':
+				return [
+					{
+						title: 'PO#',
+						key: 'po_number',
+						dataIndex: 'po_number',
+					},
+					{
+						title: 'ARN',
+						key: 'arn',
+						dataIndex: 'arn',
+					},
+					{
+						title: 'Carrier',
+						key: 'carrier',
+						dataIndex: 'carrier',
+					},
+					{
+						title: '',
+						key: 'actions',
+						render: (text, record) => {
+							return <span>
+						<Button size="small" onClick={() => this.handleFileSwitch(record)}>选择</Button>
 					</span>
 						}
 					}
@@ -182,6 +209,7 @@ class EdiFormView extends React.Component {
 				</Link>
 				&nbsp;&nbsp;
 				{ this.state.type === '753'&& <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('850')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}订单</Button> }
+				{ this.state.type === 'label-excel'&& <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('754')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}754文档</Button> }
 			</Row>
 
 			<h2>Excel文档生成 ({this.state.type})</h2>

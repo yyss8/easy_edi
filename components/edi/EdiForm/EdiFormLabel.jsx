@@ -29,7 +29,7 @@ export default class extends FormBase {
 
 	getFormItems() {
 		return <React.Fragment>
-			<Form.Item name="pro" label="PRO" rules={[{ required: true }]}>
+			<Form.Item name="pro" label="PRO">
 				<Input size="small" />
 			</Form.Item>
 			<Form.Item name="asin" label="ASIN" rules={[{ required: true }]}>
