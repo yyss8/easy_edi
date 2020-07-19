@@ -11,6 +11,7 @@ import EdiForm753 from "../../../components/edi/EdiForm/EdiForm753";
 import EdiFormLabel from "../../../components/edi/EdiForm/EdiFormLabel"
 import OrderProductTable from "../../../components/edi/EdiTable/OrderProductTable/OrderProductTable";
 import EdiDetails754 from "../../../components/edi/EdiDetails/EdiDetails754";
+import EdiForm856 from "../../../components/edi/EdiForm/EdiForm856";
 
 class EdiFormView extends React.Component {
 	/** @inheritdoc */
@@ -20,6 +21,7 @@ class EdiFormView extends React.Component {
 		};
 	}
 
+	/** @inheritdoc */
 	constructor(props) {
 		super(props);
 
@@ -39,26 +41,47 @@ class EdiFormView extends React.Component {
 		this.getSwitchTableColumns = this.getSwitchTableColumns.bind(this);
 	}
 
+	/** @inheritdoc */
 	componentDidMount() {
 		if (Boolean(this.state.fileName)) {
 			this.fetchSingleFile();
 		}
 	}
 
+	/**
+	 * 获取生成中文档表单.
+	 *
+	 * @return {React}
+	 */
 	getCreatingForm() {
 		switch (this.state.type) {
 			case '753':
 				return <EdiForm753 type={this.state.type} file={this.state.file} />;
+
+			case '856':
+				return <EdiForm856 type={this.state.type} file={ this.state.file } />
 
 			case 'label-excel':
 				return <EdiFormLabel type={this.state.type} file={ this.state.file } />
 		}
 	}
 
+	/**
+	 * 处理文档替换.
+	 *
+	 * @param {Object} file
+	 *   要替换的文档数据.
+	 */
 	handleFileSwitch(file) {
 		this.setState({file, showSwitchModal: false});
 	}
 
+	/**
+	 * 获取生成中文档列表.
+	 *
+	 * @param {string} srcType
+	 *   文档类型.
+	 */
 	loadSwitchingFiles(srcType) {
 		this.setState({isLoadingFiles : true}, () => {
 			axios.get(`/api/files/edi/${srcType}`)
@@ -78,6 +101,11 @@ class EdiFormView extends React.Component {
 		});
 	}
 
+	/**
+	 * 获取生产中文档描述
+	 *
+	 * @return {Descriptions}
+	 */
 	getFileDescription() {
 		const { type, file } = this.state;
 
@@ -101,18 +129,20 @@ class EdiFormView extends React.Component {
 				</Descriptions>;
 
 			case 'label-excel':
+			case '856':
 				return <EdiDetails754 file={this.state.file} />
 		}
 	}
 
+	/**
+	 * 获取生产中文档.
+	 */
 	fetchSingleFile() {
 		const typeMapper = {
 			'753': '850',
 			'label-excel': '754',
 			'856': '754',
 		};
-
-		const queryString = {};
 
 		axios(`/api/file/edi/${typeMapper[this.state.type]}/${this.state.fileName}`)
 			.then(response => {
@@ -123,10 +153,18 @@ class EdiFormView extends React.Component {
 			});
 	}
 
+	/**
+	 * 处理替换生成中文档表格关闭
+	 */
 	onSwitchModalClose() {
 		this.setState({switchingFiles: []});
 	}
 
+	/**
+	 * 获取替换生成中文档表格的columns.
+	 *
+	 * @return {Array}
+	 */
 	getSwitchTableColumns() {
 		switch (this.state.type) {
 			case '753':
@@ -166,6 +204,8 @@ class EdiFormView extends React.Component {
 						}
 					}
 				];
+
+			case '856':
 			case 'label-excel':
 				return [
 					{
@@ -197,7 +237,8 @@ class EdiFormView extends React.Component {
 	}
 
 	render() {
-		const label = `Excel文档生成 (${this.state.type})`;
+		const { type } = this.state;
+		const label = `Excel文档生成 (${type})`;
 
 		return <SiteLayout>
 			<Head>
@@ -208,11 +249,11 @@ class EdiFormView extends React.Component {
 					<a className="ant-btn ant-btn-sm" title="返回主界面" style={ {marginBottom: 20} }>返回</a>
 				</Link>
 				&nbsp;&nbsp;
-				{ this.state.type === '753'&& <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('850')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}订单</Button> }
-				{ this.state.type === 'label-excel'&& <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('754')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}754文档</Button> }
+				{ type === '753'&& <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('850')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}订单</Button> }
+				{ (type === 'label-excel' || type === '856') && <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('754')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}754文档</Button> }
 			</Row>
 
-			<h2>Excel文档生成 ({this.state.type})</h2>
+			<h2>Excel文档生成 ({type})</h2>
 			<Row type="flex">
 				<Col span={14}>
 					{ this.getCreatingForm() }

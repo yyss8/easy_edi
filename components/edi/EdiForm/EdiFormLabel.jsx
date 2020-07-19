@@ -5,7 +5,11 @@ import axois from "axios";
 import fileDownload from "js-file-download";
 import moment from "moment";
 
+/**
+ * 标签文档表单
+ */
 export default class extends FormBase {
+	/** @inheritdoc */
 	handleFileGenerate(data) {
 		if (!this.props.file) {
 			message.error('请选择相关754文件.');
@@ -40,8 +44,8 @@ export default class extends FormBase {
 			</Form.Item>
 			<Row>
 				<Col offset={ 3 } span={ 6 }>
-					<Form.Item name="pallet_num" label="Pallet Number" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 8 } }>
-						<InputNumber size="small" defaultValue={ 1 } />
+					<Form.Item initialValue={ 1 } name="pallet_num" label="Pallet Number" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 8 } }>
+						<InputNumber size="small" />
 					</Form.Item>
 				</Col>
 				<Col span={ 6 }>

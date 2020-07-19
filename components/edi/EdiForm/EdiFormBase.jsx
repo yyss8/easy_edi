@@ -2,9 +2,13 @@ import React from 'react';
 import { Form, Button, Modal } from 'antd';
 import FormStyles from './EdiFormBase.module.scss';
 
+/**
+ * 文档表单基础组件.
+ */
 export default class extends React.Component {
 	formRef = React.createRef();
 
+	/** @inheritdoc */
 	constructor(props) {
 		super(props);
 
@@ -15,18 +19,6 @@ export default class extends React.Component {
 		this.getFormItems = this.getFormItems.bind(this);
 	}
 
-	getFormItems() {}
-
-	buildFileContent() {
-
-	}
-
-	handleFileGenerate() {}
-
-	handleEditingFileSwitch() {
-
-	}
-
 	onClearForm() {
 		Modal.confirm({
 			title: '确认清空当前内容?',
@@ -35,10 +27,6 @@ export default class extends React.Component {
 	}
 
 	render() {
-		const fileColumns = [
-
-		];
-
 		const layout = {
 			labelCol: { span: 6 },
 			wrapperCol: { span: 14 },

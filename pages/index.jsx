@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Router from 'next/router';
 import Head from 'next/head'
 import Link from 'next/link';
-import { Tabs, message, Button, Modal, Row, Col } from 'antd';
+import { Tabs, message, Button, Modal, Row, Col, Menu, Dropdown } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import qs from 'qs';
@@ -223,6 +223,11 @@ export default class extends Component {
     });
   }
 
+  /**
+   * 获取筛选内容默认值
+   *
+   * @return {Object}}
+   */
   getDefaultFilters() {
     return {
       sorting: 'created_DESC',
@@ -379,6 +384,14 @@ export default class extends Component {
     this.setState({selectedRowKeys});
   }
 
+  /**
+   * 处理表格文件选择.
+   *
+   * @param {Object} record
+   *   文件数据.
+   * @param {boolean} selected
+   *   是否被选择.
+   */
   onSelectFile(record, selected) {
     const index = this.state.files.findIndex((data) => data.name === record.name);
     const files = updater(this.state.files, {
@@ -461,6 +474,14 @@ export default class extends Component {
     });
   }
 
+  /**
+   * 获取不同文档类型独有的columns.
+   *
+   * @param {string} type
+   *   文档类型.
+   *
+   * @return {Array}
+   */
   getColumnsByType(type) {
     switch (type) {
       case '850':
@@ -580,9 +601,20 @@ export default class extends Component {
             { this.state.fileType === 'edi' && this.state.type === '850' &&  <Link href={ `/form/753?fileName=${encodeURI(record.name)}` }>
               <a title="生成753文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成753</a>
             </Link> }
-            { this.state.fileType === 'edi' && this.state.type === '754' &&  <Link href={ `/form/label-excel?fileName=${encodeURI(record.name)}` }>
-              <a title="生成标签文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成标签文档</a>
-            </Link> }
+            { this.state.fileType === 'edi' && this.state.type === '754' && <Dropdown overlay={<Menu>
+              <Menu.Item>
+                <Link href={ `/form/label-excel?fileName=${encodeURI(record.name)}` }>
+                  <a title="生成标签文档">生成标签文档</a>
+                </Link>
+              </Menu.Item>
+              <Menu.Item>
+                <Link href={ `/form/856?fileName=${encodeURI(record.name)}` }>
+                  <a title="生成856文档">生成856</a>
+                </Link>
+              </Menu.Item>
+            </Menu>} placement="bottomRight">
+              <Button style={ {marginLeft: 8} } size="small">生成文档</Button>
+            </Dropdown> }
             {/*<Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>*/}
           </span>
         },

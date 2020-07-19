@@ -6,24 +6,25 @@ import fileDownload from "js-file-download";
 import moment from 'moment';
 
 /**
- * 753文档表单.
+ * 856文档表单.
  */
 export default class extends FormBase {
 
 	/** @inheritdoc */
 	handleFileGenerate(data) {
 		if (!this.props.file) {
-			message.error('请选择相关850文件.');
+			message.error('请选择相关754文件.');
 			return;
 		}
 
-		data.freight_ready_date = data.freight_ready_date.format('YYYYMMDD');
+		data.delivery_date = data.delivery_date.format('YYYYMMDD');
+		data.ship_date = data.ship_date.format('YYYYMMDD');
 
-		axois.post(`/api/generate/edi/753/${this.props.file.name}`, data, {
+		axois.post(`/api/generate/edi/856/${this.props.file.name}`, data, {
 			responseType: 'arraybuffer',
 		})
 			.then(response => {
-				fileDownload(response.data, `753-${moment().format('MMDD')}-PO-${this.props.file.po_number}.xlsx`);
+				fileDownload(response.data, `856-${moment().format('MMDD')}-PO-${this.props.file.po_number}.xlsx`);
 				message.success('成功生成文件.');
 			})
 			.catch(rejected => {
@@ -34,71 +35,45 @@ export default class extends FormBase {
 
 	getFormItems() {
 		return <React.Fragment>
-			<Form.Item name="freight_ready_date" label="Freight Ready Date" rules={[{ required: true }]}>
+			<Form.Item name="ship_date" label="Ship Date" rules={[{ required: true }]}>
 				<DatePicker size="small" />
 			</Form.Item>
-			<Form.Item label={ <b>Ship From</b> } rules={[{ required: true }]} />
-			<Form.Item name="from_code" label="Ship Code" rules={[{ required: true }]}>
+			<Form.Item name="delivery_date" label="Delivery Date" rules={[{ required: true }]}>
+				<DatePicker size="small" />
+			</Form.Item>
+			<Form.Item name="pro" label="PRO">
 				<Input size="small" />
 			</Form.Item>
-			<Form.Item name="from_street" label="Street" rules={[{ required: true }]}>
-				<Input size="small" />
-			</Form.Item>
-			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="from_city" label="City" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
-						<Input size="small" />
-					</Form.Item>
-				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="from_state" label="State/Province" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
-						<Input size="small" />
-					</Form.Item>
-				</Col>
-			</Row>
-			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="from_zipcode" label="Zip Code" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
-						<Input size="small" />
-					</Form.Item>
-				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="from_country" label="Country" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
-						<Input size="small" />
-					</Form.Item>
-				</Col>
-			</Row>
-			<Form.Item label={ <b>Ship To</b> } rules={[{ required: true }]} />
-			{Boolean(this.props.file) && <Form.Item name="from_code" label="Ship Code" rules={[{ required: true }]}>
-				<span>{this.props.file.ship_to}</span>
-			</Form.Item>}
-			<Form.Item name="to_street" label="Street" rules={[{ required: true }]}>
+			<Form.Item name="asin" label="ASIN" rules={[{ required: true }]}>
 				<Input size="small" />
 			</Form.Item>
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="to_city" label="City" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
+					<Form.Item name="tracking_number" label="Tracking No" rules={[{ required: true }]}  labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
 				<Col span={ 10 }>
-					<Form.Item name="to_state" label="State/Province" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+					<Form.Item name="sscc" label="SSCC" labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="to_zipcode" label="Zip Code" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
-						<Input size="small" />
+					<Form.Item initialValue={0} name="stacked_pallets" label="# of Stacked Pallets" labelCol={ {span: 8 } } wrapperCol={ {span: 5 } }>
+						<InputNumber size="small" />
 					</Form.Item>
 				</Col>
 				<Col span={ 10 }>
-					<Form.Item name="to_country" label="Country" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
-						<Input size="small" />
+					<Form.Item name="unstacked_pallets" label="# of Unstacked Pallets" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 11 } }>
+						<InputNumber size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
+			<Form.Item name="to_be_shipped" label="To Be Shipped (EA)" rules={[{ required: true }]}>
+				<InputNumber size="small" />
+			</Form.Item>
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
 					<Form.Item name="total_pallet" label="# of Packages" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
@@ -114,7 +89,7 @@ export default class extends FormBase {
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
 					<Form.Item initialValue="K" name="weight_unit" label="Weight Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
-						<Input size="small" />
+						<Input size="small"  />
 					</Form.Item>
 				</Col>
 				<Col span={ 10 }>
@@ -133,6 +108,18 @@ export default class extends FormBase {
 				<Col span={ 10 }>
 					<Form.Item name="volume" label="Volume" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
 						<InputNumber size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
+			<Row>
+				<Col offset={ 3 } span={ 9 }>
+					<Form.Item name="upc" label="UPC" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+				<Col span={ 10 }>
+					<Form.Item initialValue="EA" name="type_unit" label="Unit" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>

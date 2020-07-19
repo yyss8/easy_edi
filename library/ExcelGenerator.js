@@ -9,7 +9,7 @@ const moment = require('moment');
  */
 class ExcelGenerator {
 	/**
-	 * 生成753文档
+	 * 生成753 Excel文档
 	 *
 	 * @param {Object} data
 	 *   753文档数据.
@@ -36,6 +36,14 @@ class ExcelGenerator {
 		]);
 	}
 
+	/**
+	 * 生成标签Excel文档.
+	 *
+	 * @param {Object} data
+	 *   标签数据.
+	 *
+	 * @return {ReadStream}
+	 */
 	static generateLabelExcel(data) {
 		return this.generate(`754-label-${moment().format('MMDD')}-PO-${data.po_number}-${data.pallet_num}-${data.pallet_num_to}`, [
 			['PO', data.po_number],
@@ -48,12 +56,40 @@ class ExcelGenerator {
 			['ASIN', data.asin],
 			['TOTAL PALLET', data.total_pallet],
 			['PALLET NUMBER', data.pallet_num, data.pallet_num_to],
-			['PACKAGES IN PALLET', data.package_in_pallet]
+			['PACKAGES IN PALLET', data.package_in_pallet],
 		]);
 	}
 
+	/**
+	 * 生成856 Excel文档.
+	 *
+	 * @param {Object} data
+	 *   856数据.
+	 *
+	 * @return {ReadStream}
+	 */
 	static generate856(data) {
-
+		return this.generate(`856-${moment().format('MMDD')}-PO-${data.po_number}`, [
+			['SENDER', 'JOINTOWN'],
+			['RECEIVER', data.receiver],
+			['SHIP DATE', data.ship_date],
+			['DELIVERY DATE', data.delivery_date],
+			['ARN', data.arn],
+			['SHIP FROM', data.from_code, 'Jointown', data.from_street, data.from_city, data.from_state, data.from_zipcode, data.from_country],
+			['SHIP TO', data.ship_to, data.receiver, data.to_street, data.to_city, data.to_state, data.to_zipcode, data.to_country],
+			['CARRIER', data.carrier, data.carrier_code],
+			['BOL', data.po_number],
+			['PRO', data.pro],
+			['ASIN', data.asin],
+			['TRACKING NO', data.tracking_number],
+			['SSCC', data.sscc],
+			['NUMBER OF STACKED PALLETS', data.stacked_pallets || 0, 'NUMBER OF UNSTACKED PALLETS', data.unstacked_pallets],
+			['PO#', data.po_number],
+			['SHIPMENT REFERENCE', data.po_number],
+			['TO BE SHIPPED (EA)', data.to_be_shipped],
+			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WIGHT UNIT',	'WEIGHT(KG)', 'VOLUME UNIT', 'VOLUME(SF)', 'UPC', 'UNIT'],
+			['CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume, data.upc, data.type_unit],
+		]);
 	}
 
 	/**
