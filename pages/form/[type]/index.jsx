@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'next/router';
 import Head from 'next/head';
-import { Descriptions, message, Spin, Row, Col, Button, Table, Modal } from 'antd';
+import { Descriptions, message, Row, Col, Button, Table, Modal } from 'antd';
 import Link from "next/link";
 import moment from "moment";
 import axios from 'axios';
@@ -12,8 +12,11 @@ import EdiFormLabel from "../../../components/edi/EdiForm/EdiFormLabel"
 import OrderProductTable from "../../../components/edi/EdiTable/OrderProductTable/OrderProductTable";
 import EdiDetails754 from "../../../components/edi/EdiDetails/EdiDetails754";
 import EdiForm856 from "../../../components/edi/EdiForm/EdiForm856";
+import EdiDetailsLabel from "../../../components/edi/EdiDetails/EdiDetailsLabel";
 
 class EdiFormView extends React.Component {
+	formRef = React.createRef();
+
 	/** @inheritdoc */
 	static async getInitialProps({query}) {
 		return {
@@ -59,7 +62,7 @@ class EdiFormView extends React.Component {
 				return <EdiForm753 type={this.state.type} file={this.state.file} />;
 
 			case '856':
-				return <EdiForm856 type={this.state.type} file={ this.state.file } />
+				return <EdiForm856 type={this.state.type} file={ this.state.file } parentRef={ this.formRef } />
 
 			case 'label-excel':
 				return <EdiFormLabel type={this.state.type} file={ this.state.file } />
@@ -73,6 +76,14 @@ class EdiFormView extends React.Component {
 	 *   要替换的文档数据.
 	 */
 	handleFileSwitch(file) {
+		if (this.state.type === '856') {
+			this.formRef.current.setFieldsValue({
+				carrier: file.carrier || '',
+				carrier_code: file.carrier_code || '',
+				pro: file.pro || '',
+			});
+		}
+
 		this.setState({file, showSwitchModal: false});
 	}
 
@@ -81,10 +92,12 @@ class EdiFormView extends React.Component {
 	 *
 	 * @param {string} srcType
 	 *   文档类型.
+	 * @param {string} dirType
+	 *   文档目录类型.
 	 */
-	loadSwitchingFiles(srcType) {
+	loadSwitchingFiles(srcType, dirType = 'edi') {
 		this.setState({isLoadingFiles : true}, () => {
-			axios.get(`/api/files/edi/${srcType}`)
+			axios.get(`/api/files/${dirType}/${srcType}`)
 				.then(response => {
 					const files = response.data.result.files.map((f, k) => ({...f, key: `file-${k}`}));
 
@@ -129,8 +142,10 @@ class EdiFormView extends React.Component {
 				</Descriptions>;
 
 			case 'label-excel':
-			case '856':
 				return <EdiDetails754 file={this.state.file} />
+
+			case '856':
+				return <EdiDetailsLabel file={this.state.file} />
 		}
 	}
 
@@ -141,14 +156,24 @@ class EdiFormView extends React.Component {
 		const typeMapper = {
 			'753': '850',
 			'label-excel': '754',
-			'856': '754',
+			'856': 'label-excel',
 		};
 
-		axios(`/api/file/edi/${typeMapper[this.state.type]}/${this.state.fileName}`)
+		axios(`/api/file/${this.state.type === '856' ? 'archive' : 'edi'}/${typeMapper[this.state.type]}/${this.state.fileName}`)
 			.then(response => {
-				this.setState({file: response.data.result.file, isLoading: false});
+				const { file } = response.data.result;
+				this.setState({file, isLoading: false});
+
+				if (this.state.type === '856') {
+					this.formRef.current.setFieldsValue({
+						carrier: file.carrier || '',
+						carrier_code: file.carrier_code || '',
+						pro: file.pro || '',
+					});
+				}
 			})
 			.catch(rejected => {
+				console.log(rejected);
 				message.error('文件请求失败, 请稍候再试');
 			});
 	}
@@ -250,7 +275,8 @@ class EdiFormView extends React.Component {
 				</Link>
 				&nbsp;&nbsp;
 				{ type === '753'&& <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('850')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}订单</Button> }
-				{ (type === 'label-excel' || type === '856') && <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('754')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}754文档</Button> }
+				{ type === 'label-excel' &&  <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('754')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}754文档</Button> }
+				{ type === '856' && <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('label-excel', 'archive')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}标签文档</Button> }
 			</Row>
 
 			<h2>Excel文档生成 ({type})</h2>

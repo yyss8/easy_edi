@@ -55,12 +55,10 @@ function loadFiles(type, params = {}) {
 	}
 
 	const files = fs.readdirSync(typeFullPath);
-	const getDetail = params.getDetail === true && typeof ExcelParser[`parse${type}`] === 'function';
+	const getDetail = params.getDetail === true && typeof ExcelParser[`parse${type.replace('-', '_')}`] === 'function';
 	let scannedFiles = [];
 
 	files.forEach(file => {
-		const filePath = `${typeFullPath}\\${file}`;
-
 		scannedFiles.push(getFileData(file, params.fileType, type, getDetail));
 	});
 
@@ -104,7 +102,7 @@ function getFileData(fileName, dirType, type, getDetail = false) {
 	};
 
 	if (getDetail) {
-		fileData = ExcelParser[`parse${type}`](filePath, fileData);
+		fileData = ExcelParser[`parse${type.replace('-', '_')}`](filePath, fileData);
 	}
 
 	if (type === '754') {

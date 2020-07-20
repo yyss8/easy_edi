@@ -17,19 +17,22 @@ export default class extends FormBase {
 			return;
 		}
 
-		data.freight_ready_date = data.freight_ready_date.format('YYYYMMDD');
+		this.setState({isGenerating: true}, () => {
+			data.freight_ready_date = data.freight_ready_date.format('YYYYMMDD');
 
-		axois.post(`/api/generate/edi/753/${this.props.file.name}`, data, {
-			responseType: 'arraybuffer',
-		})
-			.then(response => {
-				fileDownload(response.data, `753-${moment().format('MMDD')}-PO-${this.props.file.po_number}.xlsx`);
-				message.success('成功生成文件.');
+			axois.post(`/api/generate/edi/753/${this.props.file.name}`, data, {
+				responseType: 'arraybuffer',
 			})
-			.catch(rejected => {
-				console.log(rejected);
-				message.error('生成请求出错, 请稍候再试...');
-			});
+				.then(response => {
+					fileDownload(response.data, `753-${moment().format('MMDD')}-PO-${this.props.file.po_number}.xlsx`);
+					message.success('成功生成753文件.');
+					this.setState({isGenerating: false});
+				})
+				.catch(rejected => {
+					console.log(rejected);
+					message.error('生成请求出错, 请稍候再试...');
+				});
+		});
 	}
 
 	getFormItems() {

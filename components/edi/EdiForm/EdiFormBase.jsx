@@ -13,17 +13,22 @@ export default class extends React.Component {
 		super(props);
 
 		this.state = {
-			files: [],
+			isGenerating: false,
 		};
 
 		this.getFormItems = this.getFormItems.bind(this);
+		this.getFormRef = this.getFormRef.bind(this);
 	}
 
 	onClearForm() {
 		Modal.confirm({
 			title: '确认清空当前内容?',
-			onOk: () => this.formRef.current.resetFields()
+			onOk: () => this.getFormRef().current.resetFields()
 		});
+	}
+
+	getFormRef() {
+		return this.props.parentRef || this.formRef;
 	}
 
 	render() {
@@ -32,14 +37,16 @@ export default class extends React.Component {
 			wrapperCol: { span: 14 },
 		};
 
+		const ref = this.getFormRef();
+
 		return <div className={FormStyles['edi-excel-generator']}>
-			<Form ref={this.formRef} onFinish={ this.handleFileGenerate.bind(this) } {...layout} className="generator-form">
+			<Form ref={ref} onFinish={ this.handleFileGenerate.bind(this) } {...layout} className="generator-form">
 				<Form.Item wrapperCol={{ span: 12, offset: 6 }}>
 					<h3>请填写以下内容并点击生成:</h3>
 				</Form.Item>
 				{this.getFormItems()}
 				<Form.Item wrapperCol={{ span: 12, offset: 6 }}>
-					<Button type="primary" htmlType="submit">生成</Button>
+					<Button loading={ this.state.isGenerating } type="primary" htmlType="submit">生成</Button>
 					&nbsp;&nbsp;
 					<Button onClick={this.onClearForm.bind(this)} htmlType="button">清空</Button>
 				</Form.Item>

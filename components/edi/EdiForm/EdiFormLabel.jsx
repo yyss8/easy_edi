@@ -16,19 +16,22 @@ export default class extends FormBase {
 			return;
 		}
 
-		const { file } = this.props;
+		this.setState({isGenerating: true}, () => {
+			const { file } = this.props;
 
-		axois.post(`/api/generate/edi/label-excel/${file.name}`, data, {
-			responseType: 'arraybuffer',
-		})
-			.then(response => {
-				fileDownload(response.data, `754-label-${moment().format('MMDD')}-PO-${file.po_number}-${file.pallet_num}-${file.pallet_num_to}.xlsx`);
-				message.success('成功生成标签文件.');
+			axois.post(`/api/generate/edi/label-excel/${file.name}`, data, {
+				responseType: 'arraybuffer',
 			})
-			.catch(rejected => {
-				console.log(rejected);
-				message.error('生成请求出错, 请稍候再试...');
-			});
+				.then(response => {
+					fileDownload(response.data, `754-label-${moment().format('MMDD')}-PO-${file.po_number}-${file.pallet_num}-${file.pallet_num_to}.xlsx`);
+					message.success('成功生成标签文件.');
+					this.setState({isGenerating: false});
+				})
+				.catch(rejected => {
+					console.log(rejected);
+					message.error('生成请求出错, 请稍候再试...');
+				});
+		});
 	}
 
 	getFormItems() {

@@ -6,7 +6,7 @@ import { generateExcel, getFileData } from '../../../../../library/file.controll
 export default (req, res) => {
 	switch (req.method.toLowerCase()) {
 		case 'post':
-			const data = getFileData(req.query.fileName, req.query.dirType, '754', true);
+			const data = getFileData(req.query.fileName, 'archive', 'label-excel', true);
 
 			const generatedExcel = generateExcel({
 				...data,

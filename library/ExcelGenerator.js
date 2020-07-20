@@ -81,14 +81,14 @@ class ExcelGenerator {
 			['BOL', data.po_number],
 			['PRO', data.pro],
 			['ASIN', data.asin],
-			['TRACKING NO', data.tracking_number],
+			['TRACKING NO', data.pro],
 			['SSCC', data.sscc],
 			['NUMBER OF STACKED PALLETS', data.stacked_pallets || 0, 'NUMBER OF UNSTACKED PALLETS', data.unstacked_pallets],
 			['PO#', data.po_number],
 			['SHIPMENT REFERENCE', data.po_number],
 			['TO BE SHIPPED (EA)', data.to_be_shipped],
-			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WIGHT UNIT',	'WEIGHT(KG)', 'VOLUME UNIT', 'VOLUME(SF)', 'UPC', 'UNIT'],
-			['CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume, data.upc, data.type_unit],
+			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WEIGHT UNIT',	'WEIGHT(KG)', 'VOLUME UNIT', 'VOLUME(SF)', 'UPC', 'UNIT'],
+			['CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume, data.asin, data.type_unit],
 		]);
 	}
 
