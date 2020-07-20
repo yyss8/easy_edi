@@ -11,6 +11,7 @@ import axios from "axios";
  */
 export default class extends FormBase {
 
+	/** @inheritdoc */
 	constructor(props) {
 		super(props);
 
@@ -48,6 +49,9 @@ export default class extends FormBase {
 		})
 	}
 
+	/**
+	 * 加载753归档文档列表.
+	 */
 	load753Items() {
 		this.setState({isLoading753 : true}, () => {
 			axios.get('/api/files/archive/753')
@@ -67,6 +71,12 @@ export default class extends FormBase {
 		});
 	}
 
+	/**
+	 * 处理导入753数据.
+	 *
+	 * @param {Object} file
+	 *   753数据.
+	 */
 	handle753Import(file) {
 		this.getFormRef().current.setFieldsValue({
 			ship_date: moment(file.freight_ready_date, 'YYYYMMDD'),
@@ -80,6 +90,7 @@ export default class extends FormBase {
 		message.success('753文档信息导入成功');
 	}
 
+	/** @inheritdoc */
 	getFormItems() {
 		const column753 = [
 			{

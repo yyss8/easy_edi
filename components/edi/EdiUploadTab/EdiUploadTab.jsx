@@ -48,6 +48,14 @@ const UploadTabContent = props => {
 	return null;
 };
 
+/**
+ * 文档上传组件.
+ *
+ * @param {Object} props
+ *   组件参数.
+ *
+ * @return {React}
+ */
 export default props => {
 	return <React.Fragment>
 		<Row style={{marginBottom: 10}}>

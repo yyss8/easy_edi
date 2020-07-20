@@ -2,6 +2,9 @@ import React from "react";
 import {Button, Layout, Row} from "antd";
 import HeaderStyles from './SiteHeader.module.scss';
 
+/**
+ * 站点全局header组件.
+ */
 export default props => {
 	return <Layout.Header className={ HeaderStyles.header }>
 		<Row type="flex" justify="space-between" align="middle">

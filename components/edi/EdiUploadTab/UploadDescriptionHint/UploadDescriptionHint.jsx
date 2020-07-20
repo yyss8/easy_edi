@@ -1,5 +1,15 @@
 import React from "react";
 
+/**
+ * 上传描述组件.
+ *
+ * 根据不同文档类型返回不同描述.
+ *
+ * @param {Object} props
+ *   组件参数.
+ *
+ * @return {React}
+ */
 export default props => {
 	switch (props.type) {
 		case 'label-excel':

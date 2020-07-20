@@ -1,7 +1,23 @@
 const xlsx = require('xlsx');
 
+/**
+ * 文档Excel解析工具.
+ *
+ * 解析函数命名规则:
+ * "parse{文档类型}", 比如parse753. 如果有"-"需转换为"_".
+ */
 class ExcelParser {
 
+	/**
+	 * 解析753文档.
+	 *
+	 * @param {string} filePath
+	 *   文件路径.
+	 * @param {Object} [data]
+	 *   已有文档数据.
+	 *
+	 * @return {{}}
+	 */
 	static parse753(filePath, data = null) {
 		const fetchingDataMap = {
 			'po_number': 'B9',
@@ -22,10 +38,13 @@ class ExcelParser {
 	}
 
 	/**
+	 * 解析标签文档.
 	 *
+	 * @param {string} filePath
+	 *   文件路径.
+	 * @param {Object} [data]
+	 *   已有文档数据.
 	 *
-	 * @param filePath
-	 * @param data
 	 * @return {{}}
 	 */
 	static parselabel_excel(filePath, data = null) {

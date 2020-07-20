@@ -3,11 +3,6 @@ import {Table} from "antd";
 
 /**
  * 850订单商品表格.
- *
- * @param {Object} props
- *   参数。
- *
- * @return {React}
  */
 export default props => {
 

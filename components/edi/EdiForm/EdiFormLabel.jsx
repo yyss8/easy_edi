@@ -34,6 +34,7 @@ export default class extends FormBase {
 		});
 	}
 
+	/** @inheritdoc */
 	getFormItems() {
 		return <React.Fragment>
 			<Form.Item name="pro" label="PRO">

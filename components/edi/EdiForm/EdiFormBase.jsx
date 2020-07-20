@@ -20,6 +20,9 @@ export default class extends React.Component {
 		this.getFormRef = this.getFormRef.bind(this);
 	}
 
+	/**
+	 * 处理清空表单内容.
+	 */
 	onClearForm() {
 		Modal.confirm({
 			title: '确认清空当前内容?',
@@ -27,8 +30,20 @@ export default class extends React.Component {
 		});
 	}
 
+	/**
+	 * 获取表单ref
+	 *
+	 * @return {React.RefObject<unknown>}
+	 */
 	getFormRef() {
 		return this.props.parentRef || this.formRef;
+	}
+
+	/**
+	 * 获取不同文档类型独有的表单元素.
+	 */
+	getFormItems() {
+		return null;
 	}
 
 	render() {

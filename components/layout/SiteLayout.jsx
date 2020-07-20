@@ -7,9 +7,13 @@ import LoginView from '../login/LoginView';
 
 const { Content } = Layout;
 
+/**
+ * 站点全局layout组件.
+ */
 export default class extends Component {
 	user = null;
 
+	/** @inheritdoc */
 	constructor(props) {
 		super(props);
 
@@ -19,10 +23,17 @@ export default class extends Component {
 		};
 	}
 
+	/** @inheritdoc */
 	componentDidMount() {
 		this.setState({user: localStorage.getItem('user'), isLoading: false});
 	}
 
+	/**
+	 * 处理当前用户变动.
+	 *
+	 * @param {string} user
+	 *   用户名.
+	 */
 	userOnchange(user = null) {
 		if (user === null) {
 			localStorage.removeItem('user');
@@ -33,6 +44,7 @@ export default class extends Component {
 		this.setState({user, isLoading: false});
 	}
 
+	/** @inheritdoc */
 	render() {
 		return <Layout className="layout">
 			<Head>

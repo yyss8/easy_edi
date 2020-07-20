@@ -3,6 +3,9 @@ import styles from './SiteFooter.module.scss';
 
 const { Footer } = Layout;
 
+/**
+ * 站点全局footer组件.
+ */
 export default () => {
-	return <Footer className={ styles.footer }>Easy EDI v1.7.0 ©2020</Footer>;
+	return <Footer className={ styles.footer }>Easy EDI v1.7.1 ©2020</Footer>;
 }

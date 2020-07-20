@@ -1,12 +1,26 @@
 import React from "react";
 import {Col, Input, Select, DatePicker} from "antd";
 
+/**
+ * PO关键字搜索组件.
+ *
+ * @param {Object} props
+ *   组件参数.
+ */
 const PoKeywordFilter = props => {
 	return <Col offset={ 1 } span={ 4 }  >
 		<Input.Search placeholder="搜索PO#" title="输入PO关键字" onSearch={props.onRefresh} value={ props.poKeyword } onChange={e => props.filterOnchange(e.target.value, 'poKeyword', false)} />
 	</Col>
 };
 
+/**
+ * 根据文档类型获取不同筛选条件组件.
+ *
+ * @param {Object} props
+ *   组件参数.
+ *
+ * @return {null|React}
+ */
 function getTypeFilters(props) {
 	switch (props.type) {
 		case '850':
@@ -24,7 +38,6 @@ function getTypeFilters(props) {
 			return null;
 	}
 }
-
 
 export default props => {
 	return <React.Fragment>

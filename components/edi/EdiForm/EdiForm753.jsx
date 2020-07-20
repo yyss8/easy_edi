@@ -35,6 +35,7 @@ export default class extends FormBase {
 		});
 	}
 
+	/** @inheritdoc */
 	getFormItems() {
 		return <React.Fragment>
 			<Form.Item name="freight_ready_date" label="Freight Ready Date" rules={[{ required: true }]}>

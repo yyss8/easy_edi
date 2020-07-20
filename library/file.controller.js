@@ -5,7 +5,6 @@ const moment = require('moment');
 const archiver = require('archiver');
 const ExcelParser = require('./ExcelParser');
 const ExcelGenerator = require('./ExcelGenerator');
-import { Duplex } from 'stream';
 
 require('moment-timezone');
 const MOMENT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
