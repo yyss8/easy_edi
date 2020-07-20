@@ -78,9 +78,9 @@ class EdiFormView extends React.Component {
 	handleFileSwitch(file) {
 		if (this.state.type === '856') {
 			this.formRef.current.setFieldsValue({
-				carrier: file.carrier || '',
-				carrier_code: file.carrier_code || '',
-				pro: file.pro || '',
+				carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
+				carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
+				pro: Boolean(file.pro) ? file.pro.trim() : '',
 			});
 		}
 
@@ -166,9 +166,9 @@ class EdiFormView extends React.Component {
 
 				if (this.state.type === '856') {
 					this.formRef.current.setFieldsValue({
-						carrier: file.carrier || '',
-						carrier_code: file.carrier_code || '',
-						pro: file.pro || '',
+						carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
+						carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
+						pro: Boolean(file.pro) ? file.pro.trim() : '',
 					});
 				}
 			})

@@ -72,9 +72,9 @@ export default class extends FormBase {
 			ship_date: moment(file.freight_ready_date, 'YYYYMMDD'),
 			total_carton: file.total_carton,
 			volume: file.volume,
-			volume_unit: file.volume_unit,
+			volume_unit: Boolean(file.volume_unit) ? file.volume_unit.trim() : '',
 			weight: file.weight,
-			weight_unit: file.weight_unit,
+			weight_unit: Boolean(file.weight_unit) ? file.weight_unit.trim() : '',
 		});
 		this.setState({show753Modal: false});
 		message.success('753文档信息导入成功');
