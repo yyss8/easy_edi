@@ -110,7 +110,7 @@ export default class extends FormBase {
 					</Form.Item>
 				</Col>
 				<Col span={ 10 }>
-					<Form.Item name="total_carton" label="# of Cartons" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+					<Form.Item name="total_carton" label="Total Cartons" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
 						<InputNumber size="small" />
 					</Form.Item>
 				</Col>

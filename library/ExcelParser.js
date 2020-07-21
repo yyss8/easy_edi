@@ -69,7 +69,11 @@ class ExcelParser {
 			'pro': 'B7',
 			'asin': 'B8',
 			'total_pallet': 'B9',
-			'packages_in_pallet': 'B11',
+			'total_carton': 'B13',
+			'weight_unit': 'C13',
+			'weight': 'D13',
+			'volume_unit': 'E13',
+			'volume': 'F13',
 		};
 
 		return this.parse(filePath, fetchingDataMap, (key, position, sheet, lastRow) => {
