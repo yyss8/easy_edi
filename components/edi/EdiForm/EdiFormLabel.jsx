@@ -1,6 +1,7 @@
 import React from 'react';
 import FormBase from './EdiFormBase';
-import {Form, Input, InputNumber, Row, Col, message} from 'antd';
+import {Form, Input, InputNumber, Row, Col, message, Button} from 'antd';
+import { MinusCircleOutlined} from '@ant-design/icons';
 import axois from "axios";
 import fileDownload from "js-file-download";
 import moment from "moment";
@@ -13,6 +14,14 @@ export default class extends FormBase {
 	handleFileGenerate(data) {
 		if (!this.props.file) {
 			message.error('请选择相关754文件.');
+			return;
+		}
+
+		if (!data.pallets || data.pallets.length === 0) {
+			message.error('至少添加一个Pallet');
+			return;
+		} else if (data.pallets.length > 10) {
+			message.error('当前EDI系统只支持最多10个Pallets');
 			return;
 		}
 
@@ -46,21 +55,39 @@ export default class extends FormBase {
 			<Form.Item name="total_pallet" label="Total Pallet" rules={[{ required: true }]}>
 				<InputNumber size="small" />
 			</Form.Item>
-			<Row>
-				<Col offset={ 3 } span={ 6 }>
-					<Form.Item initialValue={ 1 } name="pallet_num" label="Pallet Number" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 8 } }>
-						<InputNumber size="small" />
-					</Form.Item>
-				</Col>
-				<Col span={ 6 }>
-					<Form.Item name="pallet_num_to" label="To" rules={[{ required: true }]} labelCol={ {span: 4 } } wrapperCol={ {span: 8 } }>
-						<InputNumber size="small" />
-					</Form.Item>
-				</Col>
-			</Row>
-			<Form.Item name="package_in_pallet" label="Packages in Pallet" rules={[{ required: true }]}>
-				<InputNumber size="small" />
-			</Form.Item>
+			<Form.List name="pallets">
+				{
+					(fields, actions) => <div style={ {marginBottom: 20} }>
+						<Form.Item wrapperCol={{ span: 12, offset: 6 }}>
+							<Button onClick={ () => actions.add() } size="small">Add pallets</Button>
+						</Form.Item>
+						{
+							fields.map((field, index) => {
+								return <Row type="flex" align="middle" key={ field.key }>
+									<Col offset={ 3 } span={ 6 }>
+										<Form.Item initialValue={ 1 } style={ {marginBottom: 0} } name={[index, 'pallet_num']} label="Pallet Number" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 10 } }>
+											<InputNumber size="small" />
+										</Form.Item>
+									</Col>
+									<Col span={ 5 }>
+										<Form.Item name={[index, 'pallet_num_to']} style={ {marginBottom: 0} } label="To" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 10 } }>
+											<InputNumber size="small" />
+										</Form.Item>
+									</Col>
+									<Col span={ 5 }>
+										<Form.Item name={[index, 'package_in_pallet']} style={ {marginBottom: 0} } label="Packages in Pallet" rules={[{ required: true }]} labelCol={ {span: 14 } } wrapperCol={ {span: 8 } }>
+											<InputNumber size="small" />
+										</Form.Item>
+									</Col>
+									<Col span={ 2 }>
+										<Button size="small" icon={ <MinusCircleOutlined/> } title="删除" onClick={ () => actions.remove(field.name) } />
+									</Col>
+								</Row>
+							})
+						}
+					</div>
+				}
+			</Form.List>
 		</React.Fragment>
 	}
 }

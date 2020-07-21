@@ -71,6 +71,12 @@ const SUPPORTED_INPUT_LIST = [
     type: 'download',
   },
   {
+    code: 'logs',
+    name: '文件日志',
+    type: 'download',
+    hideCode: true,
+  },
+  {
     code: 'error',
     name: '错误处理',
     type: 'download',

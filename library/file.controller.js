@@ -23,6 +23,8 @@ const TYPE_MAPPING = {
 	'label-excel': '\\edi\\label-excel',
 	// error
 	'error': '\\错误信息',
+	// 日志
+	'logs': '\\文件日志',
 };
 
 /**

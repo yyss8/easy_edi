@@ -45,6 +45,14 @@ class ExcelGenerator {
 	 * @return {ReadStream}
 	 */
 	static generateLabelExcel(data) {
+		const palletNumRow = ['PALLET NUMBER'];
+		const packageInPalletRow = ['PACKAGES IN PALLET'];
+
+		data.pallets.forEach(pallet => {
+			palletNumRow.push(pallet.pallet_num, pallet.pallet_num_to);
+			packageInPalletRow.push(pallet.package_in_pallet, '');
+		});
+
 		return this.generate(`754-label-${moment().format('MMDD')}-PO-${data.po_number}-${data.pallet_num}-${data.pallet_num_to}`, [
 			['PO', data.po_number],
 			['ARN', data.arn],
@@ -55,8 +63,10 @@ class ExcelGenerator {
 			['PRO', data.pro],
 			['ASIN', data.asin],
 			['TOTAL PALLET', data.total_pallet],
-			['PALLET NUMBER', data.pallet_num, data.pallet_num_to],
-			['PACKAGES IN PALLET', data.package_in_pallet],
+			palletNumRow,
+			packageInPalletRow,
+			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WEIGHT UNIT',	'WEIGHT(KG)', 'VOLUME UNIT', 'VOLUME(SF)', 'UPC', 'UNIT'],
+			['CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume],
 		]);
 	}
 
@@ -83,7 +93,7 @@ class ExcelGenerator {
 			['ASIN', data.asin],
 			['TRACKING NO', data.pro],
 			['SSCC', ''],
-			['NUMBER OF STACKED PALLETS', data.stacked_pallets || 0, 'NUMBER OF UNSTACKED PALLETS', data.unstacked_pallets],
+			['NUMBER OF STACKED PALLETS', data.stacked_pallets || 0, 'NUMBER OF UNSTACKED PALLETS', data.total_pallet],
 			['PO#', data.po_number],
 			['SHIPMENT REFERENCE', data.po_number],
 			['TO BE SHIPPED (EA)', data.to_be_shipped],
