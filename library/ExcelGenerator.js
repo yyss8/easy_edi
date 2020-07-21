@@ -131,8 +131,8 @@ class ExcelGenerator {
 			{wch:25}
 		];
 
-		wb.SheetNames.push('Data');
-		wb.Sheets['Data'] = worksheet;
+		wb.SheetNames.push('Sheet1');
+		wb.Sheets['Sheet1'] = worksheet;
 
 		// 先生成临时文件, 然后通过路径获取ReadStream方便直接返回下载response.
 		const tmpFilePath = path.resolve(`./tmp/${moment().format('YYYYMMDD-HHmmss')}-${Math.random()}.xlsx`);
