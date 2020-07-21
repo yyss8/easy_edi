@@ -201,9 +201,10 @@ class ExcelParser {
 		const parsed = xlsx.readFile(filePath);
 		const fetchedData = {};
 
-		const sheet = parsed.Sheets['Sheet1'];
+		const sheetNames = parsed.SheetNames;
+		const sheet = parsed.Sheets[sheetNames[0]];
 
-		const lastRow = this.getLastRow(sheet['!ref']);
+		const lastRow = Boolean(sheet['!ref']) ? this.getLastRow(sheet['!ref']) : null;
 		Object.entries(dataMap).forEach(([key, position]) => {
 			fetchedData[key] = assignCallback(key, position, sheet, lastRow);
 		});
