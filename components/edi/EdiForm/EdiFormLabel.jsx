@@ -44,6 +44,19 @@ export default class extends FormBase {
 	}
 
 	/** @inheritdoc */
+	getFormDefaultValues() {
+		return {
+			pallets: [
+				{
+					pallet_num: 0,
+					pallet_num_to: 1,
+					package_in_pallet: 1,
+				}
+			],
+		};
+	}
+
+	/** @inheritdoc */
 	getFormItems() {
 		return <React.Fragment>
 			<Form.Item name="pro" label="PRO">
@@ -52,6 +65,18 @@ export default class extends FormBase {
 			<Form.Item name="asin" label="ASIN" rules={[{ required: true }]}>
 				<Input size="small" />
 			</Form.Item>
+			<Row>
+				<Col offset={ 3 } span={ 9 }>
+					<Form.Item name="carrier" label="Carrier" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+				<Col span={ 10 }>
+					<Form.Item name="carrier_code" label="Carrier Code" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
 			<Form.Item name="total_pallet" label="Total Pallet" rules={[{ required: true }]}>
 				<InputNumber size="small" />
 			</Form.Item>
@@ -65,7 +90,7 @@ export default class extends FormBase {
 							fields.map((field, index) => {
 								return <Row type="flex" align="middle" key={ field.key }>
 									<Col offset={ 3 } span={ 6 }>
-										<Form.Item initialValue={ 1 } style={ {marginBottom: 0} } name={[index, 'pallet_num']} label="Pallet Number" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 10 } }>
+										<Form.Item style={ {marginBottom: 0} } name={[index, 'pallet_num']} label="Pallet Number" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 10 } }>
 											<InputNumber size="small" />
 										</Form.Item>
 									</Col>

@@ -1,4 +1,4 @@
-# Easy EDI v1.7.3
+# Easy EDI v1.7.4
 
 ### 本地开发部署:
 

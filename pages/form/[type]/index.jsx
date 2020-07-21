@@ -65,7 +65,7 @@ class EdiFormView extends React.Component {
 				return <EdiForm856 type={this.state.type} file={ this.state.file } parentRef={ this.formRef } />
 
 			case 'label-excel':
-				return <EdiFormLabel type={this.state.type} file={ this.state.file } />
+				return <EdiFormLabel type={this.state.type} file={ this.state.file } parentRef={ this.formRef } />
 		}
 	}
 
@@ -81,6 +81,11 @@ class EdiFormView extends React.Component {
 				carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
 				carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
 				pro: Boolean(file.pro) ? file.pro.trim() : '',
+			});
+		} else if (this.state.type === 'label-excel') {
+			this.formRef.current.setFieldsValue({
+				carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
+				carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
 			});
 		}
 
@@ -169,6 +174,11 @@ class EdiFormView extends React.Component {
 						carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
 						carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
 						pro: Boolean(file.pro) ? file.pro.trim() : '',
+					});
+				} else if (this.state.type === 'label-excel') {
+					this.formRef.current.setFieldsValue({
+						carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
+						carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
 					});
 				}
 			})

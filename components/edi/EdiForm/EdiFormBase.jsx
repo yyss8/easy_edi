@@ -46,6 +46,10 @@ export default class extends React.Component {
 		return null;
 	}
 
+	getFormDefaultValues() {
+		return {};
+	}
+
 	render() {
 		const layout = {
 			labelCol: { span: 6 },
@@ -55,7 +59,7 @@ export default class extends React.Component {
 		const ref = this.getFormRef();
 
 		return <div className={FormStyles['edi-excel-generator']}>
-			<Form ref={ref} onFinish={ this.handleFileGenerate.bind(this) } {...layout} className="generator-form">
+			<Form ref={ref} onFinish={ this.handleFileGenerate.bind(this) } initialValues={ this.getFormDefaultValues() } {...layout} className="generator-form">
 				<Form.Item wrapperCol={{ span: 12, offset: 6 }}>
 					<h3>请填写以下内容并点击生成:</h3>
 				</Form.Item>

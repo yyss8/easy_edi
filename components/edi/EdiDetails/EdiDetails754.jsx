@@ -10,7 +10,5 @@ export default ({file}) => {
 		<Descriptions.Item span={2} label="ARN"><b>{file.arn}</b></Descriptions.Item>
 		<Descriptions.Item span={3} label="Ship From"><b>{shipFrom}</b></Descriptions.Item>
 		<Descriptions.Item span={3} label="Ship To"><b>{shipTo}</b></Descriptions.Item>
-		<Descriptions.Item span={2} label="Carrier"><b>{file.carrier}</b></Descriptions.Item>
-		<Descriptions.Item span={2} label="Carrier Code"><b>{file.carrier_code}</b></Descriptions.Item>
 	</Descriptions>
 };
