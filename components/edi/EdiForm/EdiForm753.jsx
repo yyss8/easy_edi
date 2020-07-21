@@ -36,6 +36,14 @@ export default class extends FormBase {
 	}
 
 	/** @inheritdoc */
+	getFormDefaultValues() {
+		return {
+			weight_unit: 'K',
+			volume_unit: 'CI',
+		};
+	}
+
+	/** @inheritdoc */
 	getFormItems() {
 		return <React.Fragment>
 			<Form.Item name="freight_ready_date" label="Freight Ready Date" rules={[{ required: true }]}>
@@ -117,7 +125,7 @@ export default class extends FormBase {
 			</Row>
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
-					<Form.Item initialValue="K" name="weight_unit" label="Weight Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+					<Form.Item name="weight_unit" label="Weight Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
@@ -130,7 +138,7 @@ export default class extends FormBase {
 
 			<Row>
 				<Col offset={ 3 } span={ 9 }>
-					<Form.Item initialValue="E" name="volume_unit" label="Volume Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+					<Form.Item name="volume_unit" label="Volume Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
 						<Input size="small" />
 					</Form.Item>
 				</Col>

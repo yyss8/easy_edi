@@ -81,7 +81,7 @@ class ExcelGenerator {
 	static generate856(data) {
 		return this.generate(`856-${moment().format('MMDD')}-PO-${data.po_number}`, [
 			['SENDER', 'JOINTOWN'],
-			['RECEIVER', data.receiver],
+			['RECEIVER', 'AMAZON'],
 			['SHIP DATE', data.ship_date],
 			['DELIVERY DATE', data.ship_date],
 			['ARN', data.arn],
