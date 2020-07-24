@@ -25,7 +25,6 @@ class ExcelGenerator {
 		const existingFromData = {
 			address_type: 'from',
 			address_code: data.from_code,
-			address_owner: data.shipper || 'JOINTOWN',
 			address_street: data.from_street,
 			address_city: data.from_city,
 			address_state: data.from_state,
@@ -47,11 +46,10 @@ class ExcelGenerator {
 			}
 		}
 
-		// 查找完全一样的发货地址, 如果不存在则新建.
+		// 查找完全一样的收货地址, 如果不存在则新建.
 		const existingToData = {
 			address_type: 'to',
 			address_code: data.ship_to,
-			address_owner: data.receiver || 'AMAZON',
 			address_street: data.to_street,
 			address_city: data.to_city,
 			address_state: data.to_state,
@@ -74,8 +72,8 @@ class ExcelGenerator {
 		}
 
 		return this.generate(`753-${moment().format('MMDD')}-PO-${data.po_number}`, [
-			['FROM', existingFromData.address_owner],
-			['TO', existingToData.address_owner],
+			['FROM', 'JOINTOWN'],
+			['TO', 'AMAZON'],
 			['FREIGHT READY DATE', data.freight_ready_date],
 			['SHIP FROM', data.from_code, data.from_street, fromAddress, data.from_zipcode],
 			['SHIP TO', data.ship_to, data.to_street, toAddress, data.to_zipcode],

@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
+import Router from 'next/router';
 import SiteLayout from "../../components/layout/SiteLayout";
 import {Form, Button, Select, Row, message} from 'antd';
 import AddressTableForm from "../../components/address/AddressTableForm";
@@ -58,7 +59,13 @@ export default class extends React.Component {
 	}
 
 	filterOnChange(value, field) {
-		this.setState({[field]: value, isLoading: true}, this.fetchAddresses);
+		this.setState({[field]: value, isLoading: true}, () => {
+			this.fetchAddresses();
+			Router.push({
+				pathname: '/cp/addresses',
+				query: this.buildQuery(),
+			});
+		});
 	}
 
 	fetchAddresses() {
@@ -74,6 +81,20 @@ export default class extends React.Component {
 				message.error('地址请求出错, 请稍候再试.');
 				this.setState({isLoading: false});
 			});
+	}
+
+	buildQuery() {
+		const query = {};
+
+		if (this.state.type !== 'from') {
+			query.type = this.state.type;
+		}
+
+		return query;
+	}
+
+	onRefresh() {
+		this.setState({isLoading: true}, this.fetchAddresses);
 	}
 
 	formRef = React.createRef();
@@ -98,6 +119,8 @@ export default class extends React.Component {
 										<Button title="新增地址" onClick={ () => actions.add() } size="small">新增地址</Button>
 										&nbsp;&nbsp;
 										<Button loading={ this.state.isSubmitting } title="保存当前地址" htmlType="submit" size="small" type="primary">保存地址</Button>
+										&nbsp;&nbsp;
+										<Button loading={ this.state.isSubmitting } onClick={ this.onRefresh.bind(this) } title="刷新地址列表" size="small">刷新地址</Button>
 									</div>
 								</Row>
 								<AddressTableForm isLoading={ this.state.isLoading } type={ this.state.type } fields={ fields } actions={ actions } />

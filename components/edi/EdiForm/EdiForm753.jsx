@@ -144,7 +144,6 @@ export default class extends FormBase {
 		switch (this.state.loadingType) {
 			case 'from':
 				form.current.setFieldsValue({
-					shipper: address.address_owner,
 					from_code: address.address_code,
 					from_street: address.address_street,
 					from_city: address.address_city,
@@ -156,7 +155,6 @@ export default class extends FormBase {
 
 			case 'to':
 				form.current.setFieldsValue({
-					receiver: address.address_owner,
 					ship_to: address.address_code,
 					to_street: address.address_street,
 					to_city: address.address_city,
@@ -194,9 +192,6 @@ export default class extends FormBase {
 			<Form.Item label={ <b>Ship From</b> }>
 				<Button size="small" onClick={ () => this.onLoadAddress('from') } loading={ this.state.isLoadingAddresses }>导入地址</Button>
 			</Form.Item>
-			<Form.Item initialValue="Jointown" name="shipper" label="Shipper" rules={[{ required: true }]}>
-				<Input size="small" />
-			</Form.Item>
 			<Form.Item name="from_code" label="Ship Code" rules={[{ required: true }]}>
 				<Input size="small" />
 			</Form.Item>
@@ -229,9 +224,6 @@ export default class extends FormBase {
 			</Row>
 			<Form.Item label={ <b>Ship To</b> }>
 				<Button size="small" onClick={ () => this.onLoadAddress('to') } loading={ this.state.isLoadingAddresses }>导入地址</Button>
-			</Form.Item>
-			<Form.Item initialValue="AMAZON" name="receiver" label="Receiver" rules={[{ required: true }]}>
-				<Input size="small" />
 			</Form.Item>
 			{Boolean(this.props.file) && <Form.Item name="to_code" label="Ship Code">
 				<span>{this.props.file.ship_to}</span>
