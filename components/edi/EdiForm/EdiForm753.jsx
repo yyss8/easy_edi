@@ -71,7 +71,6 @@ export default class extends FormBase {
 			if (Boolean(this.state.keyword)) {
 				data.keyword = this.state.keyword;
 			}
-
 			axios.get(`/api/addresses?${qs.stringify(data)}`)
 				.then(response => {
 					resolve( response.data.result.addresses);
@@ -80,6 +79,12 @@ export default class extends FormBase {
 		});
 	}
 
+	/**
+	 * 获取地址表格.
+	 *
+	 * @return {null|React}
+	 *   地址表格元素.
+	 */
 	getAddressTable() {
 		if (!this.state.isAddressModalShown) {
 			return null;
@@ -135,9 +140,22 @@ export default class extends FormBase {
 			},
 		];
 
-		return <Table dataSource={ this.state.addresses || [] } columns={ addressColumns } />
+		return <div>
+			<Row type="flex" style={ {marginBottom: 10} }>
+				<Col span={ 4 }>
+					<Input.Search placeholder="搜索地址名称" value={ this.state.keyword } onChange={ e => this.setState({keyword: e.target.value}) } size="small" onSearch={ () => this.onLoadAddress(this.state.loadingType) } />
+				</Col>
+			</Row>
+			<Table dataSource={ this.state.addresses || [] } columns={ addressColumns } />
+		</div>
 	}
 
+	/**
+	 * 处理导入地址至表单.
+	 *
+	 * @param {Object} address
+	 *   地址数据.
+	 */
 	onImportAddress(address) {
 		const form = this.getFormRef();
 
@@ -168,6 +186,12 @@ export default class extends FormBase {
 		this.setState({isAddressModalShown: false});
 	}
 
+	/**
+	 * 处理加载地址列表.
+	 *
+	 * @param {string} type
+	 *   地址类型.
+	 */
 	onLoadAddress(type) {
 		this.setState({loadingType: type, isLoadingAddresses: true}, () => {
 			this.loadAddress()
@@ -292,10 +316,11 @@ export default class extends FormBase {
 					</Form.Item>
 				</Col>
 			</Row>
-			<Modal width={ 800 }
+			<Modal width={ 1000 }
 						 onCancel={ () => this.setState({isAddressModalShown: false}) }
 						 onOk={ () => this.setState({isAddressModalShown: false}) }
-						 visible={ this.state.isAddressModalShown } afterClose={ () => this.setState({addresses: [], loadingType: 'from'}) }>
+						 visible={ this.state.isAddressModalShown }
+						 afterClose={ () => this.setState({addresses: [], loadingType: 'from', keyword: ''}) }>
 				{ this.getAddressTable() }
 			</Modal>
 		</React.Fragment>

@@ -8,7 +8,7 @@ export default async (req, res) => {
 
 			if (typeof req.query.keyword !== 'undefined') {
 				const keyword = `%${req.query.keyword}%`;
-				query.whereRaw('address_title=?', keyword);
+				query.whereRaw('address_title LIKE ?', keyword);
 			}
 
 			if (Boolean(req.query.type)) {
