@@ -1,11 +1,11 @@
 import { generateExcel, getFileData } from '../../../../../library/file.controller';
 
-export default (req, res) => {
+export default async (req, res) => {
 	switch (req.method.toLowerCase()) {
 		case 'post':
 			const orgData = getFileData(req.query.fileName, req.query.dirType, '850', true);
 
-			const generatedExcel = generateExcel({
+			const generatedExcel = await generateExcel({
 				...orgData,
 				...req.body,
 			}, '753');

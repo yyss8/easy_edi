@@ -3,7 +3,7 @@ import { generateExcel, getFileData } from '../../../../../library/file.controll
 /**
  * 生成856文档接口。
  */
-export default (req, res) => {
+export default async (req, res) => {
 	switch (req.method.toLowerCase()) {
 		case 'post':
 			const data = getFileData(req.query.fileName, 'archive', 'label-excel', true);

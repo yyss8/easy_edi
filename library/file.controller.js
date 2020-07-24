@@ -422,7 +422,7 @@ function getFilePath(dirType, type, fileName = '') {
  *
  * @return {ReadStream|boolean}
  */
-function generateExcel(fileData, excelType) {
+async function generateExcel(fileData, excelType) {
 	if (excelType === 'label-excel') {
 		return ExcelGenerator.generateLabelExcel(fileData);
 	}
@@ -431,7 +431,7 @@ function generateExcel(fileData, excelType) {
 		return false;
 	}
 
-	return ExcelGenerator[`generate${excelType}`](fileData);
+	return await ExcelGenerator[`generate${excelType}`](fileData);
 }
 
 module.exports = {

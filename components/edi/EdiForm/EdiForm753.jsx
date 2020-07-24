@@ -1,14 +1,33 @@
 import React from 'react';
 import FormBase from './EdiFormBase';
-import {Form, DatePicker, Input, Row, Col, InputNumber, message} from 'antd';
+import {Form, DatePicker, Input, Row, Col, InputNumber, message, Button, Modal, Table} from 'antd';
 import axois from 'axios';
 import fileDownload from "js-file-download";
 import moment from 'moment';
+import qs from 'qs';
+import axios from "axios";
 
 /**
  * 753文档表单.
  */
 export default class extends FormBase {
+
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			...super.state,
+			isLoadingAddresses: false,
+			isAddressModalShown: false,
+			loadingType: 'from',
+			addresses: [],
+			addressKeyword: '',
+			keyword: '',
+		};
+
+		this.getAddressTable = this.getAddressTable.bind(this);
+		this.loadAddress = this.loadAddress.bind(this);
+	}
 
 	/** @inheritdoc */
 	handleFileGenerate(data) {
@@ -43,13 +62,141 @@ export default class extends FormBase {
 		};
 	}
 
+	loadAddress() {
+		return new Promise((resolve, reject) => {
+			const data = {
+				type: this.state.loadingType,
+			};
+
+			if (Boolean(this.state.keyword)) {
+				data.keyword = this.state.keyword;
+			}
+
+			axios.get(`/api/addresses?${qs.stringify(data)}`)
+				.then(response => {
+					resolve( response.data.result.addresses);
+				})
+				.catch(reject);
+		});
+	}
+
+	getAddressTable() {
+		if (!this.state.isAddressModalShown) {
+			return null;
+		}
+
+		const addressColumns = [
+			{
+				title: '描述',
+				key: 'address_title',
+				dataIndex: 'address_title',
+			},
+			{
+				title: 'Code',
+				key: 'address_code',
+				dataIndex: 'address_code',
+			},
+			{
+				title: this.state.loadingType === 'from' ? 'Sender' : 'Receiver',
+				key: 'owner',
+				dataIndex: 'address_owner',
+			},
+			{
+				title: 'Street',
+				key: 'address_street',
+				dataIndex: 'address_street',
+			},
+			{
+				title: 'City',
+				key: 'address_city',
+				dataIndex: 'address_city',
+			},
+			{
+				title: 'State',
+				key: 'address_state',
+				dataIndex: 'address_state',
+			},
+			{
+				title: 'Zip Code',
+				key: 'address_zip',
+				dataIndex: 'address_zip',
+			},
+			{
+				title: 'Country',
+				key: 'address_country',
+				dataIndex: 'address_country',
+			},
+			{
+				title: '',
+				key: 'action',
+				render: (text, record) => <span>
+						<Button size="small" title={ `导入${this.state.loadingType === 'from' ? 'Sender' : 'Receiver'}地址` } onClick={ () => this.onImportAddress(record) }>导入</Button>
+				</span>
+			},
+		];
+
+		return <Table dataSource={ this.state.addresses || [] } columns={ addressColumns } />
+	}
+
+	onImportAddress(address) {
+		const form = this.getFormRef();
+
+		switch (this.state.loadingType) {
+			case 'from':
+				form.current.setFieldsValue({
+					shipper: address.address_owner,
+					from_code: address.address_code,
+					from_street: address.address_street,
+					from_city: address.address_city,
+					from_state: address.address_state,
+					from_zipcode: address.address_zip,
+					from_country: address.address_country,
+				});
+				break;
+
+			case 'to':
+				form.current.setFieldsValue({
+					receiver: address.address_owner,
+					ship_to: address.address_code,
+					to_street: address.address_street,
+					to_city: address.address_city,
+					to_state: address.address_state,
+					to_zipcode: address.address_zip,
+					to_country: address.address_country,
+				});
+				break;
+		}
+
+		this.setState({isAddressModalShown: false});
+	}
+
+	onLoadAddress(type) {
+		this.setState({loadingType: type, isLoadingAddresses: true}, () => {
+			this.loadAddress()
+				.then(addresses => {
+					this.setState({addresses, isLoadingAddresses: false, isAddressModalShown: true});
+				})
+				.catch(rejected => {
+					this.setState({isLoadingAddresses: false}, () => {
+						console.log(rejected);
+						message.error('加载地址出错, 请稍候再试');
+					});
+				});
+		});
+	}
+
 	/** @inheritdoc */
 	getFormItems() {
 		return <React.Fragment>
 			<Form.Item name="freight_ready_date" label="Freight Ready Date" rules={[{ required: true }]}>
 				<DatePicker size="small" />
 			</Form.Item>
-			<Form.Item label={ <b>Ship From</b> } rules={[{ required: true }]} />
+			<Form.Item label={ <b>Ship From</b> }>
+				<Button size="small" onClick={ () => this.onLoadAddress('from') } loading={ this.state.isLoadingAddresses }>导入地址</Button>
+			</Form.Item>
+			<Form.Item initialValue="Jointown" name="shipper" label="Shipper" rules={[{ required: true }]}>
+				<Input size="small" />
+			</Form.Item>
 			<Form.Item name="from_code" label="Ship Code" rules={[{ required: true }]}>
 				<Input size="small" />
 			</Form.Item>
@@ -80,8 +227,13 @@ export default class extends FormBase {
 					</Form.Item>
 				</Col>
 			</Row>
-			<Form.Item label={ <b>Ship To</b> } rules={[{ required: true }]} />
-			{Boolean(this.props.file) && <Form.Item name="from_code" label="Ship Code" rules={[{ required: true }]}>
+			<Form.Item label={ <b>Ship To</b> }>
+				<Button size="small" onClick={ () => this.onLoadAddress('to') } loading={ this.state.isLoadingAddresses }>导入地址</Button>
+			</Form.Item>
+			<Form.Item initialValue="AMAZON" name="receiver" label="Receiver" rules={[{ required: true }]}>
+				<Input size="small" />
+			</Form.Item>
+			{Boolean(this.props.file) && <Form.Item name="to_code" label="Ship Code">
 				<span>{this.props.file.ship_to}</span>
 			</Form.Item>}
 			<Form.Item name="to_street" label="Street" rules={[{ required: true }]}>
@@ -148,6 +300,12 @@ export default class extends FormBase {
 					</Form.Item>
 				</Col>
 			</Row>
+			<Modal width={ 800 }
+						 onCancel={ () => this.setState({isAddressModalShown: false}) }
+						 onOk={ () => this.setState({isAddressModalShown: false}) }
+						 visible={ this.state.isAddressModalShown } afterClose={ () => this.setState({addresses: [], loadingType: 'from'}) }>
+				{ this.getAddressTable() }
+			</Modal>
 		</React.Fragment>
 	}
 }

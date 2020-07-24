@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from 'path';
+import db from './database.connection';
 
 const xlsx = require('xlsx');
 const moment = require('moment');
@@ -16,13 +17,65 @@ class ExcelGenerator {
 	 *
 	 * @return {ReadStream}
 	 */
-	static generate753(data) {
+	static async generate753(data) {
 		const fromAddress = [data.from_city, data.from_state, data.from_country].filter(Boolean).join(',');
 		const toAddress = [data.to_city, data.to_state, data.to_country].filter(Boolean).join(',');
 
+		// 查找完全一样的发货地址, 如果不存在则新建.
+		const existingFromData = {
+			address_type: 'from',
+			address_code: data.from_code,
+			address_owner: data.shipper || 'JOINTOWN',
+			address_street: data.from_street,
+			address_city: data.from_city,
+			address_state: data.from_state,
+			address_zip: data.from_zipcode,
+			address_country: data.from_country,
+		};
+		const existingFromAddress = await db('ed_address').where(existingFromData)
+			.select('address_id')
+			.first();
+
+		if (!existingFromAddress) {
+			try {
+				await db('ed_address').insert({
+					address_title: `地址 - ${data.from_code}`,
+					...existingFromData,
+				});
+			} catch (e) {
+				console.log(e);
+			}
+		}
+
+		// 查找完全一样的发货地址, 如果不存在则新建.
+		const existingToData = {
+			address_type: 'to',
+			address_code: data.ship_to,
+			address_owner: data.receiver || 'AMAZON',
+			address_street: data.to_street,
+			address_city: data.to_city,
+			address_state: data.to_state,
+			address_zip: data.to_zipcode,
+			address_country: data.to_country,
+		};
+		const existingToAddress = await db('ed_address').where(existingToData)
+			.select('address_id')
+			.first();
+
+		if (!existingToAddress) {
+			try {
+				await db('ed_address').insert({
+					address_title: `地址 - ${data.ship_to}`,
+					...existingToData,
+				});
+			} catch (e) {
+				console.log(e);
+			}
+		}
+
 		return this.generate(`753-${moment().format('MMDD')}-PO-${data.po_number}`, [
-			['FROM', 'JOINTOWN'],
-			['TO', 'AMAZON'],
+			['FROM', existingFromData.address_owner],
+			['TO', existingToData.address_owner],
 			['FREIGHT READY DATE', data.freight_ready_date],
 			['SHIP FROM', data.from_code, data.from_street, fromAddress, data.from_zipcode],
 			['SHIP TO', data.ship_to, data.to_street, toAddress, data.to_zipcode],
@@ -85,8 +138,8 @@ class ExcelGenerator {
 			['SHIP DATE', data.ship_date],
 			['DELIVERY DATE', data.ship_date],
 			['ARN', data.arn],
-			['SHIP FROM', data.from_code, 'Jointown', data.from_street, data.from_city, data.from_state, data.from_zipcode, data.from_country],
-			['SHIP TO', data.ship_to, data.receiver, data.to_street, data.to_city, data.to_state, data.to_zipcode, data.to_country],
+			['SHIP FROM', data.from_code, data.shipper || 'Jointown', data.from_street, data.from_city, data.from_state, data.from_zipcode, data.from_country],
+			['SHIP TO', data.ship_to, data.receiver || 'AMAZON', data.to_street, data.to_city, data.to_state, data.to_zipcode, data.to_country],
 			['CARRIER', data.carrier, data.carrier_code],
 			['BOL', data.po_number],
 			['PRO', data.pro],
