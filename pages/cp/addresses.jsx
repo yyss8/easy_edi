@@ -84,6 +84,7 @@ export default class extends React.Component {
 				<title>地址管理</title>
 			</Head>
 			<div>
+				<h2>地址管理</h2>
 				<Form ref={ this.formRef } onFinish={ this.handleAddressSave.bind(this) }>
 					<Form.List name="address">
 						{
