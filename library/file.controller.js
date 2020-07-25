@@ -100,6 +100,7 @@ function getFileData(fileName, dirType, type, getDetail = false) {
 		name: fileName,
 		modified: moment(stat.mtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
 		created: moment(stat.birthtime).tz(MOMENT_TIMEZONE).format(MOMENT_FORMAT),
+		size: stat.size,
 	};
 
 	if (getDetail) {

@@ -614,6 +614,14 @@ export default class extends Component {
       }
     ];
 
+    if (this.state.type === 'label') {
+      defaultFileColumns.splice(1, 0, {
+        title: '文件大小',
+        key: 'size',
+        render: (text, record) => <span>{this.getFileSize(record.size)}</span>
+      });
+    }
+
     return [
       defaultFileColumns.shift(),
       ...this.getColumnsByType(this.state.type),
