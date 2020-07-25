@@ -22,16 +22,7 @@ class ExcelGenerator {
 		const toAddress = [data.to_city, data.to_state, data.to_country].filter(Boolean).join(',');
 
 		// 查找完全一样的发货地址, 如果不存在则新建.
-		const existingFromData = {
-			address_type: 'from',
-			address_code: data.from_code,
-			address_street: data.from_street,
-			address_city: data.from_city,
-			address_state: data.from_state,
-			address_zip: data.from_zipcode,
-			address_country: data.from_country,
-		};
-		const existingFromAddress = await db('ed_address').where(existingFromData)
+		const existingFromAddress = await db('ed_address').where('address_code', data.from_code)
 			.select('address_id')
 			.first();
 
@@ -39,7 +30,13 @@ class ExcelGenerator {
 			try {
 				await db('ed_address').insert({
 					address_title: `地址 - ${data.from_code}`,
-					...existingFromData,
+					address_type: 'from',
+					address_code: data.from_code,
+					address_street: data.from_street,
+					address_city: data.from_city,
+					address_state: data.from_state,
+					address_zip: data.from_zipcode,
+					address_country: data.from_country,
 				});
 			} catch (e) {
 				console.log(e);
@@ -47,16 +44,7 @@ class ExcelGenerator {
 		}
 
 		// 查找完全一样的收货地址, 如果不存在则新建.
-		const existingToData = {
-			address_type: 'to',
-			address_code: data.ship_to,
-			address_street: data.to_street,
-			address_city: data.to_city,
-			address_state: data.to_state,
-			address_zip: data.to_zipcode,
-			address_country: data.to_country,
-		};
-		const existingToAddress = await db('ed_address').where(existingToData)
+		const existingToAddress = await db('ed_address').where('address_code', data.ship_to)
 			.select('address_id')
 			.first();
 
@@ -64,7 +52,13 @@ class ExcelGenerator {
 			try {
 				await db('ed_address').insert({
 					address_title: `地址 - ${data.ship_to}`,
-					...existingToData,
+					address_type: 'to',
+					address_code: data.ship_to,
+					address_street: data.to_street,
+					address_city: data.to_city,
+					address_state: data.to_state,
+					address_zip: data.to_zipcode,
+					address_country: data.to_country,
 				});
 			} catch (e) {
 				console.log(e);

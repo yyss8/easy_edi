@@ -17,7 +17,7 @@ export default props => {
 			title: 'Code',
 			key: 'address_code',
 			render: (text, record, index) => {
-				return <Form.Item name={[index, 'address_code']}>
+				return <Form.Item name={[index, 'address_code']} rules={[{ required: true }]}>
 					<Input size="small" placeholder="Code" />
 				</Form.Item>
 			}
