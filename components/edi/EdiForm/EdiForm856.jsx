@@ -37,47 +37,53 @@ export default class extends FormBase {
 
 	/** @inheritdoc */
 	getFormItems() {
+		const twoColumnLayout = this.getTwoColumnSpans();
+
 		return <React.Fragment>
 			<Form.Item name="ship_date" label="Ship/Delivery Date" rules={[{ required: true }]}>
 				<DatePicker size="small" />
 			</Form.Item>
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="carrier" label="Carrier" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="carrier" label="Carrier" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="carrier_code" label="Carrier Code" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
-						<Input size="small" />
-					</Form.Item>
-				</Col>
-			</Row>
-			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="pro" label="PRO" labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="carrier_code" label="Carrier Code" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item initialValue={0} name="stacked_pallets" label="Total Stacked Pallets" labelCol={ {span: 8 } } wrapperCol={ {span: 5 } }>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="pro" label="PRO"{...twoColumnLayout.first.inner}>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
+			<Row>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item initialValue={0} name="stacked_pallets" label="Total Stacked Pallets"{...twoColumnLayout.first.inner}>
 						<InputNumber size="small" />
 					</Form.Item>
 				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="unstacked_pallets" label="Total Unstacked Pallets" rules={[{ required: true }]} labelCol={ {span: 10 } } wrapperCol={ {span: 9 } }>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="unstacked_pallets" label="Total Unstacked Pallets" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<InputNumber size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
-			<Form.Item name="to_be_shipped" label="To Be Shipped (EA)" rules={[{ required: true }]}>
-				<InputNumber size="small" />
-			</Form.Item>
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item initialValue="EA" name="type_unit" label="Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="to_be_shipped" label="To Be Shipped (EA)" rules={[{ required: true }]} {...twoColumnLayout.second.inner}>
+						<InputNumber size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
+			<Row>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item initialValue="EA" name="type_unit" label="Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>

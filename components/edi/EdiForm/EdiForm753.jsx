@@ -209,6 +209,8 @@ export default class extends FormBase {
 
 	/** @inheritdoc */
 	getFormItems() {
+		const twoColumnLayout = this.getTwoColumnSpans();
+
 		return <React.Fragment>
 			<Form.Item name="freight_ready_date" label="Freight Ready Date" rules={[{ required: true }]}>
 				<DatePicker size="small" />
@@ -223,25 +225,25 @@ export default class extends FormBase {
 				<Input size="small" />
 			</Form.Item>
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="from_city" label="City" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="from_city" label="City" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="from_state" label="State/Province" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="from_state" label="State/Province" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="from_zipcode" label="Zip Code" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="from_zipcode" label="Zip Code" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="from_country" label="Country" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="from_country" label="Country" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
@@ -256,62 +258,62 @@ export default class extends FormBase {
 				<Input size="small" />
 			</Form.Item>
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="to_city" label="City" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } } >
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="to_city" label="City" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="to_state" label="State/Province" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
-						<Input size="small" />
-					</Form.Item>
-				</Col>
-			</Row>
-			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="to_zipcode" label="Zip Code" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
-						<Input size="small" />
-					</Form.Item>
-				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="to_country" label="Country" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="to_state" label="State/Province" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="total_pallet" label="# of Packages" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="to_zipcode" label="Zip Code" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="to_country" label="Country" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
+			<Row>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="total_pallet" label="Total Number of Packages" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<InputNumber size="small" />
 					</Form.Item>
 				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="total_carton" label="Total Cartons" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="total_carton" label="Total Number of Cartons" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<InputNumber size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="weight_unit" label="Weight Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="weight_unit" label="Weight Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="weight" label="Weight" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="weight" label="Weight" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
 
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="volume_unit" label="Volume Unit" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="volume_unit" label="Volume Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="volume" label="Volume" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="volume" label="Volume" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<InputNumber size="small" />
 					</Form.Item>
 				</Col>

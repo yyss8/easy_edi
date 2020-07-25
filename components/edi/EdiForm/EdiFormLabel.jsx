@@ -58,6 +58,8 @@ export default class extends FormBase {
 
 	/** @inheritdoc */
 	getFormItems() {
+		const twoColumnLayout = this.getTwoColumnSpans();
+
 		return <React.Fragment>
 			<Form.Item name="pro" label="PRO">
 				<Input size="small" />
@@ -66,13 +68,13 @@ export default class extends FormBase {
 				<Input size="small" />
 			</Form.Item>
 			<Row>
-				<Col offset={ 3 } span={ 9 }>
-					<Form.Item name="carrier" label="Carrier" rules={[{ required: true }]} labelCol={ {span: 8 } } wrapperCol={ {span: 16 } }>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="carrier" label="Carrier" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
-				<Col span={ 10 }>
-					<Form.Item name="carrier_code" label="Carrier Code" rules={[{ required: true }]} labelCol={ {span: 6 } } wrapperCol={ {span: 13 } }>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="carrier_code" label="Carrier Code" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
@@ -83,13 +85,13 @@ export default class extends FormBase {
 			<Form.List name="pallets">
 				{
 					(fields, actions) => <div style={ {marginBottom: 20} }>
-						<Form.Item wrapperCol={{ span: 12, offset: 6 }}>
+						<Form.Item wrapperCol={{ span: 12, offset: 5 }}>
 							<Button onClick={ () => actions.add() } size="small">Add pallets</Button>
 						</Form.Item>
 						{
 							fields.map((field, index) => {
 								return <Row type="flex" align="middle" key={ field.key }>
-									<Col offset={ 3 } span={ 6 }>
+									<Col offset={ 2 } span={ 6 }>
 										<Form.Item style={ {marginBottom: 0} } name={[index, 'pallet_num']} label="Pallet Number" rules={[{ required: true }]} labelCol={ {span: 12 } } wrapperCol={ {span: 10 } }>
 											<InputNumber size="small" />
 										</Form.Item>
@@ -105,7 +107,7 @@ export default class extends FormBase {
 										</Form.Item>
 									</Col>
 									<Col span={ 2 }>
-										<Button size="small" icon={ <MinusCircleOutlined/> } title="删除" onClick={ () => actions.remove(field.name) } />
+										{ index > 0 && <Button size="small" icon={ <MinusCircleOutlined/> } title="删除" onClick={ () => actions.remove(field.name) } /> }
 									</Col>
 								</Row>
 							})

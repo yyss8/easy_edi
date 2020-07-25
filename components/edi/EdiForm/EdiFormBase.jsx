@@ -50,21 +50,45 @@ export default class extends React.Component {
 		return {};
 	}
 
+	getTwoColumnSpans() {
+		return {
+			first: {
+				outer: {
+					offset: 0,
+					span: 10,
+				},
+				inner: {
+					labelCol: { span: 12 },
+					wrapperCol: { span: 12},
+				}
+			},
+			second: {
+				outer: {
+					span: 12,
+				},
+				inner: {
+					labelCol: { span: 12 },
+					wrapperCol: { span: 12 },
+				}
+			}
+		};
+	}
+
 	render() {
 		const layout = {
-			labelCol: { span: 6 },
-			wrapperCol: { span: 14 },
+			labelCol: { span: 5 },
+			wrapperCol: { span: 17 },
 		};
 
 		const ref = this.getFormRef();
 
 		return <div className={FormStyles['edi-excel-generator']}>
 			<Form ref={ref} onFinish={ this.handleFileGenerate.bind(this) } initialValues={ this.getFormDefaultValues() } {...layout} className="generator-form">
-				<Form.Item wrapperCol={{ span: 12, offset: 6 }}>
+				<Form.Item wrapperCol={{ span: 12, offset: 5 }}>
 					<h3>请填写以下内容并点击生成:</h3>
 				</Form.Item>
 				{this.getFormItems()}
-				<Form.Item wrapperCol={{ span: 12, offset: 6 }}>
+				<Form.Item wrapperCol={{ span: 12, offset: 5 }}>
 					<Button loading={ this.state.isGenerating } type="primary" htmlType="submit">生成</Button>
 					&nbsp;&nbsp;
 					<Button onClick={this.onClearForm.bind(this)} htmlType="button">清空</Button>
