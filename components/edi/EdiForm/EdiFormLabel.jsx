@@ -1,7 +1,7 @@
 import React from 'react';
 import FormBase from './EdiFormBase';
 import {Form, Input, InputNumber, Row, Col, message, Button} from 'antd';
-import { MinusCircleOutlined} from '@ant-design/icons';
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import axois from "axios";
 import fileDownload from "js-file-download";
 import moment from "moment";
@@ -48,7 +48,7 @@ export default class extends FormBase {
 		return {
 			pallets: [
 				{
-					pallet_num: 0,
+					pallet_num: 1,
 					pallet_num_to: 1,
 					package_in_pallet: 1,
 				}
@@ -61,9 +61,6 @@ export default class extends FormBase {
 		const twoColumnLayout = this.getTwoColumnSpans();
 
 		return <React.Fragment>
-			<Form.Item name="pro" label="PRO">
-				<Input size="small" />
-			</Form.Item>
 			<Form.Item name="asin" label="ASIN" rules={[{ required: true }]}>
 				<Input size="small" />
 			</Form.Item>
@@ -79,15 +76,15 @@ export default class extends FormBase {
 					</Form.Item>
 				</Col>
 			</Row>
+			<Form.Item name="pro" label="TRACKING NO. (PRO)">
+				<Input size="small" />
+			</Form.Item>
 			<Form.Item name="total_pallet" label="Total Pallet" rules={[{ required: true }]}>
 				<InputNumber size="small" />
 			</Form.Item>
 			<Form.List name="pallets">
 				{
 					(fields, actions) => <div style={ {marginBottom: 20} }>
-						<Form.Item wrapperCol={{ span: 12, offset: 5 }}>
-							<Button onClick={ () => actions.add() } size="small">Add pallets</Button>
-						</Form.Item>
 						{
 							fields.map((field, index) => {
 								return <Row type="flex" align="middle" key={ field.key }>
@@ -101,13 +98,14 @@ export default class extends FormBase {
 											<InputNumber size="small" />
 										</Form.Item>
 									</Col>
-									<Col span={ 5 }>
-										<Form.Item name={[index, 'package_in_pallet']} style={ {marginBottom: 0} } label="Packages in Pallet" rules={[{ required: true }]} labelCol={ {span: 14 } } wrapperCol={ {span: 8 } }>
+									<Col span={ 6 }>
+										<Form.Item name={[index, 'package_in_pallet']} style={ {marginBottom: 0} } label="Cartons in Pallet" rules={[{ required: true }]} labelCol={ {span: 14 } } wrapperCol={ {span: 10 } }>
 											<InputNumber size="small" />
 										</Form.Item>
 									</Col>
-									<Col span={ 2 }>
-										{ index > 0 && <Button size="small" icon={ <MinusCircleOutlined/> } title="删除" onClick={ () => actions.remove(field.name) } /> }
+									<Col span={ 3 } style={ {textAlign: 'right'} }>
+										{ index === 0 &&  <Button size="small" icon={ <PlusCircleOutlined/> } title="新增Pallet" onClick={ () => actions.add() } /> }
+										{ index > 0 && <Button size="small" icon={ <MinusCircleOutlined/> } title="删除Pallet" type="danger" onClick={ () => actions.remove(field.name) } /> }
 									</Col>
 								</Row>
 							})

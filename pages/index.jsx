@@ -66,19 +66,14 @@ const SUPPORTED_INPUT_LIST = [
     disabled: true,
   },
   {
-    code: '997',
-    name: '发送回执',
-    type: 'download',
-  },
-  {
     code: 'logs',
     name: '文件日志',
     type: 'download',
     hideCode: true,
   },
   {
-    code: 'error',
-    name: '错误处理',
+    code: 'notify',
+    name: '网关通知',
     type: 'download',
     hideCode: true,
   },

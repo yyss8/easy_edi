@@ -283,10 +283,10 @@ class EdiFormView extends React.Component {
 				<Link href="/">
 					<a className="ant-btn ant-btn-sm" title="返回主界面" style={ {marginBottom: 20} }>返回</a>
 				</Link>
-				&nbsp;&nbsp;
-				{ type === '753'&& <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('850')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}订单</Button> }
-				{ type === 'label-excel' &&  <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('754')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}754文档</Button> }
-				{ type === '856' && <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('label-excel', 'archive')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}标签文档</Button> }
+				{/*&nbsp;&nbsp;*/}
+				{/*{ type === '753'&& <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('850')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}订单</Button> }*/}
+				{/*{ type === 'label-excel' &&  <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('754')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}754文档</Button> }*/}
+				{/*{ type === '856' && <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('label-excel', 'archive')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}标签文档</Button> }*/}
 			</Row>
 
 			<h2>Excel文档生成 ({type})</h2>

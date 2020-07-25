@@ -21,8 +21,8 @@ const TYPE_MAPPING = {
 	'856': '\\edi\\856-excel',
 	'label': '\\edi\\label',
 	'label-excel': '\\edi\\label-excel',
-	// error
-	'error': '\\错误信息',
+	// 通知
+	'notify': '\\错误信息',
 	// 日志
 	'logs': '\\文件日志',
 };
