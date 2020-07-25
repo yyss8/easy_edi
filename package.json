@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
-    "antd": "^4.4.2",
-    "archiver": "^4.0.2",
+    "antd": "^4.4.3",
+    "archiver": "^5.0.0",
     "axios": "^0.19.2",
     "formidable": "^1.2.2",
     "immutability-helper": "^3.1.1",
