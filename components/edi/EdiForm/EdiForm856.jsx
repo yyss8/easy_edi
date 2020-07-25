@@ -65,7 +65,7 @@ export default class extends FormBase {
 			</Row>
 			<Row>
 				<Col{...twoColumnLayout.first.outer}>
-					<Form.Item name="pro" label="PRO"{...twoColumnLayout.first.inner}>
+					<Form.Item name="pro" label="TRACKING NO. (PRO)"{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>
 				</Col>
