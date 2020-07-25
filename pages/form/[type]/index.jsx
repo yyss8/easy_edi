@@ -174,6 +174,12 @@ class EdiFormView extends React.Component {
 						carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
 						carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
 						pro: Boolean(file.pro) ? file.pro.trim() : '',
+						total_carton: file.total_carton,
+						total_pallet: file.total_pallet,
+						weight: file.weight,
+						weight_unit: Boolean(file.weight_unit) ? file.weight_unit.trim() : '',
+						volume: file.volume,
+						volume_unit: Boolean(file.volume_unit) ? file.volume_unit.trim() : '',
 					});
 				} else if (this.state.type === 'label-excel') {
 					this.formRef.current.setFieldsValue({

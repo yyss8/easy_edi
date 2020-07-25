@@ -426,13 +426,15 @@ function getFilePath(dirType, type, fileName = '') {
 async function generateExcel(fileData, excelType) {
 	if (excelType === 'label-excel') {
 		return ExcelGenerator.generateLabelExcel(fileData);
+	} else if (excelType === '753') {
+		return await ExcelGenerator[`generate${excelType}`](fileData);
 	}
 
 	if (typeof ExcelGenerator[`generate${excelType}`] !== 'function') {
 		return false;
 	}
 
-	return await ExcelGenerator[`generate${excelType}`](fileData);
+	return ExcelGenerator[`generate${excelType}`](fileData);
 }
 
 module.exports = {

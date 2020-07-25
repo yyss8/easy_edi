@@ -8,7 +8,7 @@ export default async (req, res) => {
 		case 'post':
 			const data = getFileData(req.query.fileName, 'archive', 'label-excel', true);
 
-			const generatedExcel = generateExcel({
+			const generatedExcel = await generateExcel({
 				...data,
 				...req.body,
 			}, '856');

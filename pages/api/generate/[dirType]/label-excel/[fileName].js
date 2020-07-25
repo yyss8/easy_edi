@@ -3,12 +3,12 @@ import { generateExcel, getFileData } from '../../../../../library/file.controll
 /**
  * 生成754 label接口。
  */
-export default (req, res) => {
+export default async (req, res) => {
 	switch (req.method.toLowerCase()) {
 		case 'post':
 			const data = getFileData(req.query.fileName, req.query.dirType, '754', true);
 
-			const generatedExcel = generateExcel({
+			const generatedExcel = await generateExcel({
 				...data,
 				...req.body,
 			}, 'label-excel');

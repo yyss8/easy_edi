@@ -83,6 +83,43 @@ export default class extends FormBase {
 			</Row>
 			<Row>
 				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="total_pallet" label="Total Number of Pallets" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
+						<InputNumber size="small" />
+					</Form.Item>
+				</Col>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="total_carton" label="Total Number of Cartons" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
+						<InputNumber size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
+			<Row>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="weight_unit" label="Weight Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="weight" label="Weight" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
+
+			<Row>
+				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="volume_unit" label="Volume Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
+						<Input size="small" />
+					</Form.Item>
+				</Col>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item name="volume" label="Volume" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
+						<InputNumber size="small" />
+					</Form.Item>
+				</Col>
+			</Row>
+			<Row>
+				<Col{...twoColumnLayout.first.outer}>
 					<Form.Item initialValue="EA" name="type_unit" label="Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<Input size="small" />
 					</Form.Item>

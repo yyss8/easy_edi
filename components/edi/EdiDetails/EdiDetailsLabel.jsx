@@ -14,11 +14,5 @@ export default ({file}) => {
 		<Descriptions.Item span={1} label="ASIN"><b>{file.asin}</b></Descriptions.Item>
 		<Descriptions.Item span={3} label="Ship From"><b>{shipFrom}</b></Descriptions.Item>
 		<Descriptions.Item span={3} label="Ship To"><b>{shipTo}</b></Descriptions.Item>
-		<Descriptions.Item span={2} label="Total Pallet"><b>{file.total_pallet}</b></Descriptions.Item>
-		<Descriptions.Item span={2} label="Total Carton"><b>{file.total_pallet}</b></Descriptions.Item>
-		<Descriptions.Item span={2} label="Weight Unit"><b>{file.weight_unit}</b></Descriptions.Item>
-		<Descriptions.Item span={2} label="Weight"><b>{file.weight}</b></Descriptions.Item>
-		<Descriptions.Item span={2} label="Volume Unit"><b>{file.volume_unit}</b></Descriptions.Item>
-		<Descriptions.Item span={2} label="volume"><b>{file.volume}</b></Descriptions.Item>
 	</Descriptions>
 };
