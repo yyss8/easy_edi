@@ -36,6 +36,14 @@ export default class extends FormBase {
 	}
 
 	/** @inheritdoc */
+	getFormDefaultValues() {
+		return {
+			weight_unit: 'K',
+			volume_unit: 'CI',
+		};
+	}
+
+	/** @inheritdoc */
 	getFormItems() {
 		const twoColumnLayout = this.getTwoColumnSpans();
 
@@ -76,8 +84,13 @@ export default class extends FormBase {
 			</Row>
 			<Row>
 				<Col{...twoColumnLayout.first.outer}>
-					<Form.Item name="to_be_shipped" label="To Be Shipped (EA)" rules={[{ required: true }]} {...twoColumnLayout.second.inner}>
+					<Form.Item name="to_be_shipped" label="To Be Shipped" rules={[{ required: true }]} {...twoColumnLayout.second.inner}>
 						<InputNumber size="small" />
+					</Form.Item>
+				</Col>
+				<Col{...twoColumnLayout.second.outer}>
+					<Form.Item initialValue="EA" name="type_unit" label="Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
+						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>
@@ -115,13 +128,6 @@ export default class extends FormBase {
 				<Col{...twoColumnLayout.second.outer}>
 					<Form.Item name="volume" label="Volume" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<InputNumber size="small" />
-					</Form.Item>
-				</Col>
-			</Row>
-			<Row>
-				<Col{...twoColumnLayout.first.outer}>
-					<Form.Item initialValue="EA" name="type_unit" label="Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
-						<Input size="small" />
 					</Form.Item>
 				</Col>
 			</Row>

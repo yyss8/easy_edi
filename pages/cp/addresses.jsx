@@ -123,7 +123,7 @@ export default class extends React.Component {
 										<Button loading={ this.state.isSubmitting } onClick={ this.onRefresh.bind(this) } title="刷新地址列表" size="small">刷新地址</Button>
 									</div>
 								</Row>
-								<AddressTableForm isLoading={ this.state.isLoading } type={ this.state.type } fields={ fields } actions={ actions } />
+								<AddressTableForm isLoading={ this.state.isLoading } type={ this.state.type } fields={ fields } actions={ actions } formRef={ this.formRef } />
 							</div>
 						}
 					</Form.List>
