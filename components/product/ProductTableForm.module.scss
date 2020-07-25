@@ -1,0 +1,7 @@
+.product-form {
+  width: 800px;
+
+  :global .ant-form-item {
+	margin-bottom: 0;
+  }
+}

@@ -14,6 +14,7 @@ export default class extends React.Component {
 		};
 	}
 
+	/** @inheritdoc */
 	constructor(props) {
 		super(props);
 
@@ -54,6 +55,7 @@ export default class extends React.Component {
 		});
 	}
 
+	/** @inheritdoc */
 	componentDidMount() {
 		this.fetchAddresses();
 	}
@@ -99,6 +101,7 @@ export default class extends React.Component {
 
 	formRef = React.createRef();
 
+	/** @inheritdoc */
 	render() {
 		return <SiteLayout>
 			<Head>

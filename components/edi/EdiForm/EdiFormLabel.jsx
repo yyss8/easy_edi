@@ -1,15 +1,34 @@
 import React from 'react';
 import FormBase from './EdiFormBase';
-import {Form, Input, InputNumber, Row, Col, message, Button} from 'antd';
+import {Form, Input, InputNumber, Row, Col, message, Button, Modal, Table} from 'antd';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import axois from "axios";
 import fileDownload from "js-file-download";
 import moment from "moment";
+import axios from "axios";
+import qs from "qs";
 
 /**
  * 标签文档表单
  */
 export default class extends FormBase {
+
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			...super.state,
+			isLoadingProducts: false,
+			isProductModalShown: false,
+			products: [],
+			asin: '',
+			keyword: '',
+		};
+
+		this.getProductTable = this.getProductTable.bind(this);
+		this.loadProducts = this.loadProducts.bind(this);
+	}
+	
 	/** @inheritdoc */
 	handleFileGenerate(data) {
 		if (!this.props.file) {
@@ -56,11 +75,117 @@ export default class extends FormBase {
 		};
 	}
 
+	loadProducts() {
+		return new Promise((resolve, reject) => {
+			const data = {};
+
+			if (Boolean(this.state.keyword)) {
+				data.keyword = this.state.keyword;
+			}
+			
+			if (Boolean(this.state.asin)) {
+				data.asin = this.state.asin;
+			}
+			
+			const query = qs.stringify(data);
+			
+			axios.get(`/api/products${Boolean(query) ? `?${query}` : ''}`)
+				.then(response => {
+					resolve( response.data.result.products);
+				})
+				.catch(reject);
+		});
+	}
+
+	/**
+	 * 获取商品表格.
+	 *
+	 * @return {null|React}
+	 *   商品表格元素.
+	 */
+	getProductTable() {
+		if (!this.state.isProductModalShown) {
+			return null;
+		}
+
+		const productColumns = [
+			{
+				title: '描述',
+				key: 'product_title',
+				dataIndex: 'product_title',
+			},
+			{
+				title: 'ASIN',
+				key: 'asin',
+				dataIndex: 'asin',
+			},
+			{
+				title: '',
+				key: 'action',
+				render: (text, record) => <span>
+						<Button size="small" title="导入商品" onClick={ () => this.onImportProduct(record) }>导入</Button>
+				</span>
+			},
+		];
+
+		return <div>
+			<Row type="flex" style={ {marginBottom: 10} }>
+				<Col span={ 6 }>
+					<Input.Search placeholder="搜索商品名" value={ this.state.keyword } onChange={ e => this.setState({keyword: e.target.value}) } size="small" onSearch={ () => this.onLoadProducts() } />
+				</Col>
+				<Col span={ 6 } offset={ 1 }>
+					<Input.Search placeholder="搜索ASIN" value={ this.state.asin } onChange={ e => this.setState({asin: e.target.value}) } size="small" onSearch={ () => this.onLoadProducts() } />
+				</Col>
+			</Row>
+			<Table dataSource={ this.state.products || [] } columns={ productColumns } />
+		</div>
+	}
+
+	/**
+	 * 处理导入商品Asin至表单.
+	 *
+	 * @param {Object} product
+	 *   商品数据.
+	 */
+	onImportProduct(product) {
+		const form = this.getFormRef();
+
+		form.current.setFieldsValue({
+			asin: product.asin,
+		});
+
+		this.setState({isProductModalShown: false});
+	}
+
+	/**
+	 * 处理加载商品列表.
+	 *
+	 * @param {string} type
+	 *   商品类型.
+	 */
+	onLoadProducts() {
+		this.setState({isLoadingProducts: true}, () => {
+			this.loadProducts()
+				.then(products => {
+					this.setState({products, isLoadingProducts: false, isProductModalShown: true});
+				})
+				.catch(rejected => {
+					this.setState({isLoadingProducts: false}, () => {
+						console.log(rejected);
+						message.error('加载商品出错, 请稍候再试');
+					});
+				});
+		});
+	}
+
 	/** @inheritdoc */
 	getFormItems() {
 		const twoColumnLayout = this.getTwoColumnSpans();
 
 		return <React.Fragment>
+			<Form.Item wrapperCol={{ span: 12, offset: 5 }}>
+				<Button size="small" onClick={ () => this.onLoadProducts() } loading={ this.state.isLoadingProducts }>导入商品</Button>
+			</Form.Item>
 			<Form.Item name="asin" label="ASIN" rules={[{ required: true }]}>
 				<Input size="small" />
 			</Form.Item>
@@ -113,6 +238,13 @@ export default class extends FormBase {
 					</div>
 				}
 			</Form.List>
+			<Modal width={ 600 }
+						 onCancel={ () => this.setState({isProductModalShown: false}) }
+						 onOk={ () => this.setState({isProductModalShown: false}) }
+						 visible={ this.state.isProductModalShown }
+						 afterClose={ () => this.setState({products: [], keyword: '', asin: ''}) }>
+				{ this.getProductTable() }
+			</Modal>
 		</React.Fragment>
 	}
 }

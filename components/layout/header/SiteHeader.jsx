@@ -17,11 +17,11 @@ export default props => {
 					<Link href="/">
 						<a>文档管理</a>
 					</Link>
-					{/*<Link href="/cp/products">*/}
-					{/*	<a>商品管理</a>*/}
-					{/*</Link>*/}
 					<Link href="/cp/addresses">
 						<a>地址管理</a>
+					</Link>
+					<Link href="/cp/products">
+						<a>商品管理</a>
 					</Link>
 					<a title="注销账户" size="small" onClick={() => props.userOnchange(null) }>注销</a>
 				</div>
