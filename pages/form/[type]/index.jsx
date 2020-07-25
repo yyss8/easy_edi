@@ -59,7 +59,7 @@ class EdiFormView extends React.Component {
 	getCreatingForm() {
 		switch (this.state.type) {
 			case '753':
-				return <EdiForm753 type={this.state.type} file={this.state.file} />;
+				return <EdiForm753 type={this.state.type} file={this.state.file} parentRef={ this.formRef } />;
 
 			case '856':
 				return <EdiForm856 type={this.state.type} file={ this.state.file } parentRef={ this.formRef } />
@@ -179,6 +179,14 @@ class EdiFormView extends React.Component {
 					this.formRef.current.setFieldsValue({
 						carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
 						carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
+					});
+				} else if (this.state.type === '753') {
+					this.formRef.current.setFieldsValue({
+						to_street: file.address_street,
+						to_city: file.address_city,
+						to_state: file.address_state,
+						to_zipcode: file.address_zip,
+						to_country: file.address_country,
 					});
 				}
 			})
