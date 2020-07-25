@@ -64,7 +64,7 @@ export default class extends React.Component {
 			},
 			second: {
 				outer: {
-					span: 12,
+					span: 13,
 				},
 				inner: {
 					labelCol: { span: 12 },
@@ -77,7 +77,7 @@ export default class extends React.Component {
 	render() {
 		const layout = {
 			labelCol: { span: 5 },
-			wrapperCol: { span: 17 },
+			wrapperCol: { span: 18 },
 		};
 
 		const ref = this.getFormRef();

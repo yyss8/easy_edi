@@ -283,7 +283,7 @@ export default class extends FormBase {
 			</Row>
 			<Row>
 				<Col{...twoColumnLayout.first.outer}>
-					<Form.Item name="total_pallet" label="Total Number of Packages" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
+					<Form.Item name="total_pallet" label="Total Number of Pallets" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
 						<InputNumber size="small" />
 					</Form.Item>
 				</Col>
