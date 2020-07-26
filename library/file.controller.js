@@ -5,6 +5,7 @@ const moment = require('moment');
 const archiver = require('archiver');
 const ExcelParser = require('./ExcelParser');
 const ExcelGenerator = require('./ExcelGenerator');
+import db from './database.connection';
 
 require('moment-timezone');
 const MOMENT_FORMAT = 'YYYY-MM-DD HH:mm:ss';
@@ -38,18 +39,8 @@ const TYPE_MAPPING = {
  * @return {Object[]}
  *   指定类型目录下的文件数组.
  */
-function loadFiles(type, params = {}) {
-	let typeFullPath;
-
-	switch (params.fileType) {
-		case 'archive':
-			typeFullPath = getArchivePath(type);
-			break;
-
-		case 'edi':
-		default:
-			typeFullPath = getRealPath(type);
-	}
+async function loadFiles(type, params = {}) {
+	const typeFullPath = getFilePath(params.fileType, type);
 
 	if (!fs.existsSync(typeFullPath)) {
 		return [];
@@ -57,10 +48,28 @@ function loadFiles(type, params = {}) {
 
 	const files = fs.readdirSync(typeFullPath);
 	const getDetail = params.getDetail === true && typeof ExcelParser[`parse${type.replace('-', '_')}`] === 'function';
+	const context = {};
+
+	switch (type) {
+		case '850':
+		case 'label-excel':
+			context.products = {};
+			try {
+				const products = await db('ed_product').select('asin', 'product_title');
+
+				products.forEach(product => {
+					context.products[product.asin] = product.product_title;
+				});
+			} catch (e) {
+				console.log(e);
+			}
+			break;
+	}
+
 	let scannedFiles = [];
 
 	files.forEach(file => {
-		scannedFiles.push(getFileData(file, params.fileType, type, getDetail));
+		scannedFiles.push(getFileData(file, params.fileType, type, getDetail, context));
 	});
 
 	if (params.shouldSort !== false) {
@@ -68,7 +77,10 @@ function loadFiles(type, params = {}) {
 	}
 
 	if (params.shouldFilter !== false) {
-		scannedFiles = filterFiles(scannedFiles, params);
+		scannedFiles = filterFiles(scannedFiles, {
+			type,
+			...params,
+		});
 	}
 
 	return scannedFiles;
@@ -88,7 +100,7 @@ function loadFiles(type, params = {}) {
  *
  * @return {Object|null}
  */
-function getFileData(fileName, dirType, type, getDetail = false) {
+function getFileData(fileName, dirType, type, getDetail = false, context = {}) {
 	const filePath = getFilePath(dirType, type, fileName);
 
 	if (!fs.existsSync(filePath)) {
@@ -107,19 +119,57 @@ function getFileData(fileName, dirType, type, getDetail = false) {
 		fileData = ExcelParser[`parse${type.replace('-', '_')}`](filePath, fileData);
 	}
 
-	if (type === '754') {
-		// 部分数据需要从850调取.
-		const fileName850 = `${fileData.po_number}.xlsx`;
-		const path850 = getFilePath(dirType, '850', fileName850);
+	switch (type) {
+		case '754':
+			// 部分数据需要从850调取.
+			const fileName850 = `${fileData.po_number}.xlsx`;
+			const path850 = getFilePath(dirType, '850', fileName850);
 
-		if (fs.existsSync(path850)) {
-			const data850 = getFileData(fileName850, dirType, '850', true) || {};
+			if (fs.existsSync(path850)) {
+				const data850 = getFileData(fileName850, dirType, '850', true) || {};
 
-			fileData = {
-				...data850,
-				...fileData,
-			};
-		}
+				fileData = {
+					...data850,
+					...fileData,
+				};
+			}
+			break;
+
+		case '850':
+			// 获取所属商品描述.
+			const productMap = context.products || {};
+
+			if (Array.isArray(fileData.products)) {
+				fileData.products.forEach(product => {
+					if (Boolean(productMap[product.asin])) {
+						product.product_title = productMap[product.asin];
+
+						// 如果一个商品已存在于数据库, 将850标记为有描述.
+						fileData.has_product_title = true;
+					} else {
+						product.product_title = '';
+					}
+				});
+			}
+
+			if (!fileData.has_product_title) {
+				fileData.has_product_title = false;
+			}
+			break;
+
+		case 'label-excel':
+			// 获取所属商品描述.
+			const labelProductMap = context.products || {};
+
+			if (Boolean(fileData.asin) && Boolean(labelProductMap[fileData.asin])) {
+				fileData.product_title = labelProductMap[fileData.asin];
+			} else {
+				fileData.product_title = '';
+			}
+			break;
+
+		default:
+			// Nothing.
 	}
 
 	return fileData;
@@ -137,12 +187,12 @@ function getFileData(fileName, dirType, type, getDetail = false) {
  *
  * @return {Archiver}
  */
-function getZipWriteStream(dirType, fileType, fileNames) {
+async function getZipWriteStream(dirType, fileType, fileNames) {
 	const archive = archiver('zip', {
 		zlib: { level: 9 },
 	});
 
-	const files = loadFiles(dirType, {
+	const files = await loadFiles(dirType, {
 		fileType,
 	});
 
@@ -233,6 +283,23 @@ function filterFiles(files, params) {
 			if (!file.po_number.includes(params.poKeyword)) {
 				return;
 			}
+		}
+
+		// 不同类型独有的筛选.
+		switch (params.type) {
+			case '754':
+				if (Boolean(params.arn)) {
+					if (!file.arn.includes(params.arn)) {
+						return;
+					}
+				}
+
+				if (Boolean(params.carrier)) {
+					if (!file.carrier.includes(params.carrier)) {
+						return;
+					}
+				}
+				break;
 		}
 
 		filteredFiles.push(file);

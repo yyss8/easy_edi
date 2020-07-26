@@ -5,7 +5,7 @@ import styles from './AddressTableForm.module.scss';
 export default props => {
 	const addressColumns = [
 		{
-			title: '描述',
+			title: 'Description',
 			key: 'address_title',
 			render: (text, record) => {
 				return <Form.Item rules={[{ required: true }]} name={[record.name, 'address_title']}>

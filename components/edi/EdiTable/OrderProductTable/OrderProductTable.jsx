@@ -28,9 +28,14 @@ export default props => {
 			key: 'qualifier',
 		},
 		{
-			title: 'ID',
-			dataIndex: 'id',
-			key: 'id',
+			title: 'ASIN',
+			dataIndex: 'asin',
+			key: 'asin',
+		},
+		{
+			title: 'Description',
+			dataIndex: 'product_title',
+			key: 'product_title',
 		},
 	];
 

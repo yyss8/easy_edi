@@ -2,10 +2,11 @@ import { getFileData, getFilePath } from '../../../../../library/file.controller
 import db from '../../../../../library/database.connection';
 import fs from 'fs';
 
+/**
+ * 单个文件数据获取.
+ */
 export default async (req, res) => {
 	const filePath = getFilePath(req.query.dirType, req.query.type, req.query.fileName);
-
-
 
 	if (!fs.existsSync(filePath)) {
 		res
@@ -17,7 +18,29 @@ export default async (req, res) => {
 		return;
 	}
 
-	let data = getFileData(req.query.fileName, req.query.dirType, req.query.type,true);
+	const context = {};
+	// 获取不同文档的context.
+	switch (req.query.type) {
+		case '850':
+		case 'label-excel':
+			context.products = {};
+
+			try {
+				const products = await db('ed_product').select('asin', 'product_title');
+
+				products.forEach(product => {
+					context.products[product.asin] = product.product_title;
+				});
+			} catch (e) {
+				console.log(e);
+			}
+			break;
+
+		default:
+		// Nothing.
+	}
+
+	let data = getFileData(req.query.fileName, req.query.dirType, req.query.type,true, context);
 
 	switch (req.query.type) {
 		case '850':
@@ -37,6 +60,9 @@ export default async (req, res) => {
 				}
 			}
 			break;
+
+		default:
+			// Nothing.
 	}
 
 	res.status(200)

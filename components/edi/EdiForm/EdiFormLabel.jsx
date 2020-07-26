@@ -110,7 +110,7 @@ export default class extends FormBase {
 
 		const productColumns = [
 			{
-				title: '描述',
+				title: 'Description',
 				key: 'product_title',
 				dataIndex: 'product_title',
 			},

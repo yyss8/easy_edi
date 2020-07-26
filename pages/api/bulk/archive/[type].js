@@ -3,7 +3,7 @@ import { archiveFile, loadFiles } from '../../../../library/file.controller';
 export default (async (req, res) => {
 	switch (req.method.toLowerCase()) {
 		case 'post':
-			const files = loadFiles(req.query.type, {
+			const files = await loadFiles(req.query.type, {
 				shouldSort: false,
 				shouldFilter: false,
 			})

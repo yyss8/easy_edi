@@ -5,11 +5,11 @@ import styles from './ProductTableForm.module.scss';
 export default props => {
 	const productColumns = [
 		{
-			title: '描述',
+			title: 'Description',
 			key: 'product_title',
 			render: (text, record) => {
 				return <Form.Item rules={[{ required: true }]} name={[record.name, 'product_title']}>
-					<Input size="small" placeholder="描述" />
+					<Input size="small" placeholder="Description" />
 				</Form.Item>
 			}
 		},

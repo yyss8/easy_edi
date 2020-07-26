@@ -109,6 +109,8 @@ export default class extends Component {
       sorting: query.sort || 'created_DESC',
       keyword: query.keyword || '',
       poKeyword: query.poKeyword || '',
+      arn: query.arn || '',
+      carrier: query.carrier || '',
       poDate: moment.isMoment(poDate) && poDate.isValid() ? poDate : null,
       // 只有在下载界面或上传的归档界面时才加载文件列表.
       shouldInitFetch: defaultTypeObject.type === 'download' || (defaultTypeObject.type === 'upload' && query.fileType === 'archive'),
@@ -141,6 +143,14 @@ export default class extends Component {
 
     if (Boolean(this.state.poKeyword)) {
       queryObject.poKeyword = this.state.poKeyword;
+    }
+
+    if (Boolean(this.state.arn)) {
+      queryObject.arn = this.state.arn;
+    }
+
+    if (Boolean(this.state.carrier)) {
+      queryObject.carrier = this.state.carrier;
     }
 
     if (moment.isMoment(this.state.poDate)) {
@@ -235,6 +245,8 @@ export default class extends Component {
       keyword: '',
       poDate: null,
       poKeyword: '',
+      arn: '',
+      carrier: '',
     };
   }
 
@@ -339,6 +351,14 @@ export default class extends Component {
 
     if (Boolean(this.state.poKeyword)) {
       query.poKeyword = this.state.poKeyword;
+    }
+
+    if (Boolean(this.state.arn)) {
+      query.arn = this.state.arn;
+    }
+
+    if (Boolean(this.state.carrier)) {
+      query.carrier = this.state.carrier;
     }
 
     if (moment.isMoment(this.state.poDate)) {
@@ -512,6 +532,11 @@ export default class extends Component {
             key: 'ship_to',
             dataIndex: 'ship_to',
           },
+          {
+            title: 'ASIN状态',
+            key: 'asin_status',
+            render: (text, record) => <span>{Boolean(record.has_product_title) ? '有' : '无'}</span>
+          },
         ];
       case '754':
         return [
@@ -529,6 +554,25 @@ export default class extends Component {
             title: 'Carrier',
             key: 'carrier',
             dataIndex: 'carrier',
+          },
+        ];
+
+      case 'label-excel':
+        return [
+          {
+            title: 'ARN',
+            key: 'arn',
+            dataIndex: 'arn',
+          },
+          {
+            title: 'ASIN',
+            key: 'asin',
+            dataIndex: 'asin',
+          },
+          {
+            title: 'Description',
+            key: 'description',
+            dataIndex: 'product_title',
           },
         ];
     }
@@ -676,6 +720,8 @@ export default class extends Component {
       fileType: this.state.fileType,
       type: this.state.type,
       poKeyword: this.state.poKeyword,
+      arn: this.state.arn,
+      carrier: this.state.carrier,
       filterOnchange: this.filterOnchange.bind(this),
       onRefresh: this.onRefresh.bind(this),
       bulkDownload: this.bulkDownload.bind(this),

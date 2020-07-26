@@ -32,7 +32,16 @@ function getTypeFilters(props) {
 			</React.Fragment>
 
 		case '754':
-			return <PoKeywordFilter {...props} />;
+			return <React.Fragment>
+				<PoKeywordFilter {...props} />
+				<Col offset={ 1 } span={ 4 }>
+					<Input.Search placeholder="搜索ARN" title="输入ARN关键字" onSearch={props.onRefresh} value={ props.arn } onChange={e => props.filterOnchange(e.target.value, 'arn', false)} />
+				</Col>
+				{/*{ 暂时太长 }*/}
+				{/*<Col offset={ 1 } span={ 4 }>*/}
+				{/*	<Input.Search placeholder="搜索Carrier" title="输入Carrier关键字" onSearch={props.onRefresh} value={ props.carrier } onChange={e => props.filterOnchange(e.target.value, 'carrier', false)} />*/}
+				{/*</Col>*/}
+			</React.Fragment>
 
 		default:
 			return null;

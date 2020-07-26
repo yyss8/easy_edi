@@ -125,7 +125,7 @@ class ExcelParser {
 							unit: sheet[`C${i}`].v,
 							price: sheet[`D${i}`].v,
 							qualifier: sheet[`E${i}`].v,
-							id: sheet[`F${i}`].v,
+							asin: sheet[`F${i}`].v,
 						});
 					}
 
