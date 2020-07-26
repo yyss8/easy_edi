@@ -335,7 +335,7 @@ function uploadFile(tempPath, name, type) {
 	}
 
 	const archiveFilePath = `${archivePath}\\${name}`;
-	const copyingArchiveFilePath = getUniqueArchiveFilePath(archiveFilePath);
+	const copyingArchiveFilePath = getUniqueFilePath(archiveFilePath);
 	fs.copyFileSync(tempPath, copyingArchiveFilePath);
 
 	// 删除tmp文件.
@@ -343,48 +343,22 @@ function uploadFile(tempPath, name, type) {
 }
 
 /**
- * 介于归档文件可能会重名, 加入时间防止重名.
+ * 介于文件目录可能会重名, 加入时间防止重名.
  *
- * @param {string} archiveFilePath
- *   原归档文件路径.
+ * @param {string} filePath
+ *   原文件路径.
  *
  * @return {string}
- *   归档文件路径.
+ *   新文件路径.
  */
-function getUniqueArchiveFilePath(archiveFilePath) {
-	if (!fs.existsSync(archiveFilePath)) {
-		return archiveFilePath;
+function getUniqueFilePath(filePath) {
+	if (!fs.existsSync(filePath)) {
+		return filePath;
 	}
 
-	const parsedArchiveFile = path.parse(archiveFilePath);
+	const parsedFilePath = path.parse(filePath);
 
-	return `${parsedArchiveFile.dir}\\${parsedArchiveFile.name}-${moment().tz(MOMENT_TIMEZONE).format('YYYYMMDD-HHmmss')}${parsedArchiveFile.ext}`;
-}
-
-/**
- * 删除文件.
- *
- * @param {string} fileName
- *   文件名
- * @param {string} type
- *   文件所属类型.
- *
- * @return {boolean}
- *   是否删除成功.
- */
-function deleteFile(fileName, type) {
-	const realPath = getRealPath(type, fileName);
-
-	if (!fs.existsSync(realPath)) {
-		return false;
-	}
-
-	try {
-		fs.unlinkSync(realPath);
-		return true;
-	} catch (e) {
-		return false;
-	}
+	return `${parsedFilePath.dir}\\${parsedFilePath.name}-${moment().tz(MOMENT_TIMEZONE).format('YYYYMMDD-HHmmss')}${parsedFilePath.ext}`;
 }
 
 /**
@@ -430,6 +404,26 @@ function getArchivePath(type, fileName = '') {
 }
 
 /**
+ * 获取已删除文件路径.
+ *
+ * @param {string} type
+ *   文件类型.
+ * @param {string} fileName
+ *   文件名.
+ *
+ * @return {string}
+ */
+function getDeletedPath(type, fileName = '') {
+	const archiveDir = `${EDI_PATH}\\delete\\${type}`;
+
+	if (!fileName || fileName === '') {
+		return archiveDir;
+	}
+
+	return `${archiveDir}\\${fileName}`;
+}
+
+/**
  * 归档文件.
  *
  * @param {string} fileName
@@ -449,12 +443,41 @@ function archiveFile(fileName, type, deleteOrg = false) {
 
 	const realPath = getRealPath(type, fileName);
 
-	fs.copyFileSync(realPath, getUniqueArchiveFilePath(`${typeArchiveDirectory}\\${fileName}`));
+	fs.copyFileSync(realPath, getUniqueFilePath(`${typeArchiveDirectory}\\${fileName}`));
 
 	// 删除原文件.
 	if (deleteOrg) {
 		fs.unlinkSync(realPath);
 	}
+}
+
+/**
+ * 将文件移动至删除目录.
+ *
+ * @param {string} fileName
+ *   文件名
+ * @param {string} type
+ *   文件所属类型.
+ * @param {boolean} deleteOrg
+ *   是否删除源文件.
+ */
+function deleteFile(fileName, type) {
+	const typeDeleteDirectory = getDeletedPath(type);
+
+	// 如果目录不存在则创建.
+	if (!fs.existsSync(typeDeleteDirectory)) {
+		fs.mkdirSync(typeDeleteDirectory);
+	}
+
+	const archivePath = getArchivePath(type, fileName);
+
+	// 复制文件至删除目录.
+	fs.copyFileSync(archivePath, getUniqueFilePath(`${typeDeleteDirectory}\\${fileName}`));
+
+	// 删除原文件.
+	fs.unlinkSync(archivePath);
+
+	return true;
 }
 
 /**
@@ -474,6 +497,10 @@ function getFilePath(dirType, type, fileName = '') {
 	switch (dirType) {
 		case 'archive':
 			return getArchivePath(type, fileName);
+
+		case 'delete':
+			return getDeletedPath(type, fileName);
+
 		case 'edi':
 		default:
 			return getRealPath(type, fileName);

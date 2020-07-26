@@ -396,6 +396,33 @@ export default class extends Component {
   }
 
   /**
+   * 删除文件。
+   *
+   * @param {string} name
+   *   文件名
+   */
+  deleteFile(name) {
+    Modal.confirm({
+      title: '确认删除该文件?',
+      onOk: () => {
+        return new Promise(finished => {
+          axios.delete(`/api/delete/${this.state.type}/${name}`)
+            .then(response => {
+              message.success('文件删除成功');
+              this.onRefresh();
+              finished();
+            })
+            .catch(rejected => {
+              message.error('文件删除请求出错');
+              console.log(rejected);
+              finished();
+            });
+        });
+      }
+    });
+  }
+
+  /**
    * 处理表格已/未选.
    *
    * @param {Array} selectedRowKeys
@@ -609,7 +636,46 @@ export default class extends Component {
             })
             .catch(rejected => {
               console.log(rejected);
-              message.error('批量下载请求出错, 请稍候再试...');
+              message.error('批量归档请求出错, 请稍候再试...');
+              finished();
+            });
+        });
+      }
+    });
+  }
+
+  /**
+   * 处理批量删除文件.
+   */
+  bulkDelete() {
+    const selectedLength = this.state.selectedRowKeys.length;
+    if (selectedLength === 0) {
+      message.error('尚未选择任何文件.');
+      return;
+    }
+
+    Modal.confirm({
+      title: '确认删除所选文件?',
+      onOk:() => {
+        return new Promise(finished => {
+          axios.delete(`/api/bulk/delete/${this.state.type}`, {
+            data: {
+              fileNames: this.state.files.filter(file => file.isSelected).map(file => file.name),
+            }
+          })
+            .then(response => {
+              message.success(`成功删除${response.data.result.deleted}个文件.`);
+              this.setState({
+                files: this.state.files.map(file => updater(file, {
+                  $unset: ['isSelected'],
+                })),
+                selectedRowKeys: [],
+              }, this.fetchFiles);
+              finished();
+            })
+            .catch(rejected => {
+              console.log(rejected);
+              message.error('批量删除请求出错, 请稍候再试...');
               finished();
             });
         });
@@ -643,6 +709,7 @@ export default class extends Component {
           return <span>
             <Button size="small" title="点击下载" onClick={ () => this.downloadFile(record.name) }>下载文件</Button>
             { this.state.fileType === 'edi' && <Button style={ {marginLeft: 8} } size="small" onClick={ () => this.archiveFile(record.name) }>归档</Button> }
+            { this.state.fileType === 'archive' && <Button style={ {marginLeft: 8} } type="danger" size="small" onClick={ () => this.deleteFile(record.name) }>删除</Button> }
             { this.state.fileType === 'edi' && this.state.type === '850' &&  <Link href={ `/form/753?fileName=${encodeURI(record.name)}` }>
               <a title="生成753文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成753</a>
             </Link> }
@@ -737,7 +804,7 @@ export default class extends Component {
           SUPPORTED_INPUT_LIST.map((code, index) => {
             return <TabPane key={ code.code } tab={ <span>{this.getLabel(code)} <ArrowUpOutlined className={ code.type } /></span> }>
               {
-                code.type === 'download' && <EdiDownloadTab poDate={this.state.poDate} subTableRendered={this.getSubTableRenderer()} bulkArchive={this.bulkArchive.bind(this)} {...commonProps} />
+                code.type === 'download' && <EdiDownloadTab poDate={this.state.poDate} subTableRendered={this.getSubTableRenderer()} bulkArchive={this.bulkArchive.bind(this)} bulkDelete={this.bulkDelete.bind(this)}  {...commonProps} />
               }
               { code.type === 'upload' && <EdiUploadTab {...commonProps} /> }
             </TabPane>;
