@@ -12,7 +12,7 @@ export default ({file}) => {
 		<Descriptions.Item span={ 2 } label="PO #"><b>{file.po_number}</b></Descriptions.Item>
 		<Descriptions.Item span={ 2 } label="ARN"><b>{file.arn}</b></Descriptions.Item>
 		{ Boolean(file.asin) && <Descriptions.Item span={ 2 } label="ASIN"><b>{file.asin}</b></Descriptions.Item> }
-		{ Boolean(file.product_title) && <Descriptions.Item span={ 2 } label="ASIN"><b>{file.product_title}</b></Descriptions.Item> }
+		{ Boolean(file.product_title) && <Descriptions.Item span={ 2 } label="Description"><b>{file.product_title}</b></Descriptions.Item> }
 		<Descriptions.Item span={3} label="Ship From"><b>{shipFrom}</b></Descriptions.Item>
 		<Descriptions.Item span={3} label="Ship To"><b>{shipTo}</b></Descriptions.Item>
 	</Descriptions>
