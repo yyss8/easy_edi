@@ -5,6 +5,9 @@ import {Form, Button, Row, message} from 'antd';
 import axios from 'axios';
 import ProductTableForm from "../../components/product/ProductTableForm";
 
+/**
+ * 商品管理表单页面.
+ */
 export default class extends React.Component {
 	/** @inheritdoc */
 	constructor(props) {
@@ -23,6 +26,12 @@ export default class extends React.Component {
 		this.fetchProducts();
 	}
 
+	/**
+	 * 处理商品列表表单保存.
+	 *
+	 * @param {Object} form
+	 *   表单数据.
+	 */
 	handleProductSave(form) {
 		this.setState({isSubmitting: true}, () => {
 			axios.post('/api/products', {
@@ -43,6 +52,9 @@ export default class extends React.Component {
 		});
 	}
 
+	/**
+	 * 获取并更新表单中的商品列表.
+	 */
 	fetchProducts() {
 		axios.get('/api/products')
 			.then(response => {
@@ -58,10 +70,14 @@ export default class extends React.Component {
 			});
 	}
 
+	/**
+	 * 处理地址列表更新
+	 */
 	onRefresh() {
 		this.setState({isLoading: true}, this.fetchProducts);
 	}
 
+	/** @inheritdoc */
 	render() {
 		return <SiteLayout>
 			<Head>

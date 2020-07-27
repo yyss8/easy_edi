@@ -2,6 +2,9 @@ import {Button, Form, Input, Table} from "antd";
 import {MinusCircleOutlined} from "@ant-design/icons";
 import styles from './AddressTableForm.module.scss';
 
+/**
+ * 地址列表表单组件.
+ */
 export default props => {
 	const addressColumns = [
 		{

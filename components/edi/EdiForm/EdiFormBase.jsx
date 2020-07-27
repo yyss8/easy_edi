@@ -46,10 +46,20 @@ export default class extends React.Component {
 		return null;
 	}
 
+	/**
+	 * 获取表单默认数据.
+	 *
+	 * @return {{}}
+	 */
 	getFormDefaultValues() {
 		return {};
 	}
 
+	/**
+	 * 获取两列相关元素的span以及offset.
+	 *
+	 * @return {{first: {outer: {offset: number, span: number}, inner: {wrapperCol: {span: number}, labelCol: {span: number}}}, second: {outer: {span: number}, inner: {wrapperCol: {span: number}, labelCol: {span: number}}}}}
+	 */
 	getTwoColumnSpans() {
 		return {
 			first: {
@@ -74,6 +84,7 @@ export default class extends React.Component {
 		};
 	}
 
+	/** @inheritdoc */
 	render() {
 		const layout = {
 			labelCol: { span: 5 },

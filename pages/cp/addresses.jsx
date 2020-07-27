@@ -1,11 +1,15 @@
 import React from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
-import SiteLayout from "../../components/layout/SiteLayout";
 import {Form, Button, Select, Row, message} from 'antd';
-import AddressTableForm from "../../components/address/AddressTableForm";
 import axios from 'axios';
 
+import SiteLayout from "../../components/layout/SiteLayout";
+import AddressTableForm from "../../components/address/AddressTableForm";
+
+/**
+ * 地址管理表单页面.
+ */
 export default class extends React.Component {
 	/** @inheritdoc */
 	static async getInitialProps({query}) {
@@ -27,6 +31,17 @@ export default class extends React.Component {
 		};
 	}
 
+	/** @inheritdoc */
+	componentDidMount() {
+		this.fetchAddresses();
+	}
+
+	/***
+	 * 处理地址保存.
+	 *
+	 * @param {string} form
+	 *   表单数据.
+	 */
 	handleAddressSave(form) {
 		this.setState({isSubmitting: true}, () => {
 			const addresses = form.address.map(address => {
@@ -55,11 +70,14 @@ export default class extends React.Component {
 		});
 	}
 
-	/** @inheritdoc */
-	componentDidMount() {
-		this.fetchAddresses();
-	}
-
+	/**
+	 * 处理帅选条件更新。
+	 *
+	 * @param {Any} value
+	 *   筛选值
+	 * @param {string} field
+	 *   筛选字段名
+	 */
 	filterOnChange(value, field) {
 		this.setState({[field]: value, isLoading: true}, () => {
 			this.fetchAddresses();
@@ -70,6 +88,9 @@ export default class extends React.Component {
 		});
 	}
 
+	/**
+	 *获取地址列表.
+	 */
 	fetchAddresses() {
 		axios.get(`/api/addresses?type=${this.state.type}`)
 			.then(response => {
@@ -85,6 +106,11 @@ export default class extends React.Component {
 			});
 	}
 
+	/**
+	 * 获取当前筛选条件Object.
+	 *
+	 * @return {Object}
+	 */
 	buildQuery() {
 		const query = {};
 
@@ -95,6 +121,9 @@ export default class extends React.Component {
 		return query;
 	}
 
+	/**
+	 * 处理地址列表更新
+	 */
 	onRefresh() {
 		this.setState({isLoading: true}, this.fetchAddresses);
 	}

@@ -13,6 +13,7 @@ import qs from "qs";
  */
 export default class extends FormBase {
 
+	/** @inheritdoc */
 	constructor(props) {
 		super(props);
 
@@ -75,6 +76,11 @@ export default class extends FormBase {
 		};
 	}
 
+	/**
+	 * 加载商品列表.
+	 *
+	 * @return {Promise<unknown>}
+	 */
 	loadProducts() {
 		return new Promise((resolve, reject) => {
 			const data = {};

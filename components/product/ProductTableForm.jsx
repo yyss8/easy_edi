@@ -2,6 +2,9 @@ import {Button, Form, Input, Table} from "antd";
 import {MinusCircleOutlined} from "@ant-design/icons";
 import styles from './ProductTableForm.module.scss';
 
+/**
+ * 商品列表table表单组件.
+ */
 export default props => {
 	const productColumns = [
 		{

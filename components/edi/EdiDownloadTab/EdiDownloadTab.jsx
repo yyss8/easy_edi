@@ -1,8 +1,12 @@
+import React from "react";
 import {Button, Col, Radio, Row, Table} from "antd";
 import {SyncOutlined} from "@ant-design/icons";
-import React from "react";
+
 import EdiTableFilters from "../EdiTableFilters/EdiTableFilters";
 
+/**
+ * EDI下载列表tab组件.
+ */
 export default props => {
 	return <React.Fragment>
 		<Row style={{marginBottom: 10}}>

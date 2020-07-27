@@ -1,6 +1,9 @@
 import db from '../../library/database.connection';
 import { batchInsertDuplicate } from '../../library/mysql.controller';
 
+/**
+ * 商品列表api
+ */
 export default async (req, res) => {
 	switch (req.method.toLowerCase()) {
 		case 'get':

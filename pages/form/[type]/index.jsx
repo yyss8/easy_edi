@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'next/router';
 import Head from 'next/head';
-import { Descriptions, message, Row, Col, Button, Table, Modal } from 'antd';
+import { Descriptions, message, Row, Col, Button, Table, Modal, Spin } from 'antd';
 import Link from "next/link";
 import moment from "moment";
 import axios from 'axios';
@@ -14,6 +14,9 @@ import EdiDetails754 from "../../../components/edi/EdiDetails/EdiDetails754";
 import EdiForm856 from "../../../components/edi/EdiForm/EdiForm856";
 import EdiDetailsLabel from "../../../components/edi/EdiDetails/EdiDetailsLabel";
 
+/**
+ * EDI表单通用页面.
+ */
 class EdiFormView extends React.Component {
 	formRef = React.createRef();
 
@@ -285,6 +288,7 @@ class EdiFormView extends React.Component {
 		}
 	}
 
+	/** @inheritdoc */
 	render() {
 		const { type } = this.state;
 		const label = `Excel文档生成 (${type})`;
@@ -306,7 +310,9 @@ class EdiFormView extends React.Component {
 			<h2>Excel文档生成 ({type})</h2>
 			<Row type="flex">
 				<Col span={14}>
-					{ this.getCreatingForm() }
+					<Spin spinning={ this.state.isLoading }>
+						{ this.getCreatingForm() }
+					</Spin>
 				</Col>
 				{this.state.file !== null && <Col span={ 10 }>
 					{ this.getFileDescription() }
