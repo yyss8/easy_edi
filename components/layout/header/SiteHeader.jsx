@@ -18,7 +18,7 @@ export default props => {
 						<a>文档管理</a>
 					</Link>
 					<Link href="/cp/addresses">
-						<a>地址管理</a>
+						<a>列表管理</a>
 					</Link>
 					<Link href="/cp/products">
 						<a>商品管理</a>
