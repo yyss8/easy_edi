@@ -7,6 +7,10 @@ import moment from 'moment';
 import qs from 'qs';
 import axios from "axios";
 
+import WeightSelect from "../EdiFormComponents/WeightSelect";
+import VolumeSelect from "../EdiFormComponents/VolumeSelect";
+import TypeSelect from "../EdiFormComponents/TypeSelect";
+
 /**
  * 753文档表单.
  */
@@ -57,8 +61,9 @@ export default class extends FormBase {
 	/** @inheritdoc */
 	getFormDefaultValues() {
 		return {
-			weight_unit: 'K',
-			volume_unit: 'CI',
+			weight_unit: 'KG',
+			volume_unit: 'N',
+			type: 'CTN',
 		};
 	}
 
@@ -71,6 +76,7 @@ export default class extends FormBase {
 			if (Boolean(this.state.keyword)) {
 				data.keyword = this.state.keyword;
 			}
+
 			axios.get(`/api/addresses?${qs.stringify(data)}`)
 				.then(response => {
 					resolve( response.data.result.addresses);
@@ -295,8 +301,15 @@ export default class extends FormBase {
 			</Row>
 			<Row>
 				<Col{...twoColumnLayout.first.outer}>
+					<Form.Item name="type" label="Type" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
+						<TypeSelect />
+					</Form.Item>
+				</Col>
+			</Row>
+			<Row>
+				<Col{...twoColumnLayout.first.outer}>
 					<Form.Item name="weight_unit" label="Weight Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
-						<Input size="small" />
+						<WeightSelect type="753" />
 					</Form.Item>
 				</Col>
 				<Col{...twoColumnLayout.second.outer}>
@@ -309,7 +322,7 @@ export default class extends FormBase {
 			<Row>
 				<Col{...twoColumnLayout.first.outer}>
 					<Form.Item name="volume_unit" label="Volume Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
-						<Input size="small" />
+						<VolumeSelect />
 					</Form.Item>
 				</Col>
 				<Col{...twoColumnLayout.second.outer}>

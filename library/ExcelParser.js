@@ -22,6 +22,7 @@ class ExcelParser {
 		const fetchingDataMap = {
 			'po_number': 'B9',
 			'freight_ready_date': 'B3',
+			'type': 'A12',
 			'total_carton': 'B12',
 			'weight_unit': 'C12',
 			'weight': 'D12',
@@ -69,6 +70,7 @@ class ExcelParser {
 			'pro': 'B7',
 			'asin': 'B8',
 			'total_pallet': 'B9',
+			'type': 'A13',
 			'total_carton': 'B13',
 			'weight_unit': 'C13',
 			'weight': 'D13',
@@ -168,6 +170,7 @@ class ExcelParser {
 			'pro': 'B7',
 			'asin': 'B8',
 			'total_pallet': 'B9',
+			'type': 'A13',
 			'total_carton': 'B13',
 			'weight_unit': 'C13',
 			'weight': 'D13',

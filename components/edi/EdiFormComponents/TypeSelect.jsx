@@ -1,0 +1,9 @@
+import React from 'react';
+import { Select } from 'antd';
+
+export default props => {
+	return <Select {...props} size="small">
+		<Select.Option value="CTN">Carton</Select.Option>
+		<Select.Option value="PKG">Package</Select.Option>
+	</Select>
+}

@@ -14,6 +14,19 @@ import EdiDetails754 from "../../../components/edi/EdiDetails/EdiDetails754";
 import EdiForm856 from "../../../components/edi/EdiForm/EdiForm856";
 import EdiDetailsLabel from "../../../components/edi/EdiDetails/EdiDetailsLabel";
 
+const VOLUME_MAP = {
+	CF: 'E',
+	CI: 'N',
+	CR: 'X',
+};
+
+const WEIGHT_MAP = {
+	GR: 'G',
+	KG: 'K',
+	LB: 'L',
+	OZ: 'O',
+};
+
 /**
  * EDI表单通用页面.
  */
@@ -180,9 +193,10 @@ class EdiFormView extends React.Component {
 						total_carton: file.total_carton,
 						total_pallet: file.total_pallet,
 						weight: file.weight,
-						weight_unit: Boolean(file.weight_unit) ? file.weight_unit.trim() : '',
+						weight_unit: Boolean(file.weight_unit) ? WEIGHT_MAP[file.weight_unit.trim()] : '',
 						volume: file.volume,
-						volume_unit: Boolean(file.volume_unit) ? file.volume_unit.trim() : '',
+						volume_unit: Boolean(file.volume_unit) ? VOLUME_MAP[file.volume_unit.trim()] : '',
+						type: Boolean(file.type) ? file.type.trim() : '',
 					});
 				} else if (this.state.type === 'label-excel') {
 					this.formRef.current.setFieldsValue({

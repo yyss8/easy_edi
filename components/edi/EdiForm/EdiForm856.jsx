@@ -5,6 +5,10 @@ import axois from 'axios';
 import fileDownload from "js-file-download";
 import moment from 'moment';
 
+import VolumeSelect from "../EdiFormComponents/VolumeSelect";
+import WeightSelect from "../EdiFormComponents/WeightSelect";
+import TypeSelect from "../EdiFormComponents/TypeSelect";
+
 /**
  * 856文档表单.
  */
@@ -40,6 +44,7 @@ export default class extends FormBase {
 		return {
 			weight_unit: 'K',
 			volume_unit: 'CI',
+			type: 'CTN',
 		};
 	}
 
@@ -96,12 +101,12 @@ export default class extends FormBase {
 			</Row>
 			<Row>
 				<Col{...twoColumnLayout.first.outer}>
-					<Form.Item name="total_pallet" label="Total Number of Pallets" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
-						<InputNumber size="small" />
+					<Form.Item name="type" label="Type" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
+						<TypeSelect />
 					</Form.Item>
 				</Col>
 				<Col{...twoColumnLayout.second.outer}>
-					<Form.Item name="total_carton" label="Total Number of Cartons" rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
+					<Form.Item name="total_carton" label='Total Number of Ctn (Pkg)' rules={[{ required: true }]}{...twoColumnLayout.second.inner}>
 						<InputNumber size="small" />
 					</Form.Item>
 				</Col>
@@ -109,7 +114,7 @@ export default class extends FormBase {
 			<Row>
 				<Col{...twoColumnLayout.first.outer}>
 					<Form.Item name="weight_unit" label="Weight Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
-						<Input size="small" />
+						<WeightSelect />
 					</Form.Item>
 				</Col>
 				<Col{...twoColumnLayout.second.outer}>
@@ -122,7 +127,7 @@ export default class extends FormBase {
 			<Row>
 				<Col{...twoColumnLayout.first.outer}>
 					<Form.Item name="volume_unit" label="Volume Unit" rules={[{ required: true }]}{...twoColumnLayout.first.inner}>
-						<Input size="small" />
+						<VolumeSelect type="856" />
 					</Form.Item>
 				</Col>
 				<Col{...twoColumnLayout.second.outer}>

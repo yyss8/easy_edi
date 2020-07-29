@@ -77,7 +77,7 @@ class ExcelGenerator {
 			['PO#', data.po_number],
 			['SHIPMENT REFERENCE', data.po_number],
 			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WIGHT UNIT',	'WEIGHT', 'VOLUME UNIT', 'VOLUME'],
-			['CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume],
+			[data.type || 'CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume],
 		]);
 	}
 
@@ -111,7 +111,7 @@ class ExcelGenerator {
 			palletNumRow,
 			packageInPalletRow,
 			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WEIGHT UNIT',	'WEIGHT(KG)', 'VOLUME UNIT', 'VOLUME(SF)', 'UPC', 'UNIT'],
-			['CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume],
+			[data.type || 'CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume],
 		]);
 	}
 
@@ -138,12 +138,12 @@ class ExcelGenerator {
 			['ASIN', data.asin],
 			['TRACKING NO', data.pro],
 			['SSCC', ''],
-			['NUMBER OF STACKED PALLETS', data.stacked_pallets || 0, 'NUMBER OF UNSTACKED PALLETS', data.total_pallet],
+			['NUMBER OF STACKED PALLETS', data.stacked_pallets || 0, 'NUMBER OF UNSTACKED PALLETS', data.unstacked_pallets],
 			['PO#', data.po_number],
 			['SHIPMENT REFERENCE', data.po_number],
 			['TO BE SHIPPED (EA)', data.to_be_shipped],
 			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WEIGHT UNIT',	'WEIGHT(KG)', 'VOLUME UNIT', 'VOLUME(SF)', 'UPC', 'UNIT'],
-			['CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume, data.asin, data.type_unit],
+			[data.type || 'CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume, data.asin, data.type_unit],
 		]);
 	}
 
