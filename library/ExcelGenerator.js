@@ -14,10 +14,14 @@ class ExcelGenerator {
 	 *
 	 * @param {Object} data
 	 *   753文档数据.
+	 * @param {boolean} submit
+	 *   是否直接提交至目录.
+	 * @param {string} titleOverride
+	 *   覆盖标题.
 	 *
-	 * @return {ReadStream}
+	 * @return {ReadStream|null}
 	 */
-	static async generate753(data) {
+	static async generate753(data, submit = false, titleOverride = false) {
 		const fromAddress = [data.from_city, data.from_state, data.from_country].filter(Boolean).join(',');
 		const toAddress = [data.to_city, data.to_state, data.to_country].filter(Boolean).join(',');
 
@@ -78,7 +82,7 @@ class ExcelGenerator {
 			['SHIPMENT REFERENCE', data.po_number],
 			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WIGHT UNIT',	'WEIGHT', 'VOLUME UNIT', 'VOLUME'],
 			[data.type || 'CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume],
-		]);
+		], '753', submit, titleOverride);
 	}
 
 	/**
@@ -86,10 +90,14 @@ class ExcelGenerator {
 	 *
 	 * @param {Object} data
 	 *   标签数据.
+	 * @param {boolean} submit
+	 *   是否直接提交至目录.
+	 * @param {string} titleOverride
+	 *   覆盖标题.
 	 *
-	 * @return {ReadStream}
+	 * @return {ReadStream|null}
 	 */
-	static generateLabelExcel(data) {
+	static generateLabelExcel(data, submit = false, titleOverride = false) {
 		const palletNumRow = ['PALLET NUMBER'];
 		const packageInPalletRow = ['PACKAGES IN PALLET'];
 
@@ -112,7 +120,7 @@ class ExcelGenerator {
 			packageInPalletRow,
 			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WEIGHT UNIT',	'WEIGHT(KG)', 'VOLUME UNIT', 'VOLUME(SF)', 'UPC', 'UNIT'],
 			[data.type || 'CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume],
-		]);
+		], 'label-excel', submit, titleOverride);
 	}
 
 	/**
@@ -120,10 +128,14 @@ class ExcelGenerator {
 	 *
 	 * @param {Object} data
 	 *   856数据.
+	 * @param {boolean} submit
+	 *   是否直接提交至目录.
+	 * @param {string} titleOverride
+	 *   覆盖标题.
 	 *
-	 * @return {ReadStream}
+	 * @return {ReadStream|null}
 	 */
-	static generate856(data) {
+	static generate856(data, submit = false, titleOverride = false) {
 		return this.generate(`856-${moment().format('MMDD')}-PO-${data.po_number}`, [
 			['SENDER', 'JOINTOWN'],
 			['RECEIVER', 'AMAZON'],
@@ -144,7 +156,7 @@ class ExcelGenerator {
 			['TO BE SHIPPED (EA)', data.to_be_shipped],
 			['TYPE', 'TOTAL NUMBER OF CARTONS', 'WEIGHT UNIT',	'WEIGHT(KG)', 'VOLUME UNIT', 'VOLUME(SF)', 'UPC', 'UNIT'],
 			[data.type || 'CTN', data.total_carton, data.weight_unit, data.weight, data.volume_unit, data.volume, data.asin, data.type_unit],
-		]);
+		], '856', submit, titleOverride);
 	}
 
 	/**
@@ -154,10 +166,16 @@ class ExcelGenerator {
 	 *   excel文件名.
 	 * @param {Object} data
 	 *   excel文档数据.
+	 * @param {string} type
+	 *   Excel文档类型.
+	 * @param {boolean} submit
+	 *   是否直接提交至目录.
+	 * @param {string} titleOverride
+	 *   覆盖标题.
 	 *
-	 * @return {ReadStream}
+	 * @return {ReadStream|null}
 	 */
-	static generate(title, data) {
+	static generate(title, data,  type, submit = false, titleOverride = false) {
 		const wb = xlsx.utils.book_new();
 		wb.Props = {
 			Title: title,
@@ -178,6 +196,20 @@ class ExcelGenerator {
 
 		wb.SheetNames.push('Sheet1');
 		wb.Sheets['Sheet1'] = worksheet;
+
+		if (submit) {
+			// 直接提交至excel目录.
+			const fileName = `${titleOverride || title}.xlsx`;
+
+			const { getFilePath } = require('./file.controller');
+			const destPath = getFilePath('edi', type, fileName);
+			xlsx.writeFile(wb, destPath, {
+				bookType: 'xlsx',
+				type: 'binary',
+			});
+
+			return null;
+		}
 
 		// 先生成临时文件, 然后通过路径获取ReadStream方便直接返回下载response.
 		const tmpFilePath = path.resolve(`./tmp/${moment().format('YYYYMMDD-HHmmss')}-${Math.random()}.xlsx`);

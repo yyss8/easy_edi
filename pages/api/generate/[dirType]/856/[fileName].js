@@ -6,20 +6,39 @@ import { generateExcel, getFileData } from '../../../../../library/file.controll
 export default async (req, res) => {
 	switch (req.method.toLowerCase()) {
 		case 'post':
-			const data = getFileData(req.query.fileName, 'archive', 'label-excel', true);
+			const orgData = getFileData(req.query.fileName, 'archive', 'label-excel', true);
+			const isSubmit = Number(req.query.submit) === 1;
 
-			const generatedExcel = await generateExcel({
-				...data,
-				...req.body,
-			}, '856');
+			try {
+				const { titleOverride, ...restData } = req.body;
+				const generatedExcel = await generateExcel({
+					...orgData,
+					...restData,
+				}, '856', isSubmit, titleOverride);
 
-			res.writeHead(200, {
-				'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-				// 文件名需要URL encode处理否则会报错.
-				"Content-Disposition": "attachment; filename=856.xlsx" ,
-			});
+				if (isSubmit) {
+					res.status(200).json({
+						status: 'ok',
+						result: {
+							submitted: 1,
+						},
+					});
+					return;
+				}
 
-			generatedExcel.pipe(res);
+				res.writeHead(200, {
+					'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+					// 文件名需要URL encode处理否则会报错.
+					"Content-Disposition": "attachment; filename=753-excel.xlsx" ,
+				});
+
+				generatedExcel.pipe(res);
+			} catch (e) {
+				res.status(500).json({
+					status: 'err',
+					errorMessage: e,
+				});
+			}
 			break;
 
 		default:

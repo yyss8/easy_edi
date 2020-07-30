@@ -52,7 +52,7 @@ export default class extends FormBase {
 				responseType: 'arraybuffer',
 			})
 				.then(response => {
-					fileDownload(response.data, `754-label-${moment().format('MMDD')}-PO-${file.po_number}-${file.pallet_num}-${file.pallet_num_to}.xlsx`);
+					fileDownload(response.data, `${this.getFileName(this.props.file)}.xlsx`);
 					message.success('成功生成标签文件.');
 					this.setState({isGenerating: false});
 				})
@@ -182,6 +182,56 @@ export default class extends FormBase {
 					});
 				});
 		});
+	}
+
+	/** @inheritdoc */
+	onShowSubmitModal() {
+		this.getFormRef().current.validateFields().then(data => {
+			if (!data.pallets || data.pallets.length === 0) {
+				message.error('至少添加一个Pallet');
+				return;
+			} else if (data.pallets.length > 10) {
+				message.error('当前EDI系统只支持最多10个Pallets');
+				return;
+			}
+
+			this.setState({
+				showSubmitConfirm: true,
+				submittingTitle: this.getFileName(this.props.file),
+			});
+		});
+	}
+
+	/** @inheritdoc */
+	onDirectSubmit() {
+		this.getFormRef().current.validateFields().then(data => {
+			this.setState({isGenerating: true}, () => {
+				const { file } = this.props;
+
+				axois.post(`/api/generate/edi/label-excel/${file.name}?submit=1`, {
+					titleOverride: this.state.submittingTitle,
+					...data,
+				})
+					.then(response => {
+						if (response.data.status === 'ok') {
+							message.success('成功提交标签文档.');
+							this.setState({isGenerating: false, showSubmitConfirm: false});
+						} else {
+							message.error(`提交标签文档出错: ${response.data.errorMessage}`);
+							this.setState({isGenerating: false});
+						}
+					})
+					.catch(rejected => {
+						console.log(rejected);
+						message.error('提交请求出错, 请稍候再试...');
+					});
+			});
+		});
+	}
+
+	/** @inheritdoc */
+	getFileName(file) {
+		return `label-excel-${moment().format('MMDD')}-PO-${file.po_number}`;
 	}
 
 	/** @inheritdoc */

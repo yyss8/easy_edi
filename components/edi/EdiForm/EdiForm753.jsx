@@ -47,7 +47,7 @@ export default class extends FormBase {
 				responseType: 'arraybuffer',
 			})
 				.then(response => {
-					fileDownload(response.data, `753-${moment().format('MMDD')}-PO-${this.props.file.po_number}.xlsx`);
+					fileDownload(response.data, `${this.getFileName(this.props.file)}.xlsx`);
 					message.success('成功生成753文件.');
 					this.setState({isGenerating: false});
 				})
@@ -211,6 +211,36 @@ export default class extends FormBase {
 					});
 				});
 		});
+	}
+
+	onDirectSubmit() {
+		this.getFormRef().current.validateFields().then(data => {
+			this.setState({isGenerating: true}, () => {
+				data.freight_ready_date = data.freight_ready_date.format('YYYYMMDD');
+
+				axois.post(`/api/generate/edi/753/${this.props.file.name}?submit=1`, {
+					titleOverride: this.state.submittingTitle,
+					...data,
+				})
+					.then(response => {
+						if (response.data.status === 'ok') {
+							message.success('成功提交753文件.');
+							this.setState({isGenerating: false, showSubmitConfirm: false});
+						} else {
+							message.success(`提交753文件出错: ${response.data.errorMessage}`);
+							this.setState({isGenerating: false});
+						}
+					})
+					.catch(rejected => {
+						console.log(rejected);
+						message.error('提交请求出错, 请稍候再试...');
+					});
+			});
+		});
+	}
+
+	getFileName(file) {
+		return `753-${moment().format('MMDD')}-PO-${file.po_number}`;
 	}
 
 	/** @inheritdoc */

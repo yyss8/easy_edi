@@ -1,4 +1,4 @@
-# Easy EDI v1.10.2
+# Easy EDI v2.0.0
 
 ### 所需环境:
 - 系统: `Windows`.

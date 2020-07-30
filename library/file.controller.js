@@ -514,21 +514,25 @@ function getFilePath(dirType, type, fileName = '') {
  *   相关数据.
  * @param {string} excelType
  *   文档类型.
+ * @param {boolean} submit
+ *   是否为直接提交.
+ * @param {string} titleOverride
+ *   覆盖标题.
  *
- * @return {ReadStream|boolean}
+ * @return {ReadStream|boolean|null}
  */
-async function generateExcel(fileData, excelType) {
+async function generateExcel(fileData, excelType, submit, titleOverride = '') {
 	if (excelType === 'label-excel') {
-		return ExcelGenerator.generateLabelExcel(fileData);
+		return ExcelGenerator.generateLabelExcel(fileData, submit, titleOverride);
 	} else if (excelType === '753') {
-		return await ExcelGenerator[`generate${excelType}`](fileData);
+		return await ExcelGenerator[`generate${excelType}`](fileData, submit, titleOverride);
 	}
 
 	if (typeof ExcelGenerator[`generate${excelType}`] !== 'function') {
 		return false;
 	}
 
-	return ExcelGenerator[`generate${excelType}`](fileData);
+	return ExcelGenerator[`generate${excelType}`](fileData, submit, titleOverride);
 }
 
 module.exports = {
