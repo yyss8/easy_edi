@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import { Row, Input, Space, Button, message } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
+/**
+ * 登录组件.
+ */
 export default class extends Component {
 
+	/** @inheritdoc */
 	constructor(props) {
 		super(props);
 
@@ -13,12 +17,20 @@ export default class extends Component {
 		};
 	}
 
+	/**
+	 * 处理登录框回车登录.
+	 *
+	 * @param {Event} e
+	 */
 	handleKeyDown = (e) => {
 		if (e.key === 'Enter') {
 			this.onLogin();
 		}
 	}
 
+	/**
+	 * 处理登录.
+	 */
 	onLogin() {
 		if (this.state.user === 'user' && this.state.pass === '123456') {
 			this.props.userOnchange(this.state.user);
@@ -28,6 +40,7 @@ export default class extends Component {
 		message.error('账号或密码错误.');
 	}
 
+	/** @inheritdoc */
 	render() {
 		return <Row className="login-view" justify="center" align="middle">
 			<Space direction="vertical">

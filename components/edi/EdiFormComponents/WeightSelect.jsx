@@ -1,6 +1,9 @@
 import React from 'react';
 import { Select } from 'antd';
 
+/**
+ * 重量通用选择组件.
+ */
 export default props => {
 	let options;
 

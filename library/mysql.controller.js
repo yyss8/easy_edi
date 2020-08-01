@@ -1,4 +1,5 @@
 /**
+ * 处理重复新增.
  *
  * @param {Knex} db
  * @param values

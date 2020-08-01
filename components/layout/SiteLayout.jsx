@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Head from 'next/head';
-import { Layout, Spin, Button, Row } from 'antd';
+import { Layout, Spin } from 'antd';
 import SiteFooter from './footer/SiteFooter';
 import SiteHeader from "./header/SiteHeader";
 import LoginView from '../login/LoginView';

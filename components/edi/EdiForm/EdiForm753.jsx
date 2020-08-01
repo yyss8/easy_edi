@@ -213,6 +213,7 @@ export default class extends FormBase {
 		});
 	}
 
+	/** @inheritdoc */
 	onDirectSubmit() {
 		this.getFormRef().current.validateFields().then(data => {
 			this.setState({isGenerating: true}, () => {
@@ -239,6 +240,7 @@ export default class extends FormBase {
 		});
 	}
 
+	/** @inheritdoc */
 	getFileName(file) {
 		return `753-${moment().format('MMDD')}-PO-${file.po_number}`;
 	}

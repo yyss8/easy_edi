@@ -12,7 +12,7 @@ export default props => {
 			key: 'product_title',
 			render: (text, record) => {
 				return <Form.Item rules={[{ required: true }]} name={[record.name, 'product_title']}>
-					<Input size="small" placeholder="Description" />
+					<Input.TextArea rows={2}  size="small" placeholder="Description" />
 				</Form.Item>
 			}
 		},
