@@ -382,8 +382,7 @@ class EdiFormView extends React.Component {
           width={800}
           onCancel={() => this.setState({ showSwitchModal: false })}
           visible={this.state.showSwitchModal}
-          afterClose={this.onSwitchModalClose.bind(this)}
-        >
+          afterClose={this.onSwitchModalClose.bind(this)}>
           {this.state.showSwitchModal && (
             <Table
               loading={this.state.isLoadingFiles}

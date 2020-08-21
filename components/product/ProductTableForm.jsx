@@ -45,8 +45,7 @@ export default (props) => {
                   return Promise.resolve();
                 },
               },
-            ]}
-          >
+            ]}>
             <Input size='small' placeholder='ASIN' />
           </Form.Item>
         );

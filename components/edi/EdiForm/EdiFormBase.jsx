@@ -143,8 +143,7 @@ export default class extends React.Component {
           onFinish={this.handleFileGenerate.bind(this)}
           initialValues={this.getFormDefaultValues()}
           {...layout}
-          className='generator-form'
-        >
+          className='generator-form'>
           <Form.Item wrapperCol={{ span: 12, offset: 5 }}>
             <h3>请填写以下内容并点击生成:</h3>
           </Form.Item>
@@ -171,8 +170,7 @@ export default class extends React.Component {
           okText='提交'
           cancelText='取消'
           confirmLoading={this.state.isGenerating}
-          onCancel={() => this.setState({ showSubmitConfirm: false })}
-        >
+          onCancel={() => this.setState({ showSubmitConfirm: false })}>
           <Form.Item style={{ marginBottom: 5 }} label='文件名称'>
             <Input
               size='small'

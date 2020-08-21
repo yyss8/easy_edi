@@ -103,8 +103,7 @@ export default class extends FormBase {
               name='carrier_code'
               label='Carrier Code'
               rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}
-            >
+              {...twoColumnLayout.second.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
@@ -122,8 +121,7 @@ export default class extends FormBase {
               initialValue={0}
               name='stacked_pallets'
               label='Total Stacked Pallets'
-              {...twoColumnLayout.first.inner}
-            >
+              {...twoColumnLayout.first.inner}>
               <InputNumber size='small' />
             </Form.Item>
           </Col>
@@ -132,8 +130,7 @@ export default class extends FormBase {
               name='unstacked_pallets'
               label='Total Unstacked Pallets'
               rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}
-            >
+              {...twoColumnLayout.second.inner}>
               <InputNumber size='small' />
             </Form.Item>
           </Col>
@@ -144,8 +141,7 @@ export default class extends FormBase {
               name='to_be_shipped'
               label='To Be Shipped'
               rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}
-            >
+              {...twoColumnLayout.second.inner}>
               <InputNumber size='small' />
             </Form.Item>
           </Col>
@@ -155,8 +151,7 @@ export default class extends FormBase {
               name='type_unit'
               label='Unit'
               rules={[{ required: true }]}
-              {...twoColumnLayout.first.inner}
-            >
+              {...twoColumnLayout.first.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
@@ -172,8 +167,7 @@ export default class extends FormBase {
               name='total_carton'
               label='Total Number of Ctn (Pkg)'
               rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}
-            >
+              {...twoColumnLayout.second.inner}>
               <InputNumber size='small' />
             </Form.Item>
           </Col>
@@ -184,8 +178,7 @@ export default class extends FormBase {
               name='weight_unit'
               label='Weight Unit'
               rules={[{ required: true }]}
-              {...twoColumnLayout.first.inner}
-            >
+              {...twoColumnLayout.first.inner}>
               <WeightSelect />
             </Form.Item>
           </Col>
@@ -202,8 +195,7 @@ export default class extends FormBase {
               name='volume_unit'
               label='Volume Unit'
               rules={[{ required: true }]}
-              {...twoColumnLayout.first.inner}
-            >
+              {...twoColumnLayout.first.inner}>
               <VolumeSelect type='856' />
             </Form.Item>
           </Col>

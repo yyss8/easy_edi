@@ -151,8 +151,7 @@ export default class extends React.Component {
                       title='选择地址类型'
                       size='small'
                       value={this.state.type}
-                      onChange={(value) => this.filterOnChange(value, 'type')}
-                    >
+                      onChange={(value) => this.filterOnChange(value, 'type')}>
                       <Select.Option value='from'>Ship From</Select.Option>
                       <Select.Option value='to'>Ship To</Select.Option>
                     </Select>
@@ -166,8 +165,7 @@ export default class extends React.Component {
                         title='保存当前地址'
                         htmlType='submit'
                         size='small'
-                        type='primary'
-                      >
+                        type='primary'>
                         保存地址
                       </Button>
                       &nbsp;&nbsp;
@@ -175,8 +173,7 @@ export default class extends React.Component {
                         loading={this.state.isSubmitting}
                         onClick={this.onRefresh.bind(this)}
                         title='刷新地址列表'
-                        size='small'
-                      >
+                        size='small'>
                         刷新地址
                       </Button>
                     </div>

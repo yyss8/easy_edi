@@ -81,8 +81,7 @@ export default (props) => {
           style={{ width: '100%' }}
           title='排序方式'
           value={props.sorting}
-          onChange={(value) => props.filterOnchange(value, 'sorting')}
-        >
+          onChange={(value) => props.filterOnchange(value, 'sorting')}>
           <Select.Option value='created_DESC'>创建时间 (新到旧)</Select.Option>
           <Select.Option value='created_ASC'>创建时间 (旧到新)</Select.Option>
           <Select.Option value='modified_DESC'>编辑时间 (新到旧)</Select.Option>

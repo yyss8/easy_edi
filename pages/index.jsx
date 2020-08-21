@@ -736,8 +736,7 @@ export default class extends Component {
             href={`/api/download/${this.state.fileType}/${this.state.type}/${record.name}`}
             data-file-name={record.name}
             title='点击下载'
-            download
-          >
+            download>
             {record.name}
           </a>
         ),
@@ -771,8 +770,7 @@ export default class extends Component {
                   style={{ marginLeft: 8 }}
                   type='danger'
                   size='small'
-                  onClick={() => this.deleteFile(record.name)}
-                >
+                  onClick={() => this.deleteFile(record.name)}>
                   删除
                 </Button>
               )}
@@ -884,8 +882,7 @@ export default class extends Component {
           className='jt-edi-tabs'
           activeKey={this.state.type}
           tabPosition='left'
-          onChange={this.tabOnchange.bind(this)}
-        >
+          onChange={this.tabOnchange.bind(this)}>
           {SUPPORTED_INPUT_LIST.map((code, index) => {
             return (
               <TabPane
@@ -894,8 +891,7 @@ export default class extends Component {
                   <span>
                     {this.getLabel(code)} <ArrowUpOutlined className={code.type} />
                   </span>
-                }
-              >
+                }>
                 {code.type === 'download' && (
                   <EdiDownloadTab
                     poDate={this.state.poDate}

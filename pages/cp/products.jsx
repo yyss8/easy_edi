@@ -104,8 +104,7 @@ export default class extends React.Component {
                         title='保存商品列表'
                         htmlType='submit'
                         size='small'
-                        type='primary'
-                      >
+                        type='primary'>
                         保存商品
                       </Button>
                       &nbsp;&nbsp;
@@ -113,8 +112,7 @@ export default class extends React.Component {
                         loading={this.state.isSubmitting}
                         onClick={this.onRefresh.bind(this)}
                         title='刷新商品列表'
-                        size='small'
-                      >
+                        size='small'>
                         刷新商品
                       </Button>
                     </div>

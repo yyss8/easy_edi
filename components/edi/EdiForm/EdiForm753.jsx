@@ -146,8 +146,7 @@ export default class extends FormBase {
             <Button
               size='small'
               title={`导入${this.state.loadingType === 'from' ? 'Sender' : 'Receiver'}地址`}
-              onClick={() => this.onImportAddress(record)}
-            >
+              onClick={() => this.onImportAddress(record)}>
               导入
             </Button>
           </span>
@@ -296,8 +295,7 @@ export default class extends FormBase {
               name='from_state'
               label='State/Province'
               rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}
-            >
+              {...twoColumnLayout.second.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
@@ -308,8 +306,7 @@ export default class extends FormBase {
               name='from_zipcode'
               label='Zip Code'
               rules={[{ required: true }]}
-              {...twoColumnLayout.first.inner}
-            >
+              {...twoColumnLayout.first.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
@@ -318,8 +315,7 @@ export default class extends FormBase {
               name='from_country'
               label='Country'
               rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}
-            >
+              {...twoColumnLayout.second.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
@@ -348,8 +344,7 @@ export default class extends FormBase {
               name='to_state'
               label='State/Province'
               rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}
-            >
+              {...twoColumnLayout.second.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
@@ -372,8 +367,7 @@ export default class extends FormBase {
               name='total_pallet'
               label='Total Number of Pallets'
               rules={[{ required: true }]}
-              {...twoColumnLayout.first.inner}
-            >
+              {...twoColumnLayout.first.inner}>
               <InputNumber size='small' />
             </Form.Item>
           </Col>
@@ -382,8 +376,7 @@ export default class extends FormBase {
               name='total_carton'
               label='Total Number of Cartons'
               rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}
-            >
+              {...twoColumnLayout.second.inner}>
               <InputNumber size='small' />
             </Form.Item>
           </Col>
@@ -401,8 +394,7 @@ export default class extends FormBase {
               name='weight_unit'
               label='Weight Unit'
               rules={[{ required: true }]}
-              {...twoColumnLayout.first.inner}
-            >
+              {...twoColumnLayout.first.inner}>
               <WeightSelect type='753' />
             </Form.Item>
           </Col>
@@ -419,8 +411,7 @@ export default class extends FormBase {
               name='volume_unit'
               label='Volume Unit'
               rules={[{ required: true }]}
-              {...twoColumnLayout.first.inner}
-            >
+              {...twoColumnLayout.first.inner}>
               <VolumeSelect />
             </Form.Item>
           </Col>
@@ -435,8 +426,7 @@ export default class extends FormBase {
           onCancel={() => this.setState({ isAddressModalShown: false })}
           onOk={() => this.setState({ isAddressModalShown: false })}
           visible={this.state.isAddressModalShown}
-          afterClose={() => this.setState({ addresses: [], loadingType: 'from', keyword: '' })}
-        >
+          afterClose={() => this.setState({ addresses: [], loadingType: 'from', keyword: '' })}>
           {this.getAddressTable()}
         </Modal>
       </React.Fragment>

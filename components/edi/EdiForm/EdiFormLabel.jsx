@@ -283,8 +283,7 @@ export default class extends FormBase {
               name='carrier_code'
               label='Carrier Code'
               rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}
-            >
+              {...twoColumnLayout.second.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
@@ -308,8 +307,7 @@ export default class extends FormBase {
                         label='Pallet Number'
                         rules={[{ required: true }]}
                         labelCol={{ span: 12 }}
-                        wrapperCol={{ span: 10 }}
-                      >
+                        wrapperCol={{ span: 10 }}>
                         <InputNumber size='small' />
                       </Form.Item>
                     </Col>
@@ -320,8 +318,7 @@ export default class extends FormBase {
                         label='To'
                         rules={[{ required: true }]}
                         labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 10 }}
-                      >
+                        wrapperCol={{ span: 10 }}>
                         <InputNumber size='small' />
                       </Form.Item>
                     </Col>
@@ -332,8 +329,7 @@ export default class extends FormBase {
                         label='Cartons in Pallet'
                         rules={[{ required: true }]}
                         labelCol={{ span: 14 }}
-                        wrapperCol={{ span: 10 }}
-                      >
+                        wrapperCol={{ span: 10 }}>
                         <InputNumber size='small' />
                       </Form.Item>
                     </Col>
@@ -367,8 +363,7 @@ export default class extends FormBase {
           onCancel={() => this.setState({ isProductModalShown: false })}
           onOk={() => this.setState({ isProductModalShown: false })}
           visible={this.state.isProductModalShown}
-          afterClose={() => this.setState({ products: [], keyword: '', asin: '' })}
-        >
+          afterClose={() => this.setState({ products: [], keyword: '', asin: '' })}>
           {this.getProductTable()}
         </Modal>
       </React.Fragment>
