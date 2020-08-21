@@ -2,29 +2,29 @@ import { getRealPath, getArchivePath } from '../../../../../library/file.control
 import fs from 'fs';
 
 export default (req, res) => {
-	let filePath;
+  let filePath;
 
-	switch (req.query.dirType) {
-		case 'archive':
-			filePath = getArchivePath(req.query.type, req.query.name);
-			break;
+  switch (req.query.dirType) {
+    case 'archive':
+      filePath = getArchivePath(req.query.type, req.query.name);
+      break;
 
-		case 'edi':
-		default:
-			filePath = getRealPath(req.query.type, req.query.name);
-	}
+    case 'edi':
+    default:
+      filePath = getRealPath(req.query.type, req.query.name);
+  }
 
-	if (!fs.existsSync(filePath)) {
-		res.statusCode = 404
-		res.end('404: Not found');
-		return;
-	}
+  if (!fs.existsSync(filePath)) {
+    res.statusCode = 404;
+    res.end('404: Not found');
+    return;
+  }
 
-	res.writeHead(200, {
-		"Content-Type": "application/octet-stream",
-		// 文件名需要URL encode处理否则会报错.
-		"Content-Disposition": "attachment; filename=" + encodeURI(req.query.name),
-	});
+  res.writeHead(200, {
+    'Content-Type': 'application/octet-stream',
+    // 文件名需要URL encode处理否则会报错.
+    'Content-Disposition': 'attachment; filename=' + encodeURI(req.query.name),
+  });
 
-	fs.createReadStream(filePath).pipe(res);
+  fs.createReadStream(filePath).pipe(res);
 };
