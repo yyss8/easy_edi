@@ -1,23 +1,22 @@
-import { archiveFile } from "../../../../library/file.controller";
+import { archiveFile } from '../../../../library/file.controller';
 
 export default (req, res) => {
-	switch (req.method.toLowerCase()) {
-		case 'get':
+  switch (req.method.toLowerCase()) {
+    case 'get':
+      break;
 
-			break;
+    case 'post':
+      archiveFile(req.query.name, req.query.type, true);
 
-		case 'post':
-			archiveFile(req.query.name, req.query.type, true);
+      res.status(200).json({
+        status: 'ok',
+        result: {
+          archived: 1,
+        },
+      });
+      break;
 
-			res.status(200).json({
-				status: 'ok',
-				result: {
-					archived: 1,
-				}
-			});
-			break;
-
-		default:
-			res.status(404).end('');
-	}
+    default:
+      res.status(404).end('');
+  }
 };

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Router from 'next/router';
-import Head from 'next/head'
+import Head from 'next/head';
 import Link from 'next/link';
 import { Tabs, message, Button, Modal, Row, Col, Menu, Dropdown } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
@@ -12,10 +12,10 @@ import 'moment-timezone';
 import moment from 'moment';
 
 import SiteLayout from '../components/layout/SiteLayout';
-import EdiDownloadTab from "../components/edi/EdiDownloadTab/EdiDownloadTab";
-import EdiUploadTab from "../components/edi/EdiUploadTab/EdiUploadTab";
-import OrderProductTable from "../components/edi/EdiTable/OrderProductTable/OrderProductTable";
-import EdiDetails754 from "../components/edi/EdiDetails/EdiDetails754";
+import EdiDownloadTab from '../components/edi/EdiDownloadTab/EdiDownloadTab';
+import EdiUploadTab from '../components/edi/EdiUploadTab/EdiUploadTab';
+import OrderProductTable from '../components/edi/EdiTable/OrderProductTable/OrderProductTable';
+import EdiDetails754 from '../components/edi/EdiDetails/EdiDetails754';
 
 const { TabPane } = Tabs;
 
@@ -24,7 +24,7 @@ const SUPPORTED_INPUT_LIST = [
   {
     code: '850',
     name: '订单信息',
-    type: 'download'
+    type: 'download',
   },
   {
     code: '855',
@@ -83,9 +83,8 @@ const SUPPORTED_INPUT_LIST = [
  * EDI工具页面.
  */
 export default class extends Component {
-
   /** @inheritdoc */
-  static async getInitialProps({query}) {
+  static async getInitialProps({ query }) {
     return {
       query,
     };
@@ -98,14 +97,14 @@ export default class extends Component {
     const { query } = props;
     const hasPreload = Boolean(props.preload);
     const defaultType = query.type || '850';
-    const defaultTypeObject = SUPPORTED_INPUT_LIST.find(o => o.code === defaultType);
+    const defaultTypeObject = SUPPORTED_INPUT_LIST.find((o) => o.code === defaultType);
     const poDate = Boolean(query.poDate) ? moment(query.poDate, 'YYYY-MM-DD') : null;
 
     this.state = {
       type: defaultType,
       tabLoading: !hasPreload,
       files: hasPreload ? props.preload.files : [],
-      fileType: Boolean(query.fileType) ? query.fileType : defaultTypeObject.type === 'download' ?  'edi' : 'upload',
+      fileType: Boolean(query.fileType) ? query.fileType : defaultTypeObject.type === 'download' ? 'edi' : 'upload',
       sorting: query.sort || 'created_DESC',
       keyword: query.keyword || '',
       poKeyword: query.poKeyword || '',
@@ -113,7 +112,8 @@ export default class extends Component {
       carrier: query.carrier || '',
       poDate: moment.isMoment(poDate) && poDate.isValid() ? poDate : null,
       // 只有在下载界面或上传的归档界面时才加载文件列表.
-      shouldInitFetch: defaultTypeObject.type === 'download' || (defaultTypeObject.type === 'upload' && query.fileType === 'archive'),
+      shouldInitFetch:
+        defaultTypeObject.type === 'download' || (defaultTypeObject.type === 'upload' && query.fileType === 'archive'),
       selectedRowKeys: [],
     };
 
@@ -157,15 +157,16 @@ export default class extends Component {
       queryObject.poDate = this.state.poDate.format('YYYYMMDD');
     }
 
-    axios.get(`/api/files/${this.state.fileType}/${this.state.type}?${qs.stringify(queryObject)}`)
-      .then(response => {
+    axios
+      .get(`/api/files/${this.state.fileType}/${this.state.type}?${qs.stringify(queryObject)}`)
+      .then((response) => {
         this.setState({
-          files: response.data.result.files.map((f, k) => ({...f, key: `file-${k}`})),
+          files: response.data.result.files.map((f, k) => ({ ...f, key: `file-${k}` })),
           tabLoading: false,
-          selectedRowKeys: []
+          selectedRowKeys: [],
         });
       })
-      .catch(rejected => {
+      .catch((rejected) => {
         message.error('获取文件出错');
         console.log(rejected);
       });
@@ -177,29 +178,32 @@ export default class extends Component {
    * @param {string} key 所选key.
    */
   tabOnchange(key) {
-    const selectedTypeObject = SUPPORTED_INPUT_LIST.find(o => o.code === key);
+    const selectedTypeObject = SUPPORTED_INPUT_LIST.find((o) => o.code === key);
 
     if (selectedTypeObject.disabled === true) {
       message.warning(`本地EDI系统暂不支持该类型 - ${selectedTypeObject.name} (${selectedTypeObject.code})`);
       return;
     }
 
-    this.setState({
-      type: key,
-      tabLoading: true,
-      fileType: selectedTypeObject.type === 'download' ? 'edi' : 'upload',
-      files: [],
-      ...this.getDefaultFilters(),
-    }, () => {
-      if (selectedTypeObject.type === 'download') {
-        this.fetchFiles();
-      }
+    this.setState(
+      {
+        type: key,
+        tabLoading: true,
+        fileType: selectedTypeObject.type === 'download' ? 'edi' : 'upload',
+        files: [],
+        ...this.getDefaultFilters(),
+      },
+      () => {
+        if (selectedTypeObject.type === 'download') {
+          this.fetchFiles();
+        }
 
-      Router.push({
-        pathname : '/',
-        query: this.buildPushQuery(),
-      });
-    });
+        Router.push({
+          pathname: '/',
+          query: this.buildPushQuery(),
+        });
+      }
+    );
   }
 
   /**
@@ -214,7 +218,7 @@ export default class extends Component {
    */
   filterOnchange(value, field, shouldUpdate = true) {
     // 上传界面无需获取文件, 直接跳转至创建界面.
-    this.setState({[field]: value}, () => {
+    this.setState({ [field]: value }, () => {
       if (!shouldUpdate) {
         return;
       }
@@ -223,9 +227,9 @@ export default class extends Component {
         return;
       }
 
-      this.setState({tabLoading: true, files: []}, () => {
+      this.setState({ tabLoading: true, files: [] }, () => {
         Router.push({
-          pathname : '/',
+          pathname: '/',
           query: this.buildPushQuery(),
         });
 
@@ -254,7 +258,7 @@ export default class extends Component {
    * 刷新现有文件列表.
    */
   onRefresh() {
-    this.setState({tabLoading: true, files: []}, this.fetchFiles);
+    this.setState({ tabLoading: true, files: [] }, this.fetchFiles);
   }
 
   /**
@@ -284,7 +288,8 @@ export default class extends Component {
     let i = 0;
 
     while (size > 900) {
-      size /= 1024; i++;
+      size /= 1024;
+      i++;
     }
 
     return `${Math.round(size * 100) / 100} ${sizeUnit[i]}`;
@@ -300,13 +305,14 @@ export default class extends Component {
     Modal.confirm({
       title: '确认删除该文件? 该操作将无法恢复',
       onOk: () => {
-        return new Promise(finished => {
-          axios.post(`/api/delete/${this.state.type}/${name}`)
-            .then(response => {
+        return new Promise((finished) => {
+          axios
+            .post(`/api/delete/${this.state.type}/${name}`)
+            .then((response) => {
               const { data } = response;
 
               if (data.status === 'ok' && data.result.deleted === 1) {
-                message.success("文件删除成功");
+                message.success('文件删除成功');
                 this.onRefresh();
               } else {
                 message.error('文件删除出错');
@@ -314,13 +320,13 @@ export default class extends Component {
 
               finished();
             })
-            .catch(rejected => {
+            .catch((rejected) => {
               message.error('文件删除请求出错');
               console.log(rejected);
               finished();
             });
         });
-      }
+      },
     });
   }
 
@@ -378,20 +384,21 @@ export default class extends Component {
     Modal.confirm({
       title: '确认归档该文件?',
       onOk: () => {
-        return new Promise(finished => {
-          axios.post(`/api/archive/${this.state.type}/${name}`)
-            .then(response => {
+        return new Promise((finished) => {
+          axios
+            .post(`/api/archive/${this.state.type}/${name}`)
+            .then((response) => {
               message.success('文件归档成功');
               this.onRefresh();
               finished();
             })
-            .catch(rejected => {
+            .catch((rejected) => {
               message.error('文件归档请求出错');
               console.log(rejected);
               finished();
             });
         });
-      }
+      },
     });
   }
 
@@ -405,20 +412,21 @@ export default class extends Component {
     Modal.confirm({
       title: '确认删除该文件?',
       onOk: () => {
-        return new Promise(finished => {
-          axios.delete(`/api/delete/${this.state.type}/${name}`)
-            .then(response => {
+        return new Promise((finished) => {
+          axios
+            .delete(`/api/delete/${this.state.type}/${name}`)
+            .then((response) => {
               message.success('文件删除成功');
               this.onRefresh();
               finished();
             })
-            .catch(rejected => {
+            .catch((rejected) => {
               message.error('文件删除请求出错');
               console.log(rejected);
               finished();
             });
         });
-      }
+      },
     });
   }
 
@@ -429,7 +437,7 @@ export default class extends Component {
    *   已选择行.
    */
   onSelectItemChange(selectedRowKeys) {
-    this.setState({selectedRowKeys});
+    this.setState({ selectedRowKeys });
   }
 
   /**
@@ -462,10 +470,10 @@ export default class extends Component {
   onSelectAllFiles(isSelected, selectedRows) {
     const updating = {};
 
-    selectedRows.forEach(row => {
+    selectedRows.forEach((row) => {
       const index = this.state.files.findIndex((data) => data.name === row.name);
       updating[index] = {
-        isSelected: { $set: isSelected}
+        isSelected: { $set: isSelected },
       };
     });
 
@@ -494,25 +502,35 @@ export default class extends Component {
     Modal.confirm({
       title: `确认下载所选${selectedLength}个文件?`,
       onOk: () => {
-        return new Promise(finished => {
-          axios.post(`/api/bulk/download/${this.state.type}`, {
-            fileType: this.state.fileType,
-            fileNames: this.state.files.filter(file => file.isSelected).map(file => file.name),
-          }, {
-            responseType: 'arraybuffer',
-          })
-            .then(response => {
-              jsFileDownload(response.data, `${this.state.type}-${moment().tz('America/New_York').format('YYYYMMDD-HHmmss')}.zip`);
+        return new Promise((finished) => {
+          axios
+            .post(
+              `/api/bulk/download/${this.state.type}`,
+              {
+                fileType: this.state.fileType,
+                fileNames: this.state.files.filter((file) => file.isSelected).map((file) => file.name),
+              },
+              {
+                responseType: 'arraybuffer',
+              }
+            )
+            .then((response) => {
+              jsFileDownload(
+                response.data,
+                `${this.state.type}-${moment().tz('America/New_York').format('YYYYMMDD-HHmmss')}.zip`
+              );
               this.setState({
-                files: this.state.files.map(file => updater(file, {
-                  $unset: ['isSelected'],
-                })),
+                files: this.state.files.map((file) =>
+                  updater(file, {
+                    $unset: ['isSelected'],
+                  })
+                ),
                 selectedRowKeys: [],
               });
               message.success('文件下载成功');
               finished();
             })
-            .catch(rejected => {
+            .catch((rejected) => {
               console.log(rejected);
               message.error('批量下载请求出错, 请稍候再试...');
               finished();
@@ -542,17 +560,28 @@ export default class extends Component {
           {
             title: 'PO日期',
             key: 'po_date',
-            render: (text, record) => record.date !== '' ? moment(record.date, 'YYYYMMDD').format('YYYY/MM/DD') : '无',
+            render: (text, record) =>
+              record.date !== '' ? moment(record.date, 'YYYYMMDD').format('YYYY/MM/DD') : '无',
           },
           {
             title: 'Shipping Window',
             key: 'shipping_window',
-            render: (text, {shipping_window}) => {
-              const start = shipping_window && shipping_window.start !== '' ? moment(shipping_window.start, 'YYYYMMDD').format('YYYY/MM/DD') : '无';
-              const end = shipping_window && shipping_window.end !== '' ? moment(shipping_window.end, 'YYYYMMDD').format('YYYY/MM/DD') : '无';
+            render: (text, { shipping_window }) => {
+              const start =
+                shipping_window && shipping_window.start !== ''
+                  ? moment(shipping_window.start, 'YYYYMMDD').format('YYYY/MM/DD')
+                  : '无';
+              const end =
+                shipping_window && shipping_window.end !== ''
+                  ? moment(shipping_window.end, 'YYYYMMDD').format('YYYY/MM/DD')
+                  : '无';
 
-              return <span>{start} - {end}</span>;
-            }
+              return (
+                <span>
+                  {start} - {end}
+                </span>
+              );
+            },
           },
           {
             title: 'Ship To',
@@ -562,7 +591,7 @@ export default class extends Component {
           {
             title: 'ASIN状态',
             key: 'asin_status',
-            render: (text, record) => <span>{Boolean(record.has_product_title) ? '有' : '无'}</span>
+            render: (text, record) => <span>{Boolean(record.has_product_title) ? '有' : '无'}</span>,
           },
         ];
       case '754':
@@ -619,28 +648,34 @@ export default class extends Component {
 
     Modal.confirm({
       title: '确认归档所选文件?',
-      onOk:() => {
-        return new Promise(finished => {
-          axios.post(`/api/bulk/archive/${this.state.type}`, {
-            fileNames: this.state.files.filter(file => file.isSelected).map(file => file.name),
-          })
-            .then(response => {
+      onOk: () => {
+        return new Promise((finished) => {
+          axios
+            .post(`/api/bulk/archive/${this.state.type}`, {
+              fileNames: this.state.files.filter((file) => file.isSelected).map((file) => file.name),
+            })
+            .then((response) => {
               message.success(`成功归档${response.data.result.archived}个文件.`);
-              this.setState({
-                files: this.state.files.map(file => updater(file, {
-                  $unset: ['isSelected'],
-                })),
-                selectedRowKeys: [],
-              }, this.fetchFiles);
+              this.setState(
+                {
+                  files: this.state.files.map((file) =>
+                    updater(file, {
+                      $unset: ['isSelected'],
+                    })
+                  ),
+                  selectedRowKeys: [],
+                },
+                this.fetchFiles
+              );
               finished();
             })
-            .catch(rejected => {
+            .catch((rejected) => {
               console.log(rejected);
               message.error('批量归档请求出错, 请稍候再试...');
               finished();
             });
         });
-      }
+      },
     });
   }
 
@@ -656,30 +691,36 @@ export default class extends Component {
 
     Modal.confirm({
       title: '确认删除所选文件?',
-      onOk:() => {
-        return new Promise(finished => {
-          axios.delete(`/api/bulk/delete/${this.state.type}`, {
-            data: {
-              fileNames: this.state.files.filter(file => file.isSelected).map(file => file.name),
-            }
-          })
-            .then(response => {
+      onOk: () => {
+        return new Promise((finished) => {
+          axios
+            .delete(`/api/bulk/delete/${this.state.type}`, {
+              data: {
+                fileNames: this.state.files.filter((file) => file.isSelected).map((file) => file.name),
+              },
+            })
+            .then((response) => {
               message.success(`成功删除${response.data.result.deleted}个文件.`);
-              this.setState({
-                files: this.state.files.map(file => updater(file, {
-                  $unset: ['isSelected'],
-                })),
-                selectedRowKeys: [],
-              }, this.fetchFiles);
+              this.setState(
+                {
+                  files: this.state.files.map((file) =>
+                    updater(file, {
+                      $unset: ['isSelected'],
+                    })
+                  ),
+                  selectedRowKeys: [],
+                },
+                this.fetchFiles
+              );
               finished();
             })
-            .catch(rejected => {
+            .catch((rejected) => {
               console.log(rejected);
               message.error('批量删除请求出错, 请稍候再试...');
               finished();
             });
         });
-      }
+      },
     });
   }
 
@@ -690,7 +731,16 @@ export default class extends Component {
     const defaultFileColumns = [
       {
         title: '文件名',
-        render: (text, record) => <a href={ `/api/download/${this.state.fileType}/${this.state.type}/${record.name}` } data-file-name={ record.name } title="点击下载" download>{record.name}</a>,
+        render: (text, record) => (
+          <a
+            href={`/api/download/${this.state.fileType}/${this.state.type}/${record.name}`}
+            data-file-name={record.name}
+            title='点击下载'
+            download
+          >
+            {record.name}
+          </a>
+        ),
         key: 'name',
       },
       {
@@ -706,38 +756,63 @@ export default class extends Component {
       {
         title: '操作',
         render: (text, record) => {
-          return <span>
-            <Button size="small" title="点击下载" onClick={ () => this.downloadFile(record.name) }>下载文件</Button>
-            { this.state.fileType === 'edi' && <Button style={ {marginLeft: 8} } size="small" onClick={ () => this.archiveFile(record.name) }>归档</Button> }
-            { this.state.fileType === 'archive' && <Button style={ {marginLeft: 8} } type="danger" size="small" onClick={ () => this.deleteFile(record.name) }>删除</Button> }
-            { this.state.fileType === 'edi' && this.state.type === '850' &&  <Link href={ `/form/753?fileName=${encodeURI(record.name)}` }>
-              <a title="生成753文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成753</a>
-            </Link> }
-            { this.state.fileType === 'edi' && this.state.type === '754' && <Link href={ `/form/label-excel?fileName=${encodeURI(record.name)}` }>
-              <a title="生成标签文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成标签文档</a>
-            </Link> }
-            { this.state.fileType === 'archive' && this.state.type === 'label-excel' && <Link href={ `/form/856?fileName=${encodeURI(record.name)}` }>
-              <a title="生成标签文档" className="ant-btn ant-btn-sm" style={ {marginLeft: 8} }>生成856</a>
-            </Link> }
-            {/*<Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>*/}
-          </span>
+          return (
+            <span>
+              <Button size='small' title='点击下载' onClick={() => this.downloadFile(record.name)}>
+                下载文件
+              </Button>
+              {this.state.fileType === 'edi' && (
+                <Button style={{ marginLeft: 8 }} size='small' onClick={() => this.archiveFile(record.name)}>
+                  归档
+                </Button>
+              )}
+              {this.state.fileType === 'archive' && (
+                <Button
+                  style={{ marginLeft: 8 }}
+                  type='danger'
+                  size='small'
+                  onClick={() => this.deleteFile(record.name)}
+                >
+                  删除
+                </Button>
+              )}
+              {this.state.fileType === 'edi' && this.state.type === '850' && (
+                <Link href={`/form/753?fileName=${encodeURI(record.name)}`}>
+                  <a title='生成753文档' className='ant-btn ant-btn-sm' style={{ marginLeft: 8 }}>
+                    生成753
+                  </a>
+                </Link>
+              )}
+              {this.state.fileType === 'edi' && this.state.type === '754' && (
+                <Link href={`/form/label-excel?fileName=${encodeURI(record.name)}`}>
+                  <a title='生成标签文档' className='ant-btn ant-btn-sm' style={{ marginLeft: 8 }}>
+                    生成标签文档
+                  </a>
+                </Link>
+              )}
+              {this.state.fileType === 'archive' && this.state.type === 'label-excel' && (
+                <Link href={`/form/856?fileName=${encodeURI(record.name)}`}>
+                  <a title='生成标签文档' className='ant-btn ant-btn-sm' style={{ marginLeft: 8 }}>
+                    生成856
+                  </a>
+                </Link>
+              )}
+              {/*<Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>*/}
+            </span>
+          );
         },
-      }
+      },
     ];
 
     if (this.state.type === 'label') {
       defaultFileColumns.splice(1, 0, {
         title: '文件大小',
         key: 'size',
-        render: (text, record) => <span>{this.getFileSize(record.size)}</span>
+        render: (text, record) => <span>{this.getFileSize(record.size)}</span>,
       });
     }
 
-    return [
-      defaultFileColumns.shift(),
-      ...this.getColumnsByType(this.state.type),
-      ...defaultFileColumns,
-    ];
+    return [defaultFileColumns.shift(), ...this.getColumnsByType(this.state.type), ...defaultFileColumns];
   }
 
   /**
@@ -747,16 +822,18 @@ export default class extends Component {
     switch (this.state.type) {
       case '850':
         return (record, index) => {
-          const products = record.products.map((p, i) => ({...p, key: `row-${index}-p-${i}`}));
-          return <OrderProductTable products={ products } />
+          const products = record.products.map((p, i) => ({ ...p, key: `row-${index}-p-${i}` }));
+          return <OrderProductTable products={products} />;
         };
 
       case '754':
-        return (record) => <Row>
-          <Col offset={ 3 } span={ 14 }>
-            <EdiDetails754 file={record} />
-          </Col>
-        </Row>
+        return (record) => (
+          <Row>
+            <Col offset={3} span={14}>
+              <EdiDetails754 file={record} />
+            </Col>
+          </Row>
+        );
 
       default:
         return null;
@@ -765,17 +842,20 @@ export default class extends Component {
 
   /** @inheritdoc */
   render() {
-    const selectedType = SUPPORTED_INPUT_LIST.find(item => item.code === this.state.type);
+    const selectedType = SUPPORTED_INPUT_LIST.find((item) => item.code === this.state.type);
     const label = this.getLabel(selectedType);
 
     const fileColumns = this.state.fileType === 'upload' ? [] : this.getTableColumns();
-    const tableRowSelection = this.state.fileType === 'upload' ? {} : {
-      onSelect: this.onSelectFile.bind(this),
-      onSelectAll: this.onSelectAllFiles.bind(this),
-      onChange: this.onSelectItemChange.bind(this),
-      selectedRowKeys: this.state.selectedRowKeys,
-      getCheckboxProps: (record) => ({ selectedRowKeys: record.isSelected }),
-    };
+    const tableRowSelection =
+      this.state.fileType === 'upload'
+        ? {}
+        : {
+            onSelect: this.onSelectFile.bind(this),
+            onSelectAll: this.onSelectAllFiles.bind(this),
+            onChange: this.onSelectItemChange.bind(this),
+            selectedRowKeys: this.state.selectedRowKeys,
+            getCheckboxProps: (record) => ({ selectedRowKeys: record.isSelected }),
+          };
 
     const commonProps = {
       fileColumns,
@@ -794,23 +874,43 @@ export default class extends Component {
       bulkDownload: this.bulkDownload.bind(this),
     };
 
-    return <SiteLayout>
-      <Head>
-        <title>{label} - Easy EDI</title>
-      </Head>
-      <h2>{label}</h2>
-      <Tabs className="jt-edi-tabs" activeKey={this.state.type} tabPosition="left" onChange={ this.tabOnchange.bind(this) }>
-        {
-          SUPPORTED_INPUT_LIST.map((code, index) => {
-            return <TabPane key={ code.code } tab={ <span>{this.getLabel(code)} <ArrowUpOutlined className={ code.type } /></span> }>
-              {
-                code.type === 'download' && <EdiDownloadTab poDate={this.state.poDate} subTableRendered={this.getSubTableRenderer()} bulkArchive={this.bulkArchive.bind(this)} bulkDelete={this.bulkDelete.bind(this)}  {...commonProps} />
-              }
-              { code.type === 'upload' && <EdiUploadTab {...commonProps} /> }
-            </TabPane>;
-          })
-        }
-      </Tabs>
-    </SiteLayout>
+    return (
+      <SiteLayout>
+        <Head>
+          <title>{label} - Easy EDI</title>
+        </Head>
+        <h2>{label}</h2>
+        <Tabs
+          className='jt-edi-tabs'
+          activeKey={this.state.type}
+          tabPosition='left'
+          onChange={this.tabOnchange.bind(this)}
+        >
+          {SUPPORTED_INPUT_LIST.map((code, index) => {
+            return (
+              <TabPane
+                key={code.code}
+                tab={
+                  <span>
+                    {this.getLabel(code)} <ArrowUpOutlined className={code.type} />
+                  </span>
+                }
+              >
+                {code.type === 'download' && (
+                  <EdiDownloadTab
+                    poDate={this.state.poDate}
+                    subTableRendered={this.getSubTableRenderer()}
+                    bulkArchive={this.bulkArchive.bind(this)}
+                    bulkDelete={this.bulkDelete.bind(this)}
+                    {...commonProps}
+                  />
+                )}
+                {code.type === 'upload' && <EdiUploadTab {...commonProps} />}
+              </TabPane>
+            );
+          })}
+        </Tabs>
+      </SiteLayout>
+    );
   }
 }
