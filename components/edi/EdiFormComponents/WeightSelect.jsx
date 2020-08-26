@@ -10,21 +10,21 @@ const WeightSelect = (props) => {
   switch (props.type) {
     case '856':
       options = [
-        { value: 'G', label: 'Gram' },
-        { value: 'K', label: 'Kilogram' },
-        { value: 'L', label: 'Pound' },
-        { value: 'O', label: 'Ounce' },
+        { value: 'GR', label: 'Gram' },
+        { value: 'KG', label: 'Kilogram' },
+        { value: 'LB', label: 'Pound' },
+        { value: 'OZ', label: 'Ounce' },
       ];
       break;
 
     case '753':
     default:
       options = [
-        { value: 'GR', label: 'Gram' },
-        { value: 'KG', label: 'Kilogram' },
-        { value: 'LB', label: 'Pound' },
-        { value: 'OZ', label: 'Ounce' },
-      ];
+      { value: 'G', label: 'Gram' },
+      { value: 'K', label: 'Kilogram' },
+      { value: 'L', label: 'Pound' },
+      { value: 'O', label: 'Ounce' },
+    ];
   }
 
   return (
