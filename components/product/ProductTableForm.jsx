@@ -5,7 +5,7 @@ import styles from './ProductTableForm.module.scss';
 /**
  * 商品列表table表单组件.
  */
-export default (props) => {
+const ProductTableForm = (props) => {
   const productColumns = [
     {
       title: 'Description',
@@ -78,3 +78,5 @@ export default (props) => {
     />
   );
 };
+
+export default ProductTableForm;

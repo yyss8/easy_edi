@@ -4,7 +4,7 @@ import { Select } from 'antd';
 /**
  * 重量通用选择组件.
  */
-export default (props) => {
+const WeightSelect = (props) => {
   let options;
 
   switch (props.type) {
@@ -37,3 +37,5 @@ export default (props) => {
     </Select>
   );
 };
+
+export default WeightSelect;

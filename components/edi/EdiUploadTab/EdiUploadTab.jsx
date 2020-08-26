@@ -65,7 +65,7 @@ const UploadTabContent = (props) => {
  *
  * @return {React}
  */
-export default (props) => {
+const EdiUploadTab = (props) => {
   return (
     <React.Fragment>
       <Row style={{ marginBottom: 10 }}>
@@ -100,3 +100,5 @@ export default (props) => {
     </React.Fragment>
   );
 };
+
+export default EdiUploadTab;

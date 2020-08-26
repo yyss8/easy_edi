@@ -1,6 +1,8 @@
 import 'antd/dist/antd.css';
 import '../style/main.scss';
 
-export default ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }) => {
   return <Component {...pageProps} />;
 };
+
+export default App;

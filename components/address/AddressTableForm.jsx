@@ -5,7 +5,7 @@ import styles from './AddressTableForm.module.scss';
 /**
  * 地址列表表单组件.
  */
-export default (props) => {
+const AddressTableForm = (props) => {
   const addressColumns = [
     {
       title: 'Description',
@@ -145,3 +145,5 @@ export default (props) => {
     />
   );
 };
+
+export default AddressTableForm;

@@ -73,7 +73,7 @@ function getTypeFilters(props) {
   }
 }
 
-export default (props) => {
+const EdiTableFilters = (props) => {
   return (
     <React.Fragment>
       <Col span={4}>
@@ -103,3 +103,5 @@ export default (props) => {
     </React.Fragment>
   );
 };
+
+export default EdiTableFilters;

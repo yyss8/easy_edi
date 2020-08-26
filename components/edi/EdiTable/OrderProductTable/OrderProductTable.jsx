@@ -4,7 +4,7 @@ import { Table } from 'antd';
 /**
  * 850订单商品表格.
  */
-export default (props) => {
+const OrderProductTable = (props) => {
   const tableColumns850 = [
     {
       title: 'Quantity',
@@ -48,3 +48,5 @@ export default (props) => {
     />
   );
 };
+
+export default OrderProductTable;

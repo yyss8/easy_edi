@@ -10,7 +10,7 @@ import React from 'react';
  *
  * @return {React}
  */
-export default (props) => {
+const UploadDescriptionHint = (props) => {
   switch (props.type) {
     case 'label-excel':
       return (
@@ -45,3 +45,5 @@ export default (props) => {
       );
   }
 };
+
+export default UploadDescriptionHint;

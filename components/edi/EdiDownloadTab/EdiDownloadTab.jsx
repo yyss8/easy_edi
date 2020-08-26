@@ -7,7 +7,7 @@ import EdiTableFilters from '../EdiTableFilters/EdiTableFilters';
 /**
  * EDI下载列表tab组件.
  */
-export default (props) => {
+const EdiDownloadTab = (props) => {
   return (
     <React.Fragment>
       <Row style={{ marginBottom: 10 }}>
@@ -52,3 +52,5 @@ export default (props) => {
     </React.Fragment>
   );
 };
+
+export default EdiDownloadTab;

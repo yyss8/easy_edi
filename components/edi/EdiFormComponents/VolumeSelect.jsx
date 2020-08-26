@@ -4,7 +4,7 @@ import { Select } from 'antd';
 /**
  * 体积通用选择组件.
  */
-export default (props) => {
+const VolumeSelect = (props) => {
   let options;
 
   switch (props.type) {
@@ -35,3 +35,5 @@ export default (props) => {
     </Select>
   );
 };
+
+export default VolumeSelect;

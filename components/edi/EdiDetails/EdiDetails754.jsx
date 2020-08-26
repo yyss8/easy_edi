@@ -4,7 +4,7 @@ import { Descriptions } from 'antd';
 /**
  * 754详情组件.
  */
-export default ({ file }) => {
+const EdiDetails754 = ({ file }) => {
   const shipFrom = [
     file.from_code,
     'Jointown',
@@ -45,3 +45,5 @@ export default ({ file }) => {
     </Descriptions>
   );
 };
+
+export default EdiDetails754;

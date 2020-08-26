@@ -4,7 +4,7 @@ import { Select } from 'antd';
 /**
  * 货品类型(Cartons/Package)选择组件.
  */
-export default (props) => {
+const TypeSelect = (props) => {
   return (
     <Select {...props} size='small'>
       <Select.Option value='CTN'>Carton</Select.Option>
@@ -12,3 +12,5 @@ export default (props) => {
     </Select>
   );
 };
+
+export default TypeSelect;
