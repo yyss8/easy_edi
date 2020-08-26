@@ -42,7 +42,7 @@ export default class extends FormBase {
   /** @inheritdoc */
   getFormDefaultValues() {
     return {
-      weight_unit: 'K',
+      weight_unit: 'KG',
       volume_unit: 'CI',
       type: 'CTN',
     };
