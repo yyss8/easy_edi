@@ -16,7 +16,7 @@ class ExcelGenerator {
    *   753文档数据.
    * @param {boolean} submit
    *   是否直接提交至目录.
-   * @param {string} titleOverride
+   * @param {boolean|string} titleOverride
    *   覆盖标题.
    *
    * @return {ReadStream|null}
@@ -97,7 +97,7 @@ class ExcelGenerator {
    *   标签数据.
    * @param {boolean} submit
    *   是否直接提交至目录.
-   * @param {string} titleOverride
+   * @param {string|false} titleOverride
    *   覆盖标题.
    *
    * @return {ReadStream|null}
@@ -159,7 +159,7 @@ class ExcelGenerator {
    *   856数据.
    * @param {boolean} submit
    *   是否直接提交至目录.
-   * @param {string} titleOverride
+   * @param {string|boolean} titleOverride
    *   覆盖标题.
    *
    * @return {ReadStream|null}
@@ -232,10 +232,11 @@ class ExcelGenerator {
    *   Excel文档类型.
    * @param {boolean} submit
    *   是否直接提交至目录.
-   * @param {string} titleOverride
+   * @param {string|boolean} titleOverride
    *   覆盖标题.
    *
    * @return {ReadStream|null}
+   *   ReadStream或null如果为直接提交.
    */
   static generate(title, data, type, submit = false, titleOverride = false) {
     const wb = xlsx.utils.book_new();
@@ -258,10 +259,14 @@ class ExcelGenerator {
 
       const { getFilePath } = require('./file.controller');
       const destPath = getFilePath('edi', type, fileName);
+      const archivedPath = getFilePath('archive', type, fileName);
       xlsx.writeFile(wb, destPath, {
         bookType: 'xlsx',
         type: 'binary',
       });
+
+      // 保存一份至归档.
+      fs.copyFileSync(destPath, archivedPath);
 
       return null;
     }
