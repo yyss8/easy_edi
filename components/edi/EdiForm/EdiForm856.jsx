@@ -179,7 +179,7 @@ export default class extends FormBase {
               label='Weight Unit'
               rules={[{ required: true }]}
               {...twoColumnLayout.first.inner}>
-              <WeightSelect />
+              <WeightSelect type="856" />
             </Form.Item>
           </Col>
           <Col {...twoColumnLayout.second.outer}>
