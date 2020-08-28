@@ -1,8 +1,7 @@
 import React from 'react';
-import { withRouter } from 'next/router';
+import Router, { withRouter } from 'next/router';
 import Head from 'next/head';
 import { Descriptions, message, Row, Col, Button, Table, Modal, Spin } from 'antd';
-import Link from 'next/link';
 import moment from 'moment';
 import axios from 'axios';
 
@@ -359,11 +358,9 @@ class EdiFormView extends React.Component {
           <title>{label}</title>
         </Head>
         <Row type='flex'>
-          <Link href='/'>
-            <a className='ant-btn ant-btn-sm' title='返回主界面' style={{ marginBottom: 20 }}>
-              返回
-            </a>
-          </Link>
+          <a className='ant-btn ant-btn-sm' onClick={ () => Router.back() } title='返回主界面' style={{ marginBottom: 20 }}>
+            返回
+          </a>
           {/*&nbsp;&nbsp;*/}
           {/*{ type === '753'&& <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('850')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}订单</Button> }*/}
           {/*{ type === 'label-excel' &&  <Button loading={ this.state.isLoadingFiles } onClick={() => this.loadSwitchingFiles('754')} size="small">选择{Boolean(this.state.file) ? '其他' : ''}754文档</Button> }*/}
