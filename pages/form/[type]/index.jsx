@@ -15,16 +15,16 @@ import EdiForm856 from '../../../components/edi/EdiForm/EdiForm856';
 import EdiDetailsLabel from '../../../components/edi/EdiDetails/EdiDetailsLabel';
 
 const VOLUME_MAP = {
-  CF: 'E',
-  CI: 'N',
-  CR: 'X',
+  E: 'ECF',
+  N: 'CI',
+  X: 'CR',
 };
 
 const WEIGHT_MAP = {
-  GR: 'G',
-  KG: 'K',
-  LB: 'L',
-  OZ: 'O',
+  G: 'GR',
+  K: 'KG',
+  L: 'LB',
+  O: 'OZ',
 };
 
 /**
