@@ -44,7 +44,9 @@ export default class extends FormBase {
     return {
       weight_unit: 'KG',
       volume_unit: 'CI',
+      type_unit: 'EA',
       type: 'CTN',
+      stacked_pallets: 0,
     };
   }
 
@@ -110,7 +112,7 @@ export default class extends FormBase {
         </Row>
         <Row>
           <Col {...twoColumnLayout.first.outer}>
-            <Form.Item name='pro' label='TRACKING NO. (PRO)' {...twoColumnLayout.first.inner}>
+            <Form.Item name='pro' label='TRACKING NO. (PRO)' rules={[{ required: true }]} {...twoColumnLayout.first.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
@@ -118,7 +120,6 @@ export default class extends FormBase {
         <Row>
           <Col {...twoColumnLayout.first.outer}>
             <Form.Item
-              initialValue={0}
               name='stacked_pallets'
               label='Total Stacked Pallets'
               {...twoColumnLayout.first.inner}>
@@ -147,7 +148,6 @@ export default class extends FormBase {
           </Col>
           <Col {...twoColumnLayout.second.outer}>
             <Form.Item
-              initialValue='EA'
               name='type_unit'
               label='Unit'
               rules={[{ required: true }]}
@@ -158,7 +158,7 @@ export default class extends FormBase {
         </Row>
         <Row>
           <Col {...twoColumnLayout.first.outer}>
-            <Form.Item name='type' label='Type' rules={[{ required: true }]} {...twoColumnLayout.first.inner}>
+            <Form.Item  name='type' label='Type' rules={[{ required: true }]} {...twoColumnLayout.first.inner}>
               <TypeSelect />
             </Form.Item>
           </Col>
