@@ -358,7 +358,11 @@ class EdiFormView extends React.Component {
           <title>{label}</title>
         </Head>
         <Row type='flex'>
-          <a className='ant-btn ant-btn-sm' onClick={ () => Router.back() } title='返回主界面' style={{ marginBottom: 20 }}>
+          <a
+            className='ant-btn ant-btn-sm'
+            onClick={() => Router.back()}
+            title='返回主界面'
+            style={{ marginBottom: 20 }}>
             返回
           </a>
           {/*&nbsp;&nbsp;*/}

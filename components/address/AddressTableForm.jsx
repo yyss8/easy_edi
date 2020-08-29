@@ -12,15 +12,26 @@ const AddressTableForm = (props) => {
       key: 'address_title',
       render: (text, record) => {
         return (
-          <Form.Item rules={[{ required: true }]} name={[record.name, 'address_title']}>
+          <Form.Item rules={[{ required: true, message: '地址描述不能为空' }]} name={[record.name, 'address_title']}>
             <Input size='small' placeholder='描述' />
           </Form.Item>
         );
       },
     },
     {
-      title: 'Code',
+      title: 'Vendor Code',
+      key: 'vendor_code',
+      className: 'medium-input',
+      render: (text, record) => (
+        <Form.Item name={[record.name, 'vendor_code']}>
+          <Input size='small' placeholder='Vendor Code' />
+        </Form.Item>
+      ),
+    },
+    {
+      title: 'Address Number',
       key: 'address_code',
+      className: 'medium-input',
       render: (text, record) => {
         return (
           <Form.Item
@@ -55,6 +66,7 @@ const AddressTableForm = (props) => {
     {
       title: props.type === 'from' ? 'Sender' : 'Receiver',
       key: 'owner',
+      className: 'medium-input',
       render: (text, record, i) => {
         return (
           <Form.Item name={[record.name, 'address_owner']}>
@@ -77,6 +89,7 @@ const AddressTableForm = (props) => {
     {
       title: 'City',
       key: 'address_city',
+      className: 'medium-input',
       render: (text, record) => {
         return (
           <Form.Item name={[record.name, 'address_city']}>
@@ -88,10 +101,11 @@ const AddressTableForm = (props) => {
     {
       title: 'State',
       key: 'address_state',
+      className: 'short-input',
       render: (text, record) => {
         return (
           <Form.Item name={[record.name, 'address_state']}>
-            <Input size='small' placeholder='State/Province' />
+            <Input size='small' placeholder='State' />
           </Form.Item>
         );
       },
@@ -99,6 +113,7 @@ const AddressTableForm = (props) => {
     {
       title: 'Zip Code',
       key: 'address_zip',
+      className: 'short-input',
       render: (text, record) => {
         return (
           <Form.Item name={[record.name, 'address_zip']}>
@@ -110,6 +125,7 @@ const AddressTableForm = (props) => {
     {
       title: 'Country',
       key: 'address_country',
+      className: 'short-input',
       render: (text, record) => {
         return (
           <Form.Item name={[record.name, 'address_country']}>

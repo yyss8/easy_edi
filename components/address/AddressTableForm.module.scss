@@ -2,4 +2,12 @@
   :global .ant-form-item {
     margin-bottom: 0;
   }
+
+  :global .short-input {
+    max-width: 70px;
+  }
+
+  :global .medium-input {
+    max-width: 130px;
+  }
 }

@@ -112,17 +112,18 @@ export default class extends FormBase {
         </Row>
         <Row>
           <Col {...twoColumnLayout.first.outer}>
-            <Form.Item name='pro' label='TRACKING NO. (PRO)' rules={[{ required: true }]} {...twoColumnLayout.first.inner}>
+            <Form.Item
+              name='pro'
+              label='TRACKING NO. (PRO)'
+              rules={[{ required: true }]}
+              {...twoColumnLayout.first.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col {...twoColumnLayout.first.outer}>
-            <Form.Item
-              name='stacked_pallets'
-              label='Total Stacked Pallets'
-              {...twoColumnLayout.first.inner}>
+            <Form.Item name='stacked_pallets' label='Total Stacked Pallets' {...twoColumnLayout.first.inner}>
               <InputNumber size='small' />
             </Form.Item>
           </Col>
@@ -147,18 +148,14 @@ export default class extends FormBase {
             </Form.Item>
           </Col>
           <Col {...twoColumnLayout.second.outer}>
-            <Form.Item
-              name='type_unit'
-              label='Unit'
-              rules={[{ required: true }]}
-              {...twoColumnLayout.first.inner}>
+            <Form.Item name='type_unit' label='Unit' rules={[{ required: true }]} {...twoColumnLayout.first.inner}>
               <Input size='small' />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col {...twoColumnLayout.first.outer}>
-            <Form.Item  name='type' label='Type' rules={[{ required: true }]} {...twoColumnLayout.first.inner}>
+            <Form.Item name='type' label='Type' rules={[{ required: true }]} {...twoColumnLayout.first.inner}>
               <TypeSelect />
             </Form.Item>
           </Col>
@@ -179,7 +176,7 @@ export default class extends FormBase {
               label='Weight Unit'
               rules={[{ required: true }]}
               {...twoColumnLayout.first.inner}>
-              <WeightSelect type="856" />
+              <WeightSelect type='856' />
             </Form.Item>
           </Col>
           <Col {...twoColumnLayout.second.outer}>
