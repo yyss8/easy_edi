@@ -9,7 +9,7 @@ export const formTableSorter = (tableKey, form, field, defaultSortOrder) => {
 
     const data = form.getFieldValue(tableKey);
 
-    if (!Boolean(data[aIndex]) || !Boolean(data[bIndex][field])) {
+    if (!Boolean(data[aIndex][field]) || !Boolean(data[bIndex][field])) {
       return -1;
     }
 
