@@ -2,14 +2,16 @@ import { Button, Form, Input, Table } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import styles from './ProductTableForm.module.scss';
 
+import { getFormTableColumnParams } from '../utilities/general';
+
 /**
  * 商品列表table表单组件.
  */
 const ProductTableForm = (props) => {
   const productColumns = [
     {
+      ...getFormTableColumnParams('products', props.formRef.current, 'product_title'),
       title: 'Description',
-      key: 'product_title',
       render: (text, record) => {
         return (
           <Form.Item rules={[{ required: true }]} name={[record.name, 'product_title']}>
@@ -19,8 +21,8 @@ const ProductTableForm = (props) => {
       },
     },
     {
+      ...getFormTableColumnParams('products', props.formRef.current, 'asin'),
       title: 'ASIN',
-      key: 'asin',
       render: (text, record) => {
         return (
           <Form.Item

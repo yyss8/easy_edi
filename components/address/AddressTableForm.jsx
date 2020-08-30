@@ -2,14 +2,16 @@ import { Button, Form, Input, Table } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import styles from './AddressTableForm.module.scss';
 
+import { getFormTableColumnParams } from '../utilities/general';
+
 /**
  * 地址列表表单组件.
  */
 const AddressTableForm = (props) => {
   const addressColumns = [
     {
+      ...getFormTableColumnParams('address', props.formRef.current, 'address_title'),
       title: 'Description',
-      key: 'address_title',
       render: (text, record) => {
         return (
           <Form.Item rules={[{ required: true, message: '地址描述不能为空' }]} name={[record.name, 'address_title']}>
@@ -19,8 +21,8 @@ const AddressTableForm = (props) => {
       },
     },
     {
+      ...getFormTableColumnParams('address', props.formRef.current, 'vendor_code'),
       title: 'Vendor Code',
-      key: 'vendor_code',
       className: 'medium-input',
       render: (text, record) => (
         <Form.Item name={[record.name, 'vendor_code']}>
@@ -29,8 +31,8 @@ const AddressTableForm = (props) => {
       ),
     },
     {
+      ...getFormTableColumnParams('address', props.formRef.current, 'address_code'),
       title: 'Address Number',
-      key: 'address_code',
       className: 'medium-input',
       render: (text, record) => {
         return (
@@ -64,8 +66,8 @@ const AddressTableForm = (props) => {
       },
     },
     {
+      ...getFormTableColumnParams('address', props.formRef.current, 'address_owner'),
       title: props.type === 'from' ? 'Sender' : 'Receiver',
-      key: 'owner',
       className: 'medium-input',
       render: (text, record, i) => {
         return (
@@ -76,8 +78,8 @@ const AddressTableForm = (props) => {
       },
     },
     {
+      ...getFormTableColumnParams('address', props.formRef.current, 'address_street'),
       title: 'Street',
-      key: 'address_street',
       render: (text, record) => {
         return (
           <Form.Item name={[record.name, 'address_street']}>
@@ -87,8 +89,8 @@ const AddressTableForm = (props) => {
       },
     },
     {
+      ...getFormTableColumnParams('address', props.formRef.current, 'address_city'),
       title: 'City',
-      key: 'address_city',
       className: 'medium-input',
       render: (text, record) => {
         return (
@@ -99,8 +101,8 @@ const AddressTableForm = (props) => {
       },
     },
     {
+      ...getFormTableColumnParams('address', props.formRef.current, 'address_state'),
       title: 'State',
-      key: 'address_state',
       className: 'short-input',
       render: (text, record) => {
         return (
@@ -111,8 +113,8 @@ const AddressTableForm = (props) => {
       },
     },
     {
+      ...getFormTableColumnParams('address', props.formRef.current, 'address_zip'),
       title: 'Zip Code',
-      key: 'address_zip',
       className: 'short-input',
       render: (text, record) => {
         return (
@@ -123,8 +125,8 @@ const AddressTableForm = (props) => {
       },
     },
     {
+      ...getFormTableColumnParams('address', props.formRef.current, 'address_country'),
       title: 'Country',
-      key: 'address_country',
       className: 'short-input',
       render: (text, record) => {
         return (
