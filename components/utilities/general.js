@@ -17,7 +17,11 @@ export const formTableSorter = (tableKey, form, field, defaultSortOrder) => {
       return -1;
     }
 
-    return data[aIndex][field].localeCompare(data[bIndex][field]);
+    if (typeof data[aIndex][field] === 'string') {
+      return data[aIndex][field].localeCompare(data[bIndex][field]);
+    }
+
+    return data[aIndex][field] - data[bIndex][field];
   };
 };
 

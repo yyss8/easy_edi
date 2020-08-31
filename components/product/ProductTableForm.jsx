@@ -1,4 +1,4 @@
-import { Button, Form, Input, Table } from 'antd';
+import { Button, Form, Input, Table, InputNumber } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import styles from './ProductTableForm.module.scss';
 
@@ -49,6 +49,17 @@ const ProductTableForm = (props) => {
               },
             ]}>
             <Input size='small' placeholder='ASIN' />
+          </Form.Item>
+        );
+      },
+    },
+    {
+      ...getFormTableColumnParams('products', props.formRef.current, 'ctn_packing'),
+      title: 'Ctn Packing',
+      render: (text, record) => {
+        return (
+          <Form.Item rules={[{ required: true }]} name={[record.name, 'ctn_packing']}>
+            <InputNumber min={0} size='small' placeholder='Ctn Packing' />
           </Form.Item>
         );
       },

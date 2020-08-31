@@ -21,18 +21,8 @@ const AddressTableForm = (props) => {
       },
     },
     {
-      ...getFormTableColumnParams('address', props.formRef.current, 'vendor_code'),
-      title: 'Vendor Code',
-      className: 'medium-input',
-      render: (text, record) => (
-        <Form.Item name={[record.name, 'vendor_code']}>
-          <Input size='small' placeholder='Vendor Code' />
-        </Form.Item>
-      ),
-    },
-    {
       ...getFormTableColumnParams('address', props.formRef.current, 'address_code'),
-      title: 'Address Number',
+      title: props.type === 'to' ? 'Warehouse Code' : 'Address Number',
       className: 'medium-input',
       render: (text, record) => {
         return (
@@ -152,6 +142,19 @@ const AddressTableForm = (props) => {
       ),
     },
   ];
+
+  if (props.type === 'from') {
+    addressColumns.splice(1, 0, {
+      ...getFormTableColumnParams('address', props.formRef.current, 'vendor_code'),
+      title: 'Vendor Code',
+      className: 'medium-input',
+      render: (text, record) => (
+        <Form.Item name={[record.name, 'vendor_code']}>
+          <Input size='small' placeholder='Vendor Code' />
+        </Form.Item>
+      ),
+    });
+  }
 
   return (
     <Table
