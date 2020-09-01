@@ -27,6 +27,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "sass": "^1.26.10",
+    "winston": "^3.3.3",
     "xlsx": "^0.16.6"
   },
   "devDependencies": {

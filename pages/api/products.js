@@ -1,4 +1,5 @@
 import db from '../../library/database.connection';
+import logger from '../../library/logger';
 import { batchInsertDuplicate } from '../../library/mysql.controller';
 
 /**
@@ -29,6 +30,8 @@ export default async (req, res) => {
           });
         })
         .catch((err) => {
+          logger.error(`获取商品出错: ${err.stack}`);
+
           res.status(500).json({
             errorMessage: err.toString(),
             status: 'err',
@@ -38,7 +41,18 @@ export default async (req, res) => {
 
     case 'post':
       const products = req.body.products || [];
-      const prevProducts = (await db('ed_product').pluck('product_id')) || [];
+      let prevProducts = [];
+      try {
+        prevProducts = (await db('ed_product').pluck('product_id')) || [];
+      } catch (e) {
+        logger.error(`获取prevproducts出错: ${e.stack}`);
+        res.status(500)
+          .json({
+            status: 'err',
+            errorMessage: '系统出错, 请稍候再试.',
+          });
+        return;
+      }
 
       const creatingProducts = products.filter((product) => !product.product_id);
       const updatingProducts = products.filter(
@@ -49,15 +63,27 @@ export default async (req, res) => {
       );
 
       if (creatingProducts.length > 0) {
-        await db.batchInsert('ed_product', creatingProducts);
+        try {
+          await db.batchInsert('ed_product', creatingProducts);
+        } catch (e) {
+          logger.error(`创建商品出错: ${e.stack}`);
+        }
       }
 
       if (deletingProducts.length > 0) {
-        await db('ed_product').whereIn('product_id', deletingProducts).del();
+        try {
+          await db('ed_product').whereIn('product_id', deletingProducts).del();
+        } catch (e) {
+          logger.error(`删除商品出错: ${e.stack}`);
+        }
       }
 
       if (updatingProducts.length > 0) {
-        await batchInsertDuplicate(db, 'ed_product', updatingProducts);
+        try {
+          await batchInsertDuplicate(db, 'ed_product', updatingProducts);
+        } catch (e) {
+          logger.error(`更新商品出错: ${e.stack}`);
+        }
       }
 
       res.status(200).json({

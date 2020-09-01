@@ -589,9 +589,9 @@ export default class extends Component {
             dataIndex: 'ship_to',
           },
           {
-            title: 'ASIN状态',
-            key: 'asin_status',
-            render: (text, record) => <span>{Boolean(record.has_product_title) ? '有' : '无'}</span>,
+            title: '商品数量',
+            key: 'product_number',
+            render: (text, record) => record.products.reduce((total, p) => total + Number(p.quantity), 0),
           },
         ];
       case '754':

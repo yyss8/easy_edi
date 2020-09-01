@@ -13,6 +13,15 @@ import TypeSelect from '../EdiFormComponents/TypeSelect';
  * 856文档表单.
  */
 export default class extends FormBase {
+  validateFormData() {
+    return new Promise(async (resolve, reject) => {
+      const data = await this.getFormRef().current.validateFields();
+      const response = await axois.post(`/api/product/${this.props.file.asin}`, {
+        shipped: data.to_be_shipped,
+      });
+    });
+  }
+
   /** @inheritdoc */
   handleFileGenerate(data) {
     if (!this.props.file) {

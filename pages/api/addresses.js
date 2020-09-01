@@ -1,4 +1,5 @@
 import db from '../../library/database.connection';
+import logger from '../../library/logger';
 import { batchInsertDuplicate } from '../../library/mysql.controller';
 
 /**
@@ -28,6 +29,8 @@ export default async (req, res) => {
           });
         })
         .catch((err) => {
+          logger.error(`获取地址出错: ${err.stack}`);
+
           res.status(500).json({
             errorMessage: err.toString(),
             status: 'err',
@@ -49,15 +52,27 @@ export default async (req, res) => {
       );
 
       if (creatingAddresses.length > 0) {
-        await db.batchInsert('ed_address', creatingAddresses);
+        try {
+          await db.batchInsert('ed_address', creatingAddresses);
+        } catch (e) {
+          logger.error(`创建地址出错: ${e.stack}`);
+        }
       }
 
       if (deletingAddresses.length > 0) {
-        await db('ed_address').whereIn('address_id', deletingAddresses).where('address_type', type).del();
+        try {
+          await db('ed_address').whereIn('address_id', deletingAddresses).where('address_type', type).del();
+        } catch (e) {
+          logger.error(`删除地址出错: ${e.stack}`);
+        }
       }
 
       if (updatingAddresses.length > 0) {
-        await batchInsertDuplicate(db, 'ed_address', updatingAddresses);
+        try {
+          await batchInsertDuplicate(db, 'ed_address', updatingAddresses);
+        } catch (e) {
+          logger.error(`更新地址出错: ${e.stack}`);
+        }
       }
 
       res.status(200).json({

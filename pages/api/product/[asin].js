@@ -1,4 +1,5 @@
 import db from '../../../library/database.connection';
+import logger from '../../../library/logger';
 
 export default (req, res) => {
   const { asin } = req.params;
@@ -28,7 +29,9 @@ export default (req, res) => {
         },
       });
     })
-    .catch(() => {
+    .catch(rejected => {
+      logger.error(`获取商品CTN Packing出错: ${rejected.stack}`);
+
       res.status(500).json({
         status: 'err',
         errorMessage: '系统错误, 请稍候再试...',
