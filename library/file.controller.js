@@ -97,6 +97,8 @@ async function loadFiles(type, params = {}) {
  *   文档类型。
  * @param {boolean} getDetail
  *   是否解析文件并获取更多数据.
+ * @param {Object} context
+ *   上下文参数.
  *
  * @return {Object|null}
  */

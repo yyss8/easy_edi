@@ -228,6 +228,7 @@ class EdiFormView extends React.Component {
           this.formRef.current.setFieldsValue({
             carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
             carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
+            total_pallet: file.total_pallet,
           });
         } else if (this.state.type === '753') {
           this.formRef.current.setFieldsValue({

@@ -29,6 +29,33 @@ export default class extends FormBase {
     this.loadProducts = this.loadProducts.bind(this);
   }
 
+  validateFormData() {
+    return new Promise(async (resolve, reject) => {
+      this.getFormRef().current.validateFields()
+        .then(data => {
+          if (!data.pallets || data.pallets.length === 0) {
+            reject('至少添加一个Pallet');
+            return;
+          } else if (data.pallets.length > 10) {
+            reject('当前EDI系统只支持最多10个Pallets');
+            return;
+          }
+
+          const lastPalletNum = data.pallets[data.pallets.length - 1].pallet_num_to;
+
+          if (data.total_pallet < lastPalletNum) {
+            reject('The last pallet number is greater than the total pallet');
+            return;
+          }
+
+          resolve(data);
+        })
+        .catch(() => {
+          reject();
+        });
+    });
+  }
+
   /** @inheritdoc */
   handleFileGenerate(data) {
     if (!this.props.file) {
@@ -36,31 +63,31 @@ export default class extends FormBase {
       return;
     }
 
-    if (!data.pallets || data.pallets.length === 0) {
-      message.error('至少添加一个Pallet');
-      return;
-    } else if (data.pallets.length > 10) {
-      message.error('当前EDI系统只支持最多10个Pallets');
-      return;
-    }
+    this.validateFormData()
+      .then(() => {
+        this.setState({ isGenerating: true }, () => {
+          const { file } = this.props;
 
-    this.setState({ isGenerating: true }, () => {
-      const { file } = this.props;
-
-      axois
-        .post(`/api/generate/edi/label-excel/${file.name}`, data, {
-          responseType: 'arraybuffer',
-        })
-        .then((response) => {
-          fileDownload(response.data, `${this.getFileName(this.props.file)}.xlsx`);
-          message.success('成功生成标签文件.');
-          this.setState({ isGenerating: false });
-        })
-        .catch((rejected) => {
-          console.log(rejected);
-          message.error('生成请求出错, 请稍候再试...');
+          axois
+            .post(`/api/generate/edi/label-excel/${file.name}`, data, {
+              responseType: 'arraybuffer',
+            })
+            .then((response) => {
+              fileDownload(response.data, `${this.getFileName(this.props.file)}.xlsx`);
+              message.success('成功生成标签文件.');
+              this.setState({ isGenerating: false });
+            })
+            .catch((rejected) => {
+              console.log(rejected);
+              message.error('生成请求出错, 请稍候再试...');
+            });
         });
-    });
+      })
+      .catch(rejected => {
+        if (Boolean(rejected)) {
+          message.error(rejected);
+        }
+      });
   }
 
   /** @inheritdoc */
@@ -205,21 +232,17 @@ export default class extends FormBase {
 
   /** @inheritdoc */
   onShowSubmitModal() {
-    this.getFormRef()
-      .current.validateFields()
-      .then((data) => {
-        if (!data.pallets || data.pallets.length === 0) {
-          message.error('至少添加一个Pallet');
-          return;
-        } else if (data.pallets.length > 10) {
-          message.error('当前EDI系统只支持最多10个Pallets');
-          return;
-        }
-
+    this.validateFormData()
+      .then(() => {
         this.setState({
           showSubmitConfirm: true,
           submittingTitle: this.getFileName(this.props.file),
         });
+      })
+      .catch(rejected => {
+        if (Boolean(rejected)) {
+          message.error(rejected);
+        }
       });
   }
 
