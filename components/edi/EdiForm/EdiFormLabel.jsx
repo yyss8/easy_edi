@@ -31,8 +31,9 @@ export default class extends FormBase {
 
   validateFormData() {
     return new Promise(async (resolve, reject) => {
-      this.getFormRef().current.validateFields()
-        .then(data => {
+      this.getFormRef()
+        .current.validateFields()
+        .then((data) => {
           if (!data.pallets || data.pallets.length === 0) {
             reject('至少添加一个Pallet');
             return;
@@ -83,7 +84,7 @@ export default class extends FormBase {
             });
         });
       })
-      .catch(rejected => {
+      .catch((rejected) => {
         if (Boolean(rejected)) {
           message.error(rejected);
         }
@@ -228,22 +229,6 @@ export default class extends FormBase {
           });
         });
     });
-  }
-
-  /** @inheritdoc */
-  onShowSubmitModal() {
-    this.validateFormData()
-      .then(() => {
-        this.setState({
-          showSubmitConfirm: true,
-          submittingTitle: this.getFileName(this.props.file),
-        });
-      })
-      .catch(rejected => {
-        if (Boolean(rejected)) {
-          message.error(rejected);
-        }
-      });
   }
 
   /** @inheritdoc */

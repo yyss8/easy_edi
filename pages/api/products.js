@@ -46,11 +46,10 @@ export default async (req, res) => {
         prevProducts = (await db('ed_product').pluck('product_id')) || [];
       } catch (e) {
         logger.error(`获取prevproducts出错: ${e.stack}`);
-        res.status(500)
-          .json({
-            status: 'err',
-            errorMessage: '系统出错, 请稍候再试.',
-          });
+        res.status(500).json({
+          status: 'err',
+          errorMessage: '系统出错, 请稍候再试.',
+        });
         return;
       }
 

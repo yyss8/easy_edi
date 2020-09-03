@@ -2,7 +2,7 @@ import db from '../../../library/database.connection';
 import logger from '../../../library/logger';
 
 export default (req, res) => {
-  const { asin } = req.params;
+  const { asin } = req.query;
 
   db('ed_product')
     .where('asin', asin)
@@ -29,7 +29,7 @@ export default (req, res) => {
         },
       });
     })
-    .catch(rejected => {
+    .catch((rejected) => {
       logger.error(`获取商品CTN Packing出错: ${rejected.stack}`);
 
       res.status(500).json({

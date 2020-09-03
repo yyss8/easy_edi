@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Button, Modal, Input } from 'antd';
+import { Form, Button, Modal, Input, message } from 'antd';
 import FormStyles from './EdiFormBase.module.scss';
 import moment from 'moment';
 
@@ -101,17 +101,25 @@ export default class extends React.Component {
    */
   onDirectSubmit() {}
 
+  validateFormData() {
+    return this.getFormRef().current.validateFields();
+  }
+
   /**
    * 显示直接提交modal.
    */
   onShowSubmitModal() {
-    this.getFormRef()
-      .current.validateFields()
+    this.validateFormData()
       .then(() => {
         this.setState({
           showSubmitConfirm: true,
           submittingTitle: this.getFileName(this.props.file),
         });
+      })
+      .catch((rejected) => {
+        if (Boolean(rejected)) {
+          message.error(rejected);
+        }
       });
   }
 

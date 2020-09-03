@@ -278,7 +278,7 @@ export default class extends FormBase {
             导入地址
           </Button>
         </Form.Item>
-        <Form.Item name='from_code' label='Ship Code' rules={[{ required: true }]}>
+        <Form.Item name='from_code' label='Address Number' rules={[{ required: true }]}>
           <Input size='small' />
         </Form.Item>
         <Form.Item name='from_street' label='Street' rules={[{ required: true }]}>

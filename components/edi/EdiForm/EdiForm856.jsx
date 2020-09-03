@@ -1,9 +1,10 @@
 import React from 'react';
 import FormBase from './EdiFormBase';
-import { Form, DatePicker, Input, Row, Col, InputNumber, message, Button } from 'antd';
+import { Form, DatePicker, Input, Row, Col, InputNumber, message, Radio, Modal } from 'antd';
 import axois from 'axios';
 import fileDownload from 'js-file-download';
 import moment from 'moment';
+import updater from 'immutability-helper';
 
 import VolumeSelect from '../EdiFormComponents/VolumeSelect';
 import WeightSelect from '../EdiFormComponents/WeightSelect';
@@ -13,12 +14,58 @@ import TypeSelect from '../EdiFormComponents/TypeSelect';
  * 856文档表单.
  */
 export default class extends FormBase {
+  /** @inheritdoc */
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      ...super.state,
+      stackType: 'unstacked',
+    };
+  }
+
   validateFormData() {
-    return new Promise(async (resolve, reject) => {
-      const data = await this.getFormRef().current.validateFields();
-      const response = await axois.post(`/api/product/${this.props.file.asin}`, {
-        shipped: data.to_be_shipped,
-      });
+    return new Promise((resolve, reject) => {
+      this.getFormRef()
+        .current.validateFields()
+        .then(async (data) => {
+          try {
+            const response = await axois.post(`/api/product/${this.props.file.asin}`, {
+              shipped: data.to_be_shipped,
+              total: data.total_carton,
+            });
+
+            const checkData = response.data;
+
+            if (checkData.status === 'ok') {
+              if (checkData.result.not_found === 1 || checkData.result.match === 0) {
+                Modal.confirm({
+                  title: `${checkData.result.not_found === 1 ? '不存在该ASIN记录' : '发货量不匹配'}, 是否继续提交数据?`,
+                  onOk: () => resolve(data),
+                  onCancel: () => reject(),
+                });
+                return;
+              } else {
+                resolve(data);
+              }
+            } else {
+              Modal.confirm({
+                title: '匹配出错, 是否继续提交数据?',
+                onOk: () => resolve(data),
+                onCancel: () => reject(),
+              });
+              return;
+            }
+
+            resolve(data);
+          } catch (e) {
+            Modal.confirm({
+              title: '匹配出错, 是否继续提交数据?',
+              onOk: () => resolve(data),
+              onCancel: () => reject(),
+            });
+          }
+        });
     });
   }
 
@@ -29,23 +76,40 @@ export default class extends FormBase {
       return;
     }
 
-    this.setState({ isGenerating: true }, () => {
-      data.ship_date = data.ship_date.format('YYYYMMDD');
+    this.validateFormData()
+      .then(() => {
+        const { stackType } = this.state;
 
-      axois
-        .post(`/api/generate/edi/856/${this.props.file.name}`, data, {
-          responseType: 'arraybuffer',
-        })
-        .then((response) => {
-          fileDownload(response.data, `${this.getFileName(this.props.file)}.xlsx`);
-          message.success('成功生成856文件.');
-          this.setState({ isGenerating: false });
-        })
-        .catch((rejected) => {
-          console.log(rejected);
-          message.error('生成请求出错, 请稍候再试...');
+        this.setState({ isGenerating: true }, () => {
+          const prepared = updater(data, {
+            ship_date: {
+              $set: data.ship_date.format('YYYYMMDD'),
+            },
+            [stackType === 'unstacked' ? 'stacked_pallets' : 'unstacked_pallets']: {
+              $set: 0,
+            },
+          });
+
+          axois
+            .post(`/api/generate/edi/856/${this.props.file.name}`, prepared, {
+              responseType: 'arraybuffer',
+            })
+            .then((response) => {
+              fileDownload(response.data, `${this.getFileName(this.props.file)}.xlsx`);
+              message.success('成功生成856文件.');
+              this.setState({ isGenerating: false });
+            })
+            .catch((rejected) => {
+              console.log(rejected);
+              message.error('生成请求出错, 请稍候再试...');
+            });
         });
-    });
+      })
+      .catch((rejected) => {
+        if (Boolean(rejected)) {
+          message.error(rejected);
+        }
+      });
   }
 
   /** @inheritdoc */
@@ -56,6 +120,8 @@ export default class extends FormBase {
       type_unit: 'EA',
       type: 'CTN',
       stacked_pallets: 0,
+      unstacked_pallets: 0,
+      stack_type: 'unstacked',
     };
   }
 
@@ -65,12 +131,19 @@ export default class extends FormBase {
       .current.validateFields()
       .then((data) => {
         this.setState({ isGenerating: true }, () => {
-          data.ship_date = data.ship_date.format('YYYYMMDD');
+          const prepared = updater(data, {
+            ship_date: {
+              $set: data.ship_date.format('YYYYMMDD'),
+            },
+            [stackType === 'unstacked' ? 'stacked_pallets' : 'unstacked_pallets']: {
+              $set: 0,
+            },
+          });
 
           axois
             .post(`/api/generate/edi/856/${this.props.file.name}?submit=1`, {
               titleOverride: this.state.submittingTitle,
-              ...data,
+              ...prepared,
             })
             .then((response) => {
               if (response.data.status === 'ok') {
@@ -97,6 +170,9 @@ export default class extends FormBase {
   /** @inheritdoc */
   getFormItems() {
     const twoColumnLayout = this.getTwoColumnSpans();
+    const { stackType } = this.state;
+    const unstackOuterColSpan = stackType === 'unstacked' ? twoColumnLayout.first.outer : twoColumnLayout.second.outer;
+    const unstackInnerColSpan = stackType === 'unstacked' ? twoColumnLayout.first.inner : twoColumnLayout.second.inner;
 
     return (
       <React.Fragment>
@@ -130,21 +206,36 @@ export default class extends FormBase {
             </Form.Item>
           </Col>
         </Row>
+        <Form.Item label='Pallet Stacking Type' rules={[{ required: true }]}>
+          <Radio.Group onChange={(e) => this.setState({ stackType: e.target.value })} value={stackType}>
+            <Radio value='unstacked'>Unstacked</Radio>
+            <Radio value='stacked'>Stacked</Radio>
+            <Radio value='both'>Both</Radio>
+          </Radio.Group>
+        </Form.Item>
         <Row>
-          <Col {...twoColumnLayout.first.outer}>
-            <Form.Item name='stacked_pallets' label='Total Stacked Pallets' {...twoColumnLayout.first.inner}>
-              <InputNumber size='small' />
-            </Form.Item>
-          </Col>
-          <Col {...twoColumnLayout.second.outer}>
-            <Form.Item
-              name='unstacked_pallets'
-              label='Total Unstacked Pallets'
-              rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}>
-              <InputNumber size='small' />
-            </Form.Item>
-          </Col>
+          {(stackType === 'stacked' || stackType === 'both') && (
+            <Col {...twoColumnLayout.first.outer}>
+              <Form.Item
+                rules={[{ required: stackType === 'stacked' || stackType === 'both' }]}
+                name='stacked_pallets'
+                label='Total Stacked Pallets'
+                {...twoColumnLayout.first.inner}>
+                <InputNumber size='small' />
+              </Form.Item>
+            </Col>
+          )}
+          {(stackType === 'unstacked' || stackType === 'both') && (
+            <Col {...unstackOuterColSpan}>
+              <Form.Item
+                name='unstacked_pallets'
+                label='Total Unstacked Pallets'
+                rules={[{ required: stackType === 'unstacked' || stackType === 'both' }]}
+                {...unstackInnerColSpan}>
+                <InputNumber size='small' />
+              </Form.Item>
+            </Col>
+          )}
         </Row>
         <Row>
           <Col {...twoColumnLayout.first.outer}>
