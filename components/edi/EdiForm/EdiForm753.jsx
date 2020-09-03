@@ -159,7 +159,7 @@ export default class extends FormBase {
         <Row type='flex' style={{ marginBottom: 10 }}>
           <Col span={4}>
             <Input.Search
-              placeholder='搜索地址名称'
+              placeholder='搜索地址'
               value={this.state.keyword}
               onChange={(e) => this.setState({ keyword: e.target.value })}
               size='small'

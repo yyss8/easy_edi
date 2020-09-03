@@ -24,48 +24,42 @@ export default class extends FormBase {
     };
   }
 
+  /** @inheritdoc */
   validateFormData() {
     return new Promise((resolve, reject) => {
-      this.getFormRef()
-        .current.validateFields()
-        .then(async (data) => {
-          try {
-            const response = await axois.post(`/api/product/${this.props.file.asin}`, {
-              shipped: data.to_be_shipped,
-              total: data.total_carton,
-            });
+      super.validateFormData().then(async (data) => {
+        try {
+          const response = await axois.post(`/api/product/${this.props.file.asin}`, {
+            shipped: data.to_be_shipped,
+            total: data.total_carton,
+          });
 
-            const checkData = response.data;
+          const checkData = response.data;
 
-            if (checkData.status === 'ok') {
-              if (checkData.result.not_found === 1 || checkData.result.match === 0) {
-                Modal.confirm({
-                  title: `${checkData.result.not_found === 1 ? '不存在该ASIN记录' : '发货量不匹配'}, 是否继续提交数据?`,
-                  onOk: () => resolve(data),
-                  onCancel: () => reject(),
-                });
-                return;
-              } else {
-                resolve(data);
-              }
-            } else {
-              Modal.confirm({
-                title: '匹配出错, 是否继续提交数据?',
-                onOk: () => resolve(data),
-                onCancel: () => reject(),
-              });
+          if (checkData.status === 'ok') {
+            if (checkData.result.not_found === 1 || checkData.result.match === 0) {
+              this.displayConfirmMessage(
+                `${
+                  checkData.result.not_found === 1 ? '不存在该商品的ASIN记录' : '发货量与系统商品不匹配'
+                }, 是否继续提交数据?`,
+                data,
+                resolve,
+                reject
+              );
               return;
+            } else {
+              resolve(data);
             }
-
-            resolve(data);
-          } catch (e) {
-            Modal.confirm({
-              title: '匹配出错, 是否继续提交数据?',
-              onOk: () => resolve(data),
-              onCancel: () => reject(),
-            });
+          } else {
+            this.displayConfirmMessage('匹配出错, 是否继续提交数据?', data, resolve, reject);
+            return;
           }
-        });
+
+          resolve(data);
+        } catch (e) {
+          this.displayConfirmMessage('匹配出错, 是否继续提交数据?', data, resolve, reject);
+        }
+      });
     });
   }
 

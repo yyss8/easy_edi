@@ -1,7 +1,6 @@
 import React from 'react';
 import { Form, Button, Modal, Input, message } from 'antd';
 import FormStyles from './EdiFormBase.module.scss';
-import moment from 'moment';
 
 /**
  * 文档表单基础组件.
@@ -61,7 +60,7 @@ export default class extends React.Component {
   /**
    * 获取两列相关元素的span以及offset.
    *
-   * @return {{first: {outer: {offset: number, span: number}, inner: {wrapperCol: {span: number}, labelCol: {span: number}}}, second: {outer: {span: number}, inner: {wrapperCol: {span: number}, labelCol: {span: number}}}}}
+   * @return {Object}
    */
   getTwoColumnSpans() {
     return {
@@ -101,6 +100,11 @@ export default class extends React.Component {
    */
   onDirectSubmit() {}
 
+  /**
+   * 验证当前数据.
+   *
+   * @return {Promise}
+   */
   validateFormData() {
     return this.getFormRef().current.validateFields();
   }
@@ -121,6 +125,26 @@ export default class extends React.Component {
           message.error(rejected);
         }
       });
+  }
+
+  /**
+   * 用于显示验证后的是否继续提交的提示.
+   *
+   * @param {string} message
+   *   提示消息.
+   * @param {Object} data
+   *   准备提交的文档数据.
+   * @param {function} resolve
+   *   继续回调.
+   * @param {function} reject
+   *   取消回调.
+   */
+  displayConfirmMessage(message, data, resolve, reject) {
+    Modal.confirm({
+      title: message,
+      onOk: () => resolve(data),
+      onCancel: () => reject(),
+    });
   }
 
   /**
