@@ -35,10 +35,10 @@ export default class extends FormBase {
         .current.validateFields()
         .then((data) => {
           if (!data.pallets || data.pallets.length === 0) {
-            reject('至少添加一个Pallet');
+            reject('Please add at least 1 pallet.');
             return;
           } else if (data.pallets.length > 10) {
-            reject('当前EDI系统只支持最多10个Pallets');
+            reject('The current EDI system only supports up to 10 pallets.');
             return;
           }
 
