@@ -30,8 +30,8 @@ export default class extends FormBase {
       super.validateFormData().then(async (data) => {
         try {
           const response = await axois.post(`/api/product/${this.props.file.asin}`, {
-            shipped: data.to_be_shipped,
-            total: data.total_carton,
+            shipped: data.total_carton,
+            total: data.to_be_shipped,
           });
 
           const checkData = response.data;
@@ -47,8 +47,6 @@ export default class extends FormBase {
                 reject
               );
               return;
-            } else {
-              resolve(data);
             }
           } else {
             this.displayConfirmMessage('匹配出错, 是否继续提交数据?', data, resolve, reject);
@@ -123,8 +121,10 @@ export default class extends FormBase {
   onDirectSubmit() {
     this.getFormRef()
       .current.validateFields()
+      .then(data => this.displayRedirectSubmitConfirm(data))
       .then((data) => {
         this.setState({ isGenerating: true }, () => {
+          const { stackType } = this.state;
           const prepared = updater(data, {
             ship_date: {
               $set: data.ship_date.format('YYYYMMDD'),

@@ -1,4 +1,4 @@
-# Easy EDI v2.1.0
+# Easy EDI v2.1.1
 
 ### 所需环境:
 

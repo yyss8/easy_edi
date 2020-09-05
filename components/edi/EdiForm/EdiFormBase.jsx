@@ -147,6 +147,17 @@ export default class extends React.Component {
     });
   }
 
+  displayRedirectSubmitConfirm(data = null) {
+    return new Promise((resolve, reject) => {
+      this.displayConfirmMessage(
+        'Please confirm the accuracy of the information',
+        data,
+        resolve,
+        reject
+      );
+    });
+  }
+
   /**
    * 获取生成文件名称.
    *

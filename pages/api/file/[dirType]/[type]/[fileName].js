@@ -24,10 +24,13 @@ export default async (req, res) => {
       context.products = {};
 
       try {
-        const products = await db('ed_product').select('asin', 'product_title');
+        const products = await db('ed_product').select('asin', 'product_title', 'ctn_packing');
 
         products.forEach((product) => {
-          context.products[product.asin] = product.product_title;
+          context.products[product.asin] = {
+            title: product.product_title,
+            ctn_packing: product.ctn_packing,
+          };
         });
       } catch (e) {
         console.log(e);

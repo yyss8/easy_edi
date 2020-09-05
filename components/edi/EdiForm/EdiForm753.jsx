@@ -233,6 +233,7 @@ export default class extends FormBase {
   onDirectSubmit() {
     this.getFormRef()
       .current.validateFields()
+      .then(data => this.displayRedirectSubmitConfirm(data))
       .then((data) => {
         this.setState({ isGenerating: true }, () => {
           data.freight_ready_date = data.freight_ready_date.format('YYYYMMDD');

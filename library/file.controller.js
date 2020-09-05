@@ -55,10 +55,13 @@ async function loadFiles(type, params = {}) {
     case 'label-excel':
       context.products = {};
       try {
-        const products = await db('ed_product').select('asin', 'product_title');
+        const products = await db('ed_product').select('asin', 'product_title', 'ctn_packing');
 
         products.forEach((product) => {
-          context.products[product.asin] = product.product_title;
+          context.products[product.asin] = {
+            title: product.product_title,
+            ctn_packing: product.ctn_packing,
+          };
         });
       } catch (e) {
         console.log(e);
@@ -144,7 +147,7 @@ function getFileData(fileName, dirType, type, getDetail = false, context = {}) {
       if (Array.isArray(fileData.products)) {
         fileData.products.forEach((product) => {
           if (Boolean(productMap[product.asin])) {
-            product.product_title = productMap[product.asin];
+            product.product_title = productMap[product.asin].title;
 
             // 如果一个商品已存在于数据库, 将850标记为有描述.
             fileData.has_product_title = true;
@@ -164,10 +167,15 @@ function getFileData(fileName, dirType, type, getDetail = false, context = {}) {
       const labelProductMap = context.products || {};
 
       if (Boolean(fileData.asin) && Boolean(labelProductMap[fileData.asin])) {
-        fileData.product_title = labelProductMap[fileData.asin];
+        fileData.product_title = labelProductMap[fileData.asin].title;
+
+        if (Boolean(labelProductMap[fileData.asin].ctn_packing) && Boolean(fileData.total_carton)) {
+          fileData.to_be_shipped = fileData.total_carton * labelProductMap[fileData.asin].ctn_packing;
+        }
       } else {
         fileData.product_title = '';
       }
+
       break;
 
     default:

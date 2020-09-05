@@ -235,6 +235,7 @@ export default class extends FormBase {
   onDirectSubmit() {
     this.getFormRef()
       .current.validateFields()
+      .then(data => this.displayRedirectSubmitConfirm(data))
       .then((data) => {
         this.setState({ isGenerating: true }, () => {
           const { file } = this.props;
