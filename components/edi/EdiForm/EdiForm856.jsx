@@ -40,8 +40,8 @@ export default class extends FormBase {
             if (checkData.result.not_found === 1 || checkData.result.match === 0) {
               this.displayConfirmMessage(
                 `${
-                  checkData.result.not_found === 1 ? '不存在该商品的ASIN记录' : '发货量与系统商品不匹配'
-                }, 是否继续提交数据?`,
+                  checkData.result.not_found === 1 ? 'There is no product found that matches the ASIN' : 'The number of the items to be shipped doesn\'t match with the product'
+                }, continue submitting the file?`,
                 data,
                 resolve,
                 reject
@@ -49,13 +49,13 @@ export default class extends FormBase {
               return;
             }
           } else {
-            this.displayConfirmMessage('匹配出错, 是否继续提交数据?', data, resolve, reject);
+            this.displayConfirmMessage('Matching request failed, continue submitting the file?', data, resolve, reject);
             return;
           }
 
           resolve(data);
         } catch (e) {
-          this.displayConfirmMessage('匹配出错, 是否继续提交数据?', data, resolve, reject);
+          this.displayConfirmMessage('Matching request failed, continue submitting the file?', data, resolve, reject);
         }
       });
     });
