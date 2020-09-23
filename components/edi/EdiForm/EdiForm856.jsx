@@ -77,6 +77,9 @@ export default class extends FormBase {
             ship_date: {
               $set: data.ship_date.format('YYYYMMDD'),
             },
+            expiration: {
+              $set: Boolean(data.expiration) && moment.isMoment(data.expiration) ? data.expiration.format('YYYYMMDD') : '',
+            },
             [stackType === 'unstacked' ? 'stacked_pallets' : 'unstacked_pallets']: {
               $set: 0,
             },
@@ -128,6 +131,9 @@ export default class extends FormBase {
           const prepared = updater(data, {
             ship_date: {
               $set: data.ship_date.format('YYYYMMDD'),
+            },
+            expiration: {
+              $set: Boolean(data.expiration) && moment.isMoment(data.expiration) ? data.expiration.format('YYYYMMDD') : '',
             },
             [stackType === 'unstacked' ? 'stacked_pallets' : 'unstacked_pallets']: {
               $set: 0,
@@ -293,6 +299,16 @@ export default class extends FormBase {
           <Col {...twoColumnLayout.second.outer}>
             <Form.Item name='volume' label='Volume' rules={[{ required: true }]} {...twoColumnLayout.second.inner}>
               <InputNumber size='small' />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col {...twoColumnLayout.first.outer}>
+            <Form.Item
+              name='expiration'
+              label='Expiration'
+              {...twoColumnLayout.first.inner}>
+              <DatePicker size="small" />
             </Form.Item>
           </Col>
         </Row>
