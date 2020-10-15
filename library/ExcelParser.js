@@ -210,6 +210,8 @@ class ExcelParser {
       po_number: 'B3',
       quantity: 'B4',
       products: 6,
+      shipping_window: 3,
+      ship_to: 'H3',
     };
 
     return this.parse(
@@ -217,6 +219,14 @@ class ExcelParser {
       fetchingDataMap,
       (key, position, sheet, lastRow) => {
         switch (key) {
+          case 'shipping_window':
+            const startPosition = `E${position}`;
+            const endPosition = `F${position}`;
+            return {
+              start: typeof sheet[startPosition] === 'undefined' ? '' : sheet[startPosition].v,
+              end: typeof sheet[endPosition] === 'undefined' ? '' : sheet[endPosition].v,
+            };
+
           case 'products':
             const products = [];
 
@@ -231,8 +241,6 @@ class ExcelParser {
                 quantity: sheet[quantityPosition].v,
                 price: sheet[`D${i}`].v,
                 action: sheet[`E${i}`].v,
-                date_1: sheet[`F${i}`].v,
-                date_2: sheet[`G${i}`].v,
                 unit: sheet[`H${i}`].v,
               });
             }
@@ -246,7 +254,6 @@ class ExcelParser {
       data
     );
   }
-
 
   /**
    * 通用文档解析函数.

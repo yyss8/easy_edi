@@ -228,7 +228,7 @@ class ExcelGenerator {
     const preparedData = [
       ['SENDER', 'JOINTOWN'],
       ['RECEIVER', 'AMAZON'],
-      ['PO#', data.po_number],
+      ['PO#', data.po_number, '', 'Shipping Window', data.shipping_window.start, data.shipping_window.end, 'Ship To', data.ship_to],
       ['QUANTITY', data.quantity],
       ['LINE#', 'ASIN', 'QUANTITY', 'UNIT PRICE', 'ACTION', '', '', 'UNIT'],
     ];
@@ -240,8 +240,8 @@ class ExcelGenerator {
         product.quantity,
         product.price,
         product.action,
-        product.date_1,
-        product.date_2,
+        '', // 字段预留
+        '', // 字段预留
         product.unit,
       ]);
     });

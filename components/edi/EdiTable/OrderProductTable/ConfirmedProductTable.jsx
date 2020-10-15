@@ -31,16 +31,6 @@ const ConfirmedProductTable = (props) => {
 			dataIndex: 'action',
 			key: 'action',
 		},
-		{
-			title: 'Date 1',
-			dataIndex: 'date_1',
-			key: 'date_1',
-		},
-		{
-			title: 'Date 2',
-			dataIndex: 'date_2',
-			key: 'date_2',
-		},
 	];
 
 	return (

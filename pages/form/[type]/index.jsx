@@ -83,19 +83,19 @@ class EdiFormView extends React.Component {
 
     switch (this.state.type) {
       case '753':
-        return <EdiForm753{...commonProps}/>;
+        return <EdiForm753 {...commonProps} />;
 
       case '810':
-        return <EdiForm810{...commonProps}/>
+        return <EdiForm810 {...commonProps} />;
 
       case '855':
-        return <EdiForm855{...commonProps}/>
+        return <EdiForm855 {...commonProps} />;
 
       case '856':
-        return <EdiForm856{...commonProps}/>;
+        return <EdiForm856 {...commonProps} />;
 
       case 'label-excel':
-        return <EdiFormLabel{...commonProps}/>;
+        return <EdiFormLabel {...commonProps} />;
     }
   }
 
@@ -159,18 +159,37 @@ class EdiFormView extends React.Component {
     const { type, file } = this.state;
     switch (type) {
       case '810':
+        const start810 =
+          file.shipping_window && file.shipping_window.start !== ''
+            ? moment(file.shipping_window.start, 'YYYYMMDD').format('YYYY/MM/DD')
+            : '无';
+        const end810 =
+          file.shipping_window && file.shipping_window.end !== ''
+            ? moment(file.shipping_window.end, 'YYYYMMDD').format('YYYY/MM/DD')
+            : '无';
+
         const confirmedProducts = file.products.map((p, i) => ({ ...p, key: `row-p-${i}` }));
-        return <Descriptions size='middle' layout='vertical' title='订单信息' bordered>
-          <Descriptions.Item span={2} label='PO #'>
-            <b>{file.po_number}</b>
-          </Descriptions.Item>
-          <Descriptions.Item span={2} label='Quantity'>
-            <b>{file.quantity}</b>
-          </Descriptions.Item>
-          <Descriptions.Item span={3} label='Products'>
-            <ConfirmedProductTable products={confirmedProducts} withTitle={false} />
-          </Descriptions.Item>
-        </Descriptions>
+        return (
+          <Descriptions size='middle' layout='vertical' title='订单信息' bordered>
+            <Descriptions.Item span={2} label='PO #'>
+              <b>{file.po_number}</b>
+            </Descriptions.Item>
+            <Descriptions.Item span={2} label='Quantity'>
+              <b>{file.quantity}</b>
+            </Descriptions.Item>
+            <Descriptions.Item span={2} label='Shipping Window'>
+              <b>
+                {start810} - {end810}
+              </b>
+            </Descriptions.Item>
+            <Descriptions.Item span={2} label='Ship To'>
+              <b>{file.ship_to}</b>
+            </Descriptions.Item>
+            <Descriptions.Item span={3} label='Products'>
+              <ConfirmedProductTable products={confirmedProducts} withTitle={false} />
+            </Descriptions.Item>
+          </Descriptions>
+        );
 
       case '855':
       case '753':
@@ -228,11 +247,11 @@ class EdiFormView extends React.Component {
    */
   fetchSingleFile() {
     const typeMapper = {
-      '753': '850',
+      753: '850',
       'label-excel': '754',
-      '856': 'label-excel',
-      '855': '850',
-      '810': '855',
+      856: 'label-excel',
+      855: '850',
+      810: '855',
     };
     const { type } = this.state;
 
@@ -273,14 +292,12 @@ class EdiFormView extends React.Component {
           });
         } else if (this.state.type === '855') {
           const totalQuantity = file.products.reduce((a, b) => a + Number(b.quantity), 0);
-          const products = file.products.map(product => ({
+          const products = file.products.map((product) => ({
             quantity: product.quantity,
             price: product.price,
-            action: '',
+            action: 'IA',
             asin: product.asin,
             unit: product.unit,
-            date_1: null,
-            date_2: null,
           }));
 
           this.formRef.current.setFieldsValue({
@@ -288,7 +305,6 @@ class EdiFormView extends React.Component {
             quantity: totalQuantity,
           });
         }
-
       })
       .catch((rejected) => {
         console.log(rejected);
