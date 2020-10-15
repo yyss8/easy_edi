@@ -153,6 +153,48 @@ class ExcelGenerator {
   }
 
   /**
+   * 生成855 Excel文档.
+   *
+   * @param {Object} data
+   *   856数据.
+   * @param {boolean} submit
+   *   是否直接提交至目录.
+   * @param {string|boolean} titleOverride
+   *   覆盖标题.
+   *
+   * @return {ReadStream|null}
+   */
+  static generate855(data, submit = false, titleOverride = false) {
+    const preparedData = [
+      ['SENDER', 'JOINTOWN'],
+      ['RECEIVER', 'AMAZON'],
+      ['PO#', data.po_number],
+      ['QUANTITY', data.quantity],
+      ['LINE#', 'ASIN', 'QUANTITY', 'UNIT PRICE', 'ACTION', '', ''],
+    ];
+
+    data.products.forEach((product, i) => {
+      preparedData.push([
+        i + 1,
+        product.asin,
+        product.quantity,
+        product.price,
+        product.action,
+        product.date_1,
+        product.date_2,
+      ]);
+    });
+
+    return this.generate(
+      `855-${moment().format('MMDD')}-PO-${data.po_number}`,
+      preparedData,
+      '855',
+      submit,
+      titleOverride
+    );
+  }
+
+  /**
    * 生成856 Excel文档.
    *
    * @param {Object} data

@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import SiteLayout from '../../../components/layout/SiteLayout';
 import EdiForm753 from '../../../components/edi/EdiForm/EdiForm753';
+import EdiForm855 from '../../../components/edi/EdiForm/EdiForm855';
 import EdiFormLabel from '../../../components/edi/EdiForm/EdiFormLabel';
 import OrderProductTable from '../../../components/edi/EdiTable/OrderProductTable/OrderProductTable';
 import EdiDetails754 from '../../../components/edi/EdiDetails/EdiDetails754';
@@ -72,15 +73,24 @@ class EdiFormView extends React.Component {
    * @return {React}
    */
   getCreatingForm() {
+    const commonProps = {
+      type: this.state.type,
+      file: this.state.file,
+      parentRef: this.formRef,
+    };
+
     switch (this.state.type) {
       case '753':
-        return <EdiForm753 type={this.state.type} file={this.state.file} parentRef={this.formRef} />;
+        return <EdiForm753{...commonProps}/>;
+
+      case '855':
+        return <EdiForm855{...commonProps}/>
 
       case '856':
-        return <EdiForm856 type={this.state.type} file={this.state.file} parentRef={this.formRef} />;
+        return <EdiForm856{...commonProps}/>;
 
       case 'label-excel':
-        return <EdiFormLabel type={this.state.type} file={this.state.file} parentRef={this.formRef} />;
+        return <EdiFormLabel{...commonProps}/>;
     }
   }
 
@@ -144,6 +154,7 @@ class EdiFormView extends React.Component {
     const { type, file } = this.state;
 
     switch (type) {
+      case '855':
       case '753':
         const start =
           file.shipping_window && file.shipping_window.start !== ''
@@ -202,6 +213,8 @@ class EdiFormView extends React.Component {
       '753': '850',
       'label-excel': '754',
       '856': 'label-excel',
+      '855': '850',
+      '810': '855',
     };
 
     axios(
@@ -239,7 +252,23 @@ class EdiFormView extends React.Component {
             to_zipcode: file.address_zip,
             to_country: file.address_country,
           });
+        } else if (this.state.type === '855') {
+          const totalQuantity = file.products.reduce((a, b) => a + Number(b.quantity), 0);
+          const products = file.products.map(product => ({
+            quantity: product.quantity,
+            price: product.price,
+            action: '',
+            asin: product.asin,
+            date_1: null,
+            date_2: null,
+          }));
+
+          this.formRef.current.setFieldsValue({
+            products,
+            quantity: totalQuantity,
+          });
         }
+
       })
       .catch((rejected) => {
         console.log(rejected);

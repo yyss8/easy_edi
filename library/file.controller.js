@@ -18,8 +18,10 @@ const TYPE_MAPPING = {
   '754': '\\edi\\754-excel',
   '997': '\\ediout-json\\997',
   // out
+  '855': '\\edi\\855-excel',
   '753': '\\edi\\753-excel',
   '856': '\\edi\\856-excel',
+  '810': '\\edi\\810-excel',
   label: '\\edi\\label',
   'label-excel': '\\edi\\label-excel',
   // 通知
