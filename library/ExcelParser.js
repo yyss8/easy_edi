@@ -205,6 +205,49 @@ class ExcelParser {
     );
   }
 
+  static parse855(filePath, data = null) {
+    const fetchingDataMap = {
+      po_number: 'B3',
+      quantity: 'B4',
+      products: 6,
+    };
+
+    return this.parse(
+      filePath,
+      fetchingDataMap,
+      (key, position, sheet, lastRow) => {
+        switch (key) {
+          case 'products':
+            const products = [];
+
+            for (let i = position; i <= lastRow; i++) {
+              const quantityPosition = `C${i}`;
+              if (typeof sheet[quantityPosition] === 'undefined') {
+                continue;
+              }
+
+              products.push({
+                asin: sheet[`B${i}`].v,
+                quantity: sheet[quantityPosition].v,
+                price: sheet[`D${i}`].v,
+                action: sheet[`E${i}`].v,
+                date_1: sheet[`F${i}`].v,
+                date_2: sheet[`G${i}`].v,
+                unit: sheet[`H${i}`].v,
+              });
+            }
+
+            return products;
+
+          default:
+            return typeof sheet[position] === 'undefined' ? '' : sheet[position].v;
+        }
+      },
+      data
+    );
+  }
+
+
   /**
    * 通用文档解析函数.
    *

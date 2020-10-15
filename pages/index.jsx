@@ -62,7 +62,6 @@ const SUPPORTED_INPUT_LIST = [
     code: '810',
     name: '发送发票',
     type: 'upload',
-    disabled: true,
   },
   {
     code: 'logs',
@@ -156,9 +155,17 @@ export default class extends Component {
       queryObject.poDate = this.state.poDate.format('YYYYMMDD');
     }
 
+    const prevFileType = this.state.fileType;
+    const prevType = this.state.type;
+
     axios
-      .get(`/api/files/${this.state.fileType}/${this.state.type}?${qs.stringify(queryObject)}`)
+      .get(`/api/files/${prevFileType}/${prevType}?${qs.stringify(queryObject)}`)
       .then((response) => {
+        // 如果页面变换就不继续渲染.
+        if (this.state.type !== prevType || this.state.fileType !== prevFileType) {
+          return;
+        }
+
         this.setState({
           files: response.data.result.files.map((f, k) => ({ ...f, key: `file-${k}` })),
           tabLoading: false,
@@ -802,6 +809,7 @@ export default class extends Component {
                   </a>
                 </Link>
               )}
+
               {this.state.fileType === 'archive' && this.state.type === 'label-excel' && (
                 <Link href={`/form/856?fileName=${encodeURI(record.name)}`}>
                   <a title='生成标签文档' className='ant-btn ant-btn-sm' style={{ marginLeft: 8 }}>
@@ -809,7 +817,14 @@ export default class extends Component {
                   </a>
                 </Link>
               )}
-              {/*<Button size="small" onClick={ () => this.handleFileDelete(record.name) } type="danger">删除文件</Button>*/}
+
+              {this.state.fileType === 'archive' && this.state.type === '855' && (
+                <Link href={`/form/810?fileName=${encodeURI(record.name)}`}>
+                  <a title='生成发票文档' className='ant-btn ant-btn-sm' style={{ marginLeft: 8 }}>
+                    生成810
+                  </a>
+                </Link>
+              )}
             </span>
           );
         },

@@ -8,8 +8,10 @@ import axios from 'axios';
 import SiteLayout from '../../../components/layout/SiteLayout';
 import EdiForm753 from '../../../components/edi/EdiForm/EdiForm753';
 import EdiForm855 from '../../../components/edi/EdiForm/EdiForm855';
+import EdiForm810 from '../../../components/edi/EdiForm/EdiForm810';
 import EdiFormLabel from '../../../components/edi/EdiForm/EdiFormLabel';
 import OrderProductTable from '../../../components/edi/EdiTable/OrderProductTable/OrderProductTable';
+import ConfirmedProductTable from '../../../components/edi/EdiTable/OrderProductTable/ConfirmedProductTable';
 import EdiDetails754 from '../../../components/edi/EdiDetails/EdiDetails754';
 import EdiForm856 from '../../../components/edi/EdiForm/EdiForm856';
 import EdiDetailsLabel from '../../../components/edi/EdiDetails/EdiDetailsLabel';
@@ -83,6 +85,9 @@ class EdiFormView extends React.Component {
       case '753':
         return <EdiForm753{...commonProps}/>;
 
+      case '810':
+        return <EdiForm810{...commonProps}/>
+
       case '855':
         return <EdiForm855{...commonProps}/>
 
@@ -152,8 +157,21 @@ class EdiFormView extends React.Component {
    */
   getFileDescription() {
     const { type, file } = this.state;
-
     switch (type) {
+      case '810':
+        const confirmedProducts = file.products.map((p, i) => ({ ...p, key: `row-p-${i}` }));
+        return <Descriptions size='middle' layout='vertical' title='订单信息' bordered>
+          <Descriptions.Item span={2} label='PO #'>
+            <b>{file.po_number}</b>
+          </Descriptions.Item>
+          <Descriptions.Item span={2} label='Quantity'>
+            <b>{file.quantity}</b>
+          </Descriptions.Item>
+          <Descriptions.Item span={3} label='Products'>
+            <ConfirmedProductTable products={confirmedProducts} withTitle={false} />
+          </Descriptions.Item>
+        </Descriptions>
+
       case '855':
       case '753':
         const start =
@@ -216,9 +234,10 @@ class EdiFormView extends React.Component {
       '855': '850',
       '810': '855',
     };
+    const { type } = this.state;
 
     axios(
-      `/api/file/${this.state.type === '856' ? 'archive' : 'edi'}/${typeMapper[this.state.type]}/${this.state.fileName}`
+      `/api/file/${type === '856' || type === '810' ? 'archive' : 'edi'}/${typeMapper[type]}/${this.state.fileName}`
     )
       .then((response) => {
         const { file } = response.data.result;
@@ -259,6 +278,7 @@ class EdiFormView extends React.Component {
             price: product.price,
             action: '',
             asin: product.asin,
+            unit: product.unit,
             date_1: null,
             date_2: null,
           }));

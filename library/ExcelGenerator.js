@@ -153,6 +153,66 @@ class ExcelGenerator {
   }
 
   /**
+   * 生成810 Excel文档.
+   *
+   * @param {Object} data
+   *   856数据.
+   * @param {boolean} submit
+   *   是否直接提交至目录.
+   * @param {string|boolean} titleOverride
+   *   覆盖标题.
+   *
+   * @return {ReadStream|null}
+   */
+  static generate810(data, submit = false, titleOverride = false) {
+    const preparedData = [
+      ['SENDER', 'JOINTOWN'],
+      ['RECEIVER', 'AMAZON'],
+      [
+        'SHIP FROM',
+        data.from_code,
+        data.shipper || 'Jointown',
+        data.from_street,
+        data.from_city,
+        data.from_state,
+        data.from_zipcode,
+        data.from_country,
+      ],
+      [
+        'SHIP TO',
+        data.ship_to,
+        data.receiver || 'AMAZON',
+        data.to_street,
+        data.to_city,
+        data.to_state,
+        data.to_zipcode,
+        data.to_country,
+      ],
+      ['PO#', data.po_number],
+      ['INV#', data.po_number],
+      ['LINE#', 'ASIN', 'PRICE', 'QUANTITY', 'UNIT'],
+    ];
+
+    data.products.forEach((product, i) => {
+      preparedData.push([
+        i + 1,
+        product.asin,
+        product.price,
+        product.quantity,
+        product.unit,
+      ]);
+    });
+
+    return this.generate(
+      `810-${moment().format('MMDD')}-PO-${data.po_number}`,
+      preparedData,
+      '810',
+      submit,
+      titleOverride
+    );
+  }
+
+  /**
    * 生成855 Excel文档.
    *
    * @param {Object} data
@@ -170,7 +230,7 @@ class ExcelGenerator {
       ['RECEIVER', 'AMAZON'],
       ['PO#', data.po_number],
       ['QUANTITY', data.quantity],
-      ['LINE#', 'ASIN', 'QUANTITY', 'UNIT PRICE', 'ACTION', '', ''],
+      ['LINE#', 'ASIN', 'QUANTITY', 'UNIT PRICE', 'ACTION', '', '', 'UNIT'],
     ];
 
     data.products.forEach((product, i) => {
@@ -182,6 +242,7 @@ class ExcelGenerator {
         product.action,
         product.date_1,
         product.date_2,
+        product.unit,
       ]);
     });
 
