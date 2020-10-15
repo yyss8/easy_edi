@@ -50,7 +50,7 @@ const UploadDescriptionHint = (props) => {
       return (
         <React.Fragment>
           <h3>
-            通过<a href="/?type=855&fileType=archive">订单确认</a>文件可生成并提交ARN申请文档<br />
+            通过<a href="/?type=855&fileType=archive">订单确认</a>文件可生成并提交发票文档<br />
             上传或提交完成后至亚马逊Operational Analytics页面查看发送结果或查看<a href='/?type=notify'>网关通知</a>.
           </h3>
           <h5>上传文件名请勿带有#符号, 否则将无法下载归档文件.</h5>
