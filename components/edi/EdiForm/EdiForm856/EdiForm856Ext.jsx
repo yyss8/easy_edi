@@ -63,6 +63,13 @@ export default class extends FormBase {
     });
   }
 
+  prepareProducts(products) {
+    return products.map((product) => ({
+      ...product,
+      expiration: moment.isMoment(product.expiration) ? product.expiration.format('YYYYMMDD') : '',
+    }))
+  }
+
   /** @inheritdoc */
   handleFileGenerate(data) {
     if (!this.props.file) {
@@ -79,13 +86,12 @@ export default class extends FormBase {
             ship_date: {
               $set: data.ship_date.format('YYYYMMDD'),
             },
-            expiration: {
-              $set:
-                Boolean(data.expiration) && moment.isMoment(data.expiration) ? data.expiration.format('YYYYMMDD') : '',
-            },
             [stackType === 'unstacked' ? 'stacked_pallets' : 'unstacked_pallets']: {
               $set: 0,
             },
+            products: {
+              $set: this.prepareProducts(data.products),
+            }
           });
 
           axois
@@ -126,6 +132,7 @@ export default class extends FormBase {
           weight: 0,
           upc: '',
           unit: 'EA',
+          expiration: null,
         },
       ],
     };
@@ -143,13 +150,12 @@ export default class extends FormBase {
             ship_date: {
               $set: data.ship_date.format('YYYYMMDD'),
             },
-            expiration: {
-              $set:
-                Boolean(data.expiration) && moment.isMoment(data.expiration) ? data.expiration.format('YYYYMMDD') : '',
-            },
             [stackType === 'unstacked' ? 'stacked_pallets' : 'unstacked_pallets']: {
               $set: 0,
             },
+            products: {
+              $set: this.prepareProducts(data.products),
+            }
           });
 
           axois
@@ -382,6 +388,16 @@ export default class extends FormBase {
                           labelCol={{ span: 9 }}
                           wrapperCol={{ span: 15 }}>
                           <Input size='small' />
+                        </Form.Item>
+                      </Col>
+                      <Col span={6}>
+                        <Form.Item
+                          name={[index, 'expiration']}
+                          style={{ marginBottom: 0 }}
+                          label='Expiration'
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}>
+                          <DatePicker size="small" />
                         </Form.Item>
                       </Col>
                     </Row>

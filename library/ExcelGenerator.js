@@ -377,7 +377,7 @@ class ExcelGenerator {
       ['PO #', data.po_number],
       ['SHIPMENT REFERENCE', data.po_number],
       ['TO BE SHIPPED', data.to_be_shipped],
-      ['SSCC', 'QUANTITY', 'WEIGHT', 'UPC', 'UNIT']
+      ['SSCC', 'QUANTITY', 'WEIGHT', 'UPC', 'UNIT', 'Expiration']
     ];
 
     data.products.forEach(product => {
@@ -387,6 +387,7 @@ class ExcelGenerator {
         product.weight,
         product.upc,
         product.unit,
+        product.expiration,
       ]);
     });
 
