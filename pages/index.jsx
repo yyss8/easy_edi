@@ -60,7 +60,7 @@ const SUPPORTED_INPUT_LIST = [
   },
   {
     code: '856-ext',
-    name: '发货通知 (2)',
+    name: '发货通知',
     type: 'upload',
   },
   {
@@ -824,12 +824,12 @@ export default class extends Component {
                     <Menu>
                       <Menu.Item>
                         <Link href={`/form/856?fileName=${encodeURI(record.name)}`}>
-                          <a title='生成856 (格式1)'>生成856 (格式1)</a>
+                          <a title='生成856文档'>生成856</a>
                         </Link>
                       </Menu.Item>
                       <Menu.Item>
                         <Link href={`/form/856-ext?fileName=${encodeURI(record.name)}`}>
-                          <a title='生成856 (格式2)'>生成856 (格式2)</a>
+                          <a title='生成856-ext文档'>生成856-ext</a>
                         </Link>
                       </Menu.Item>
                     </Menu>

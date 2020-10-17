@@ -307,25 +307,25 @@ export default class extends FormBase {
               {fields.map((field, index) => {
                 return (
                   <Row type='flex' align='middle' key={field.key}>
-                    <Col offset={2} span={6}>
+                    <Col span={7}>
                       <Form.Item
                         style={{ marginBottom: 0 }}
                         name={[index, 'sscc']}
                         label='SSCC'
                         rules={[{ required: true }]}
-                        labelCol={{ span: 12 }}
-                        wrapperCol={{ span: 10 }}>
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}>
                         <Input size='small' />
                       </Form.Item>
                     </Col>
-                    <Col span={4}>
+                    <Col span={3}>
                       <Form.Item
                         name={[index, 'quantity']}
                         style={{ marginBottom: 0 }}
                         label='Quantity'
                         rules={[{ required: true }]}
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 12 }}>
+                        labelCol={{ span: 14 }}
+                        wrapperCol={{ span: 10 }}>
                         <InputNumber size='small' />
                       </Form.Item>
                     </Col>
@@ -340,14 +340,14 @@ export default class extends FormBase {
                         <InputNumber size='small' />
                       </Form.Item>
                     </Col>
-                    <Col span={3}>
+                    <Col span={5}>
                       <Form.Item
                         name={[index, 'upc']}
                         style={{ marginBottom: 0 }}
                         label='UPC'
                         rules={[{ required: true }]}
-                        labelCol={{ span: 14 }}
-                        wrapperCol={{ span: 10 }}>
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}>
                         <Input size='small' />
                       </Form.Item>
                     </Col>

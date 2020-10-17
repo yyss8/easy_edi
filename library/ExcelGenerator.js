@@ -328,7 +328,7 @@ class ExcelGenerator {
   }
 
   /**
-   * 生成856 格式2 Excel文档.
+   * 生成856 Ext Excel文档.
    *
    * @param {Object} data
    *   856数据.
