@@ -1,14 +1,14 @@
 import React from 'react';
-import FormBase from './EdiFormBase';
-import { Form, DatePicker, Input, Row, Col, InputNumber, message, Radio, Modal } from 'antd';
+import FormBase from '../EdiFormBase';
+import { Form, DatePicker, Input, Row, Col, InputNumber, message, Radio, Button } from 'antd';
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import axois from 'axios';
 import fileDownload from 'js-file-download';
 import moment from 'moment';
 import updater from 'immutability-helper';
 
-import VolumeSelect from '../EdiFormComponents/VolumeSelect';
-import WeightSelect from '../EdiFormComponents/WeightSelect';
-import TypeSelect from '../EdiFormComponents/TypeSelect';
+import VolumeSelect from '../../EdiFormComponents/VolumeSelect';
+import WeightSelect from '../../EdiFormComponents/WeightSelect';
 
 /**
  * 856文档表单.
@@ -40,7 +40,9 @@ export default class extends FormBase {
             if (checkData.result.not_found === 1 || checkData.result.match === 0) {
               this.displayConfirmMessage(
                 `${
-                  checkData.result.not_found === 1 ? 'There is no product found that matches the ASIN' : 'The number of the items to be shipped doesn\'t match with the product'
+                  checkData.result.not_found === 1
+                    ? 'There is no product found that matches the ASIN'
+                    : "The number of the items to be shipped doesn't match with the product"
                 }, continue submitting the file?`,
                 data,
                 resolve,
@@ -78,7 +80,8 @@ export default class extends FormBase {
               $set: data.ship_date.format('YYYYMMDD'),
             },
             expiration: {
-              $set: Boolean(data.expiration) && moment.isMoment(data.expiration) ? data.expiration.format('YYYYMMDD') : '',
+              $set:
+                Boolean(data.expiration) && moment.isMoment(data.expiration) ? data.expiration.format('YYYYMMDD') : '',
             },
             [stackType === 'unstacked' ? 'stacked_pallets' : 'unstacked_pallets']: {
               $set: 0,
@@ -86,7 +89,7 @@ export default class extends FormBase {
           });
 
           axois
-            .post(`/api/generate/edi/856/${this.props.file.name}`, prepared, {
+            .post(`/api/generate/edi/856-ext/${this.props.file.name}`, prepared, {
               responseType: 'arraybuffer',
             })
             .then((response) => {
@@ -113,10 +116,18 @@ export default class extends FormBase {
       weight_unit: 'KG',
       volume_unit: 'CI',
       type_unit: 'EA',
-      type: 'CTN',
       stacked_pallets: 0,
       unstacked_pallets: 0,
       stack_type: 'unstacked',
+      products: [
+        {
+          sscc: '',
+          quantity: 1,
+          weight: 0,
+          upc: '',
+          unit: 'EA',
+        },
+      ],
     };
   }
 
@@ -124,7 +135,7 @@ export default class extends FormBase {
   onDirectSubmit() {
     this.getFormRef()
       .current.validateFields()
-      .then(data => this.displayRedirectSubmitConfirm(data))
+      .then((data) => this.displayRedirectSubmitConfirm(data))
       .then((data) => {
         this.setState({ isGenerating: true }, () => {
           const { stackType } = this.state;
@@ -133,7 +144,8 @@ export default class extends FormBase {
               $set: data.ship_date.format('YYYYMMDD'),
             },
             expiration: {
-              $set: Boolean(data.expiration) && moment.isMoment(data.expiration) ? data.expiration.format('YYYYMMDD') : '',
+              $set:
+                Boolean(data.expiration) && moment.isMoment(data.expiration) ? data.expiration.format('YYYYMMDD') : '',
             },
             [stackType === 'unstacked' ? 'stacked_pallets' : 'unstacked_pallets']: {
               $set: 0,
@@ -141,7 +153,7 @@ export default class extends FormBase {
           });
 
           axois
-            .post(`/api/generate/edi/856/${this.props.file.name}?submit=1`, {
+            .post(`/api/generate/edi/856-ext/${this.props.file.name}?submit=1`, {
               titleOverride: this.state.submittingTitle,
               ...prepared,
             })
@@ -237,38 +249,7 @@ export default class extends FormBase {
             </Col>
           )}
         </Row>
-        <Row>
-          <Col {...twoColumnLayout.first.outer}>
-            <Form.Item
-              name='to_be_shipped'
-              label='To Be Shipped'
-              rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}>
-              <InputNumber size='small' />
-            </Form.Item>
-          </Col>
-          <Col {...twoColumnLayout.second.outer}>
-            <Form.Item name='type_unit' label='Unit' rules={[{ required: true }]} {...twoColumnLayout.first.inner}>
-              <Input size='small' />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col {...twoColumnLayout.first.outer}>
-            <Form.Item name='type' label='Type' rules={[{ required: true }]} {...twoColumnLayout.first.inner}>
-              <TypeSelect />
-            </Form.Item>
-          </Col>
-          <Col {...twoColumnLayout.second.outer}>
-            <Form.Item
-              name='total_carton'
-              label='Total Number of Ctn (Pkg)'
-              rules={[{ required: true }]}
-              {...twoColumnLayout.second.inner}>
-              <InputNumber size='small' />
-            </Form.Item>
-          </Col>
-        </Row>
+
         <Row>
           <Col {...twoColumnLayout.first.outer}>
             <Form.Item
@@ -279,9 +260,14 @@ export default class extends FormBase {
               <WeightSelect type='856' />
             </Form.Item>
           </Col>
+
           <Col {...twoColumnLayout.second.outer}>
-            <Form.Item name='weight' label='Weight' rules={[{ required: true }]} {...twoColumnLayout.second.inner}>
-              <Input size='small' />
+            <Form.Item
+              name='total_carton'
+              label='Total Number of Ctn (Pkg)'
+              rules={[{ required: true }]}
+              {...twoColumnLayout.second.inner}>
+              <InputNumber size='small' />
             </Form.Item>
           </Col>
         </Row>
@@ -302,16 +288,105 @@ export default class extends FormBase {
             </Form.Item>
           </Col>
         </Row>
+
         <Row>
           <Col {...twoColumnLayout.first.outer}>
             <Form.Item
-              name='expiration'
-              label='Expiration'
-              {...twoColumnLayout.first.inner}>
-              <DatePicker size="small" />
+              name='to_be_shipped'
+              label='To Be Shipped'
+              rules={[{ required: true }]}
+              {...twoColumnLayout.second.inner}>
+              <InputNumber size='small' />
             </Form.Item>
           </Col>
         </Row>
+
+        <Form.List name='products'>
+          {(fields, actions) => (
+            <div style={{ marginBottom: 20 }}>
+              {fields.map((field, index) => {
+                return (
+                  <Row type='flex' align='middle' key={field.key}>
+                    <Col offset={2} span={6}>
+                      <Form.Item
+                        style={{ marginBottom: 0 }}
+                        name={[index, 'sscc']}
+                        label='SSCC'
+                        rules={[{ required: true }]}
+                        labelCol={{ span: 12 }}
+                        wrapperCol={{ span: 10 }}>
+                        <Input size='small' />
+                      </Form.Item>
+                    </Col>
+                    <Col span={4}>
+                      <Form.Item
+                        name={[index, 'quantity']}
+                        style={{ marginBottom: 0 }}
+                        label='Quantity'
+                        rules={[{ required: true }]}
+                        labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 12 }}>
+                        <InputNumber size='small' />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <Form.Item
+                        name={[index, 'weight']}
+                        style={{ marginBottom: 0 }}
+                        label='Weight'
+                        rules={[{ required: true }]}
+                        labelCol={{ span: 14 }}
+                        wrapperCol={{ span: 10 }}>
+                        <InputNumber size='small' />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <Form.Item
+                        name={[index, 'upc']}
+                        style={{ marginBottom: 0 }}
+                        label='UPC'
+                        rules={[{ required: true }]}
+                        labelCol={{ span: 14 }}
+                        wrapperCol={{ span: 10 }}>
+                        <Input size='small' />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <Form.Item
+                        name={[index, 'unit']}
+                        style={{ marginBottom: 0 }}
+                        label='Unit'
+                        rules={[{ required: true }]}
+                        labelCol={{ span: 12 }}
+                        wrapperCol={{ span: 12 }}>
+                        <Input size='small' />
+                      </Form.Item>
+                    </Col>
+                    <Col span={2} style={{ textAlign: 'right' }}>
+                      {index === 0 && (
+                        <Button
+                          size='small'
+                          icon={<PlusCircleOutlined />}
+                          title='新增商品'
+                          onClick={() => actions.add()}
+                        />
+                      )}
+                      {index > 0 && (
+                        <Button
+                          size='small'
+                          icon={<MinusCircleOutlined />}
+                          title='删除商品'
+                          type='danger'
+                          onClick={() => actions.remove(field.name)}
+                        />
+                      )}
+                    </Col>
+                  </Row>
+                );
+              })}
+            </div>
+          )}
+        </Form.List>
       </React.Fragment>
     );
   }

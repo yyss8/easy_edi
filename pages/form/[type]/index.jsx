@@ -13,7 +13,8 @@ import EdiFormLabel from '../../../components/edi/EdiForm/EdiFormLabel';
 import OrderProductTable from '../../../components/edi/EdiTable/OrderProductTable/OrderProductTable';
 import ConfirmedProductTable from '../../../components/edi/EdiTable/OrderProductTable/ConfirmedProductTable';
 import EdiDetails754 from '../../../components/edi/EdiDetails/EdiDetails754';
-import EdiForm856 from '../../../components/edi/EdiForm/EdiForm856';
+import EdiForm856Default from '../../../components/edi/EdiForm/EdiForm856/EdiForm856Default';
+import EdiForm856Ext from '../../../components/edi/EdiForm/EdiForm856/EdiForm856Ext';
 import EdiDetailsLabel from '../../../components/edi/EdiDetails/EdiDetailsLabel';
 
 const VOLUME_MAP = {
@@ -92,7 +93,10 @@ class EdiFormView extends React.Component {
         return <EdiForm855 {...commonProps} />;
 
       case '856':
-        return <EdiForm856 {...commonProps} />;
+        return <EdiForm856Default {...commonProps} />;
+
+      case '856-ext':
+        return <EdiForm856Ext {...commonProps} />;
 
       case 'label-excel':
         return <EdiFormLabel {...commonProps} />;
@@ -106,7 +110,7 @@ class EdiFormView extends React.Component {
    *   要替换的文档数据.
    */
   handleFileSwitch(file) {
-    if (this.state.type === '856') {
+    if (this.state.type === '856' || this.state.type === '856-ext') {
       this.formRef.current.setFieldsValue({
         carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
         carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
@@ -238,6 +242,7 @@ class EdiFormView extends React.Component {
         return <EdiDetails754 file={this.state.file} />;
 
       case '856':
+      case '856-ext':
         return <EdiDetailsLabel file={this.state.file} />;
     }
   }
@@ -250,32 +255,48 @@ class EdiFormView extends React.Component {
       753: '850',
       'label-excel': '754',
       856: 'label-excel',
+      '856-ext': 'label-excel',
       855: '850',
       810: '855',
     };
     const { type } = this.state;
 
-    axios(
-      `/api/file/${type === '856' || type === '810' ? 'archive' : 'edi'}/${typeMapper[type]}/${this.state.fileName}`
-    )
+    const fetchFileType = ['856', '856-ext', '810'].indexOf(type) > -1 ? 'archive' : 'edi';
+
+    axios(`/api/file/${fetchFileType}/${typeMapper[type]}/${this.state.fileName}`)
       .then((response) => {
         const { file } = response.data.result;
         this.setState({ file, isLoading: false });
 
-        if (this.state.type === '856') {
-          this.formRef.current.setFieldsValue({
+        if (this.state.type === '856' || this.state.type === '856-ext') {
+          const data856 = {
             carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
             carrier_code: Boolean(file.carrier_code) ? file.carrier_code.trim() : '',
             pro: Boolean(file.pro) ? file.pro.trim() : '',
             total_carton: file.total_carton,
             unstacked_pallets: file.total_pallet,
             to_be_shipped: file.to_be_shipped,
-            weight: file.weight,
             weight_unit: Boolean(file.weight_unit) ? WEIGHT_MAP[file.weight_unit.trim()] : '',
             volume: file.volume,
             volume_unit: Boolean(file.volume_unit) ? VOLUME_MAP[file.volume_unit.trim()] : '',
-            type: Boolean(file.type) ? file.type.trim() : '',
-          });
+          };
+
+          if (this.state.type === '856') {
+            data856.weight = file.weight;
+            data856.type = Boolean(file.type) ? file.type.trim() : '';
+          } else {
+            data856.products = [
+              {
+                sscc: '',
+                quantity: 1,
+                weight: file.weight || 0,
+                upc: file.asin,
+                unit: 'EA',
+              },
+            ];
+          }
+          
+          this.formRef.current.setFieldsValue(data856);
         } else if (this.state.type === 'label-excel') {
           this.formRef.current.setFieldsValue({
             carrier: Boolean(file.carrier) ? file.carrier.trim() : '',
@@ -381,6 +402,7 @@ class EdiFormView extends React.Component {
 
       case '856':
       case 'label-excel':
+      case '856-ext':
         return [
           {
             title: 'PO#',

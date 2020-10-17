@@ -328,6 +328,78 @@ class ExcelGenerator {
   }
 
   /**
+   * 生成856 格式2 Excel文档.
+   *
+   * @param {Object} data
+   *   856数据.
+   * @param {boolean} submit
+   *   是否直接提交至目录.
+   * @param {string|boolean} titleOverride
+   *   覆盖标题.
+   *
+   * @return {ReadStream|null}
+   */
+  static generate856Ext(data, submit = false, titleOverride = false) {
+    const preparedData = [
+      ['SENDER', 'JOINTOWN'],
+      ['RECEIVER', 'AMAZON'],
+      ['SHIP DATE', data.ship_date],
+      ['DELIVERY DATE', data.ship_date],
+      ['ARN', data.arn],
+      [
+        'SHIP FROM',
+        data.from_code,
+        data.shipper || 'Jointown',
+        data.from_street,
+        data.from_city,
+        data.from_state,
+        data.from_zipcode,
+        data.from_country,
+      ],
+      [
+        'SHIP TO',
+        data.ship_to,
+        data.receiver || 'AMAZON',
+        data.to_street,
+        data.to_city,
+        data.to_state,
+        data.to_zipcode,
+        data.to_country,
+      ],
+      ['CARRIER', data.carrier, data.carrier_code],
+      ['BOL', data.po_number],
+      ['PRO', data.pro],
+      ['ASIN', data.asin],
+      ['TRACKING NO', data.pro],
+      ['VOLUME UNIT', data.volume_unit, 'VOLUME', data.volume],
+      ['WEIGHT UNIT', data.weight_unit, 'TOTAL PACKAGES', data.total_carton],
+      ['NUMBER OF STACKED PALLETS', data.stacked_pallets || 0, 'NUMBER OF UNSTACKED PALLETS', data.unstacked_pallets],
+      ['PO #', data.po_number],
+      ['SHIPMENT REFERENCE', data.po_number],
+      ['TO BE SHIPPED', data.to_be_shipped],
+      ['SSCC', 'QUANTITY', 'WEIGHT', 'UPC', 'UNIT']
+    ];
+
+    data.products.forEach(product => {
+      preparedData.push([
+        product.sscc,
+        product.quantity,
+        product.weight,
+        product.upc,
+        product.unit,
+      ]);
+    });
+
+    return this.generate(
+      `856-${moment().format('MMDD')}-PO-${data.po_number}`,
+      preparedData,
+      '856-ext',
+      submit,
+      titleOverride
+    );
+  }
+
+  /**
    * 通用生成函数.
    *
    * @param {string} title

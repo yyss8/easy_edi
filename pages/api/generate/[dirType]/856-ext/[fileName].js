@@ -1,7 +1,7 @@
 import { generateExcel, getFileData } from '../../../../../library/file.controller';
 
 /**
- * 生成856文档接口。
+ * 生成856 Ext文档接口。
  */
 export default async (req, res) => {
   switch (req.method.toLowerCase()) {
@@ -16,7 +16,7 @@ export default async (req, res) => {
             ...orgData,
             ...restData,
           },
-          '856',
+          '856-ext',
           isSubmit,
           titleOverride
         );

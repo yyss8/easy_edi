@@ -7,7 +7,7 @@ const { Footer } = Layout;
  * 站点全局footer组件.
  */
 const SiteFooter = () => {
-  return <Footer className={styles.footer}>Easy EDI v2.2.3 ©2020</Footer>;
+  return <Footer className={styles.footer}>Easy EDI v2.3.0 ©2020</Footer>;
 };
 
 export default SiteFooter;

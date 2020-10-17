@@ -24,6 +24,7 @@ const UploadDescriptionHint = (props) => {
       );
 
     case '856':
+    case '856-ext':  
       return (
         <React.Fragment>
           <h3>

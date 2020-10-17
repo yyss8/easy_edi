@@ -105,7 +105,7 @@ export default class extends FormBase {
               {fields.map((field, index) => {
                 return (
                   <Row type='flex' align='middle' key={field.key}>
-                    <Col offset={3} span={2}>
+                    <Col offset={0} span={3}>
                       <b>{this.props.file.products[index].asin}</b>
                     </Col>
                     <Col span={5}>

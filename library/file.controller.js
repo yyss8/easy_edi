@@ -21,6 +21,7 @@ const TYPE_MAPPING = {
   '855': '\\edi\\855-excel',
   '753': '\\edi\\753-excel',
   '856': '\\edi\\856-excel',
+  '856-ext': '\\edi\\856-excel-ext',
   '810': '\\edi\\810-excel',
   label: '\\edi\\label',
   'label-excel': '\\edi\\label-excel',
@@ -540,6 +541,8 @@ async function generateExcel(fileData, excelType, submit, titleOverride = '') {
     return ExcelGenerator.generateLabelExcel(fileData, submit, titleOverride);
   } else if (excelType === '753') {
     return await ExcelGenerator[`generate${excelType}`](fileData, submit, titleOverride);
+  } else if (excelType === '856-ext') {
+    return ExcelGenerator.generate856Ext(fileData, submit, titleOverride);
   }
 
   if (typeof ExcelGenerator[`generate${excelType}`] !== 'function') {

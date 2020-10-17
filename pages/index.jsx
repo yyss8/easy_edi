@@ -59,6 +59,11 @@ const SUPPORTED_INPUT_LIST = [
     type: 'upload',
   },
   {
+    code: '856-ext',
+    name: '发货通知 (2)',
+    type: 'upload',
+  },
+  {
     code: '810',
     name: '发送发票',
     type: 'upload',
@@ -781,26 +786,29 @@ export default class extends Component {
                 </Button>
               )}
 
-              {
-                this.state.fileType === 'edi' && this.state.type === '850' && <Dropdown overlay={<Menu>
-                  <Menu.Item>
-                    <Link href={`/form/753?fileName=${encodeURI(record.name)}`}>
-                      <a title='生成753文档'>
-                        生成753
-                      </a>
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Link href={`/form/855?fileName=${encodeURI(record.name)}`}>
-                      <a title='生成855文档'>
-                        生成855
-                      </a>
-                    </Link>
-                  </Menu.Item>
-                </Menu>} placement="bottomRight" arrow>
-                  <Button style={{ marginLeft: 8 }} size="small">生成文档</Button>
+              {this.state.fileType === 'edi' && this.state.type === '850' && (
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item>
+                        <Link href={`/form/753?fileName=${encodeURI(record.name)}`}>
+                          <a title='生成753文档'>生成753</a>
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <Link href={`/form/855?fileName=${encodeURI(record.name)}`}>
+                          <a title='生成855文档'>生成855</a>
+                        </Link>
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  placement='bottomRight'
+                  arrow>
+                  <Button style={{ marginLeft: 8 }} size='small'>
+                    生成文档
+                  </Button>
                 </Dropdown>
-              }
+              )}
 
               {this.state.fileType === 'edi' && this.state.type === '754' && (
                 <Link href={`/form/label-excel?fileName=${encodeURI(record.name)}`}>
@@ -811,11 +819,27 @@ export default class extends Component {
               )}
 
               {this.state.fileType === 'archive' && this.state.type === 'label-excel' && (
-                <Link href={`/form/856?fileName=${encodeURI(record.name)}`}>
-                  <a title='生成标签文档' className='ant-btn ant-btn-sm' style={{ marginLeft: 8 }}>
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item>
+                        <Link href={`/form/856?fileName=${encodeURI(record.name)}`}>
+                          <a title='生成856 (格式1)'>生成856 (格式1)</a>
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <Link href={`/form/856-ext?fileName=${encodeURI(record.name)}`}>
+                          <a title='生成856 (格式2)'>生成856 (格式2)</a>
+                        </Link>
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  placement='bottomRight'
+                  arrow>
+                  <Button style={{ marginLeft: 8 }} size='small'>
                     生成856
-                  </a>
-                </Link>
+                  </Button>
+                </Dropdown>
               )}
 
               {this.state.fileType === 'archive' && this.state.type === '855' && (
