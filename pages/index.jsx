@@ -59,11 +59,6 @@ const SUPPORTED_INPUT_LIST = [
     type: 'upload',
   },
   {
-    code: '856-ext',
-    name: '发货通知',
-    type: 'upload',
-  },
-  {
     code: '810',
     name: '发送发票',
     type: 'upload',
@@ -116,13 +111,15 @@ export default class extends Component {
       poDate: moment.isMoment(poDate) && poDate.isValid() ? poDate : null,
       // 只有在下载界面或上传的归档界面时才加载文件列表.
       shouldInitFetch:
-        defaultTypeObject.type === 'download' || (defaultTypeObject.type === 'upload' && query.fileType === 'archive'),
+        defaultTypeObject.type === 'download' ||
+        (defaultTypeObject.type === 'upload' && (query.fileType === 'archive' || query.fileType === 'archive-856-ext')),
       selectedRowKeys: [],
     };
 
     this.fetchFiles = this.fetchFiles.bind(this);
     this.getTableColumns = this.getTableColumns.bind(this);
     this.getSubTableRenderer = this.getSubTableRenderer.bind(this);
+    this.getCurrentFileTypes = this.getCurrentFileTypes.bind(this);
   }
 
   /** @inheritdoc */
@@ -130,6 +127,23 @@ export default class extends Component {
     if (typeof this.props.preload === 'undefined' && this.state.shouldInitFetch) {
       this.fetchFiles();
     }
+  }
+
+  getCurrentFileTypes() {
+    let prevFileType, prevType;
+
+    if (this.state.fileType === 'archive-856-ext') {
+      prevFileType = 'archive';
+      prevType = '856-ext';
+    } else {
+      prevFileType = this.state.fileType;
+      prevType = this.state.type;
+    }
+
+    return {
+      fileType: prevFileType,
+      type: prevType,
+    };
   }
 
   /**
@@ -160,14 +174,14 @@ export default class extends Component {
       queryObject.poDate = this.state.poDate.format('YYYYMMDD');
     }
 
-    const prevFileType = this.state.fileType;
-    const prevType = this.state.type;
+    const prevTypes = this.getCurrentFileTypes();
 
     axios
-      .get(`/api/files/${prevFileType}/${prevType}?${qs.stringify(queryObject)}`)
+      .get(`/api/files/${prevTypes.fileType}/${prevTypes.type}?${qs.stringify(queryObject)}`)
       .then((response) => {
         // 如果页面变换就不继续渲染.
-        if (this.state.type !== prevType || this.state.fileType !== prevFileType) {
+        const currentTypes = this.getCurrentFileTypes();
+        if (currentTypes.fileType !== prevTypes.fileType || currentTypes.type !== prevTypes.type) {
           return;
         }
 
@@ -234,7 +248,7 @@ export default class extends Component {
         return;
       }
 
-      if (field === 'fileType' && value === 'upload') {
+      if (field === 'fileType' && (value === 'upload' || value === 'upload-856-ext')) {
         return;
       }
 
@@ -424,9 +438,11 @@ export default class extends Component {
       title: '确认删除该文件?',
       onOk: () => {
         return new Promise((finished) => {
+          const type = this.state.fileType === 'archive-856-ext' ? '856-ext' : this.state.type;
+
           axios
-            .delete(`/api/delete/${this.state.type}/${name}`)
-            .then((response) => {
+            .delete(`/api/delete/${type}/${name}`)
+            .then(() => {
               message.success('文件删除成功');
               this.onRefresh();
               finished();
@@ -739,12 +755,17 @@ export default class extends Component {
    * 获取不同文档类型的表格列.
    */
   getTableColumns() {
+    const is856Archive = this.state.fileType === 'archive-856-ext';
+    const type = this.state.fileType === 'archive-856-ext' ? '856-ext' : this.state.type;
+    const isArchive = this.state.fileType === 'archive' || is856Archive;
+    const isEdi = this.state.fileType === 'edi';
+
     const defaultFileColumns = [
       {
         title: '文件名',
         render: (text, record) => (
           <a
-            href={`/api/download/${this.state.fileType}/${this.state.type}/${record.name}`}
+            href={`/api/download/${this.state.fileType}/${type}/${record.name}`}
             data-file-name={record.name}
             title='点击下载'
             download>
@@ -771,12 +792,12 @@ export default class extends Component {
               <Button size='small' title='点击下载' onClick={() => this.downloadFile(record.name)}>
                 下载文件
               </Button>
-              {this.state.fileType === 'edi' && (
+              {isEdi && (
                 <Button style={{ marginLeft: 8 }} size='small' onClick={() => this.archiveFile(record.name)}>
                   归档
                 </Button>
               )}
-              {this.state.fileType === 'archive' && (
+              {isArchive && (
                 <Button
                   style={{ marginLeft: 8 }}
                   type='danger'
@@ -786,7 +807,7 @@ export default class extends Component {
                 </Button>
               )}
 
-              {this.state.fileType === 'edi' && this.state.type === '850' && (
+              {isEdi && this.state.type === '850' && (
                 <Dropdown
                   overlay={
                     <Menu>
@@ -810,7 +831,7 @@ export default class extends Component {
                 </Dropdown>
               )}
 
-              {this.state.fileType === 'edi' && this.state.type === '754' && (
+              {isEdi && this.state.type === '754' && (
                 <Link href={`/form/label-excel?fileName=${encodeURI(record.name)}`}>
                   <a title='生成标签文档' className='ant-btn ant-btn-sm' style={{ marginLeft: 8 }}>
                     生成标签文档
@@ -896,17 +917,18 @@ export default class extends Component {
     const selectedType = SUPPORTED_INPUT_LIST.find((item) => item.code === this.state.type);
     const label = this.getLabel(selectedType);
 
-    const fileColumns = this.state.fileType === 'upload' ? [] : this.getTableColumns();
-    const tableRowSelection =
-      this.state.fileType === 'upload'
-        ? {}
-        : {
-            onSelect: this.onSelectFile.bind(this),
-            onSelectAll: this.onSelectAllFiles.bind(this),
-            onChange: this.onSelectItemChange.bind(this),
-            selectedRowKeys: this.state.selectedRowKeys,
-            getCheckboxProps: (record) => ({ selectedRowKeys: record.isSelected }),
-          };
+    const isUpload = this.state.fileType === 'upload' || this.state.fileType === 'upload-856-ext';
+
+    const fileColumns = isUpload ? [] : this.getTableColumns();
+    const tableRowSelection = isUpload
+      ? {}
+      : {
+          onSelect: this.onSelectFile.bind(this),
+          onSelectAll: this.onSelectAllFiles.bind(this),
+          onChange: this.onSelectItemChange.bind(this),
+          selectedRowKeys: this.state.selectedRowKeys,
+          getCheckboxProps: (record) => ({ selectedRowKeys: record.isSelected }),
+        };
 
     const commonProps = {
       fileColumns,

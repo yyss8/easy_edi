@@ -306,82 +306,86 @@ export default class extends FormBase {
             <div style={{ marginBottom: 20 }}>
               {fields.map((field, index) => {
                 return (
-                  <Row type='flex' align='middle' key={field.key}>
-                    <Col span={7}>
-                      <Form.Item
-                        style={{ marginBottom: 0 }}
-                        name={[index, 'sscc']}
-                        label='SSCC'
-                        rules={[{ required: true }]}
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}>
-                        <Input size='small' />
-                      </Form.Item>
-                    </Col>
-                    <Col span={3}>
-                      <Form.Item
-                        name={[index, 'quantity']}
-                        style={{ marginBottom: 0 }}
-                        label='Quantity'
-                        rules={[{ required: true }]}
-                        labelCol={{ span: 14 }}
-                        wrapperCol={{ span: 10 }}>
-                        <InputNumber size='small' />
-                      </Form.Item>
-                    </Col>
-                    <Col span={3}>
-                      <Form.Item
-                        name={[index, 'weight']}
-                        style={{ marginBottom: 0 }}
-                        label='Weight'
-                        rules={[{ required: true }]}
-                        labelCol={{ span: 14 }}
-                        wrapperCol={{ span: 10 }}>
-                        <InputNumber size='small' />
-                      </Form.Item>
-                    </Col>
-                    <Col span={5}>
-                      <Form.Item
-                        name={[index, 'upc']}
-                        style={{ marginBottom: 0 }}
-                        label='UPC'
-                        rules={[{ required: true }]}
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}>
-                        <Input size='small' />
-                      </Form.Item>
-                    </Col>
-                    <Col span={3}>
-                      <Form.Item
-                        name={[index, 'unit']}
-                        style={{ marginBottom: 0 }}
-                        label='Unit'
-                        rules={[{ required: true }]}
-                        labelCol={{ span: 12 }}
-                        wrapperCol={{ span: 12 }}>
-                        <Input size='small' />
-                      </Form.Item>
-                    </Col>
-                    <Col span={2} style={{ textAlign: 'right' }}>
-                      {index === 0 && (
-                        <Button
-                          size='small'
-                          icon={<PlusCircleOutlined />}
-                          title='新增商品'
-                          onClick={() => actions.add()}
-                        />
-                      )}
-                      {index > 0 && (
-                        <Button
-                          size='small'
-                          icon={<MinusCircleOutlined />}
-                          title='删除商品'
-                          type='danger'
-                          onClick={() => actions.remove(field.name)}
-                        />
-                      )}
-                    </Col>
-                  </Row>
+                  <React.Fragment key={field.key}>
+                    <Row type='flex' align='middle'>
+                    <Col offset={2} span={8}>
+                        <Form.Item
+                          name={[index, 'upc']}
+                          style={{ marginBottom: 0 }}
+                          label='UPC'
+                          rules={[{ required: true }]}
+                          labelCol={{ span: 9 }}
+                          wrapperCol={{ span: 15 }}>
+                          <Input size='small' />
+                        </Form.Item>
+                      </Col>
+                      <Col span={4}>
+                        <Form.Item
+                          name={[index, 'quantity']}
+                          style={{ marginBottom: 0 }}
+                          label='Quantity'
+                          rules={[{ required: true }]}
+                          labelCol={{ span: 12 }}
+                          wrapperCol={{ span: 12 }}>
+                          <InputNumber size='small' />
+                        </Form.Item>
+                      </Col>
+                      <Col span={4}>
+                        <Form.Item
+                          name={[index, 'unit']}
+                          style={{ marginBottom: 0 }}
+                          label='Unit'
+                          rules={[{ required: true }]}
+                          labelCol={{ span: 12 }}
+                          wrapperCol={{ span: 12 }}>
+                          <Input size='small' />
+                        </Form.Item>
+                      </Col>
+                      <Col span={3}>
+                        <Form.Item
+                          name={[index, 'weight']}
+                          style={{ marginBottom: 0 }}
+                          label='Weight'
+                          rules={[{ required: true }]}
+                          labelCol={{ span: 14 }}
+                          wrapperCol={{ span: 10 }}>
+                          <InputNumber size='small' />
+                        </Form.Item>
+                      </Col>
+                      <Col span={2} style={{ textAlign: 'right' }}>
+                        {index === 0 && (
+                          <Button
+                            size='small'
+                            icon={<PlusCircleOutlined />}
+                            title='新增商品'
+                            onClick={() => actions.add()}
+                          />
+                        )}
+                        {index > 0 && (
+                          <Button
+                            size='small'
+                            icon={<MinusCircleOutlined />}
+                            title='删除商品'
+                            type='danger'
+                            onClick={() => actions.remove(field.name)}
+                          />
+                        )}
+                      </Col>
+                    </Row>
+                    <Row type='flex' align='middle'>
+                      <Col offset={2} span={8}>
+                        <Form.Item
+                          style={{ marginBottom: 0 }}
+                          name={[index, 'sscc']}
+                          label='SSCC'
+                          rules={[{ required: true }]}
+                          labelCol={{ span: 9 }}
+                          wrapperCol={{ span: 15 }}>
+                          <Input size='small' />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </React.Fragment>
                 );
               })}
             </div>

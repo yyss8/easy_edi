@@ -10,10 +10,12 @@ const { Dragger } = Upload;
 const UploadTabContent = (props) => {
   switch (props.fileType) {
     case 'upload':
+    case 'upload-856-ext':
+      const type = props.fileType === 'upload-856-ext' ? '856-ext' : props.type;  
       const uploadProps = {
         name: 'file',
         multiple: true,
-        action: `/api/upload/${props.type}`,
+        action: `/api/upload/${type}`,
         style: { width: 800 },
         showUploadList: false,
         accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
@@ -43,6 +45,7 @@ const UploadTabContent = (props) => {
         </div>
       );
     case 'archive':
+    case 'archive-856-ext':
       return (
         <Table
           loading={props.tabLoading}
@@ -66,18 +69,37 @@ const UploadTabContent = (props) => {
  * @return {React}
  */
 const EdiUploadTab = (props) => {
+  const is856 = props.type === '856';
+  const isArchive = props.fileType === 'archive' || props.fileType === 'archive-856-ext';
+
   return (
     <React.Fragment>
-      <Row style={{ marginBottom: 10 }}>
+      <Row style={{ marginBottom: 10 }} type="flex" align="bottom">
         <Col span={18}>
-          <Row>
-            <Col span={6}>
+          <Row type="flex" align="bottom">
+            <Col span={3}>
+              {is856 && (
+                <p style={{ marginBottom: 3 }}>
+                  <b>856</b>
+                </p>
+              )}
               <Radio.Group value={props.fileType} onChange={(e) => props.filterOnchange(e.target.value, 'fileType')}>
                 <Radio.Button value='upload'>上传</Radio.Button>
                 <Radio.Button value='archive'>归档</Radio.Button>
               </Radio.Group>
             </Col>
-            {props.fileType === 'archive' && (
+            {is856 && (
+              <Col span={3}>
+                <p style={{ marginBottom: 3 }}>
+                  <b>856 Ext</b>
+                </p>
+                <Radio.Group value={props.fileType} onChange={(e) => props.filterOnchange(e.target.value, 'fileType')}>
+                  <Radio.Button value='upload-856-ext'>上传</Radio.Button>
+                  <Radio.Button value='archive-856-ext'>归档</Radio.Button>
+                </Radio.Group>
+              </Col>
+            )}
+            {isArchive && (
               <EdiTableFilters
                 sorting={props.sorting}
                 keyword={props.keyword}
@@ -87,7 +109,7 @@ const EdiUploadTab = (props) => {
             )}
           </Row>
         </Col>
-        {props.fileType === 'archive' && (
+        {isArchive && (
           <Col style={{ textAlign: 'right' }} span={6}>
             <Button onClick={props.bulkDownload} title='下载所选文件'>
               批量下载
