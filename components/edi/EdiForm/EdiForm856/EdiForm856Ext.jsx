@@ -67,7 +67,7 @@ export default class extends FormBase {
     return products.map((product) => ({
       ...product,
       expiration: moment.isMoment(product.expiration) ? product.expiration.format('YYYYMMDD') : '',
-    }))
+    }));
   }
 
   /** @inheritdoc */
@@ -91,7 +91,7 @@ export default class extends FormBase {
             },
             products: {
               $set: this.prepareProducts(data.products),
-            }
+            },
           });
 
           axois
@@ -155,7 +155,7 @@ export default class extends FormBase {
             },
             products: {
               $set: this.prepareProducts(data.products),
-            }
+            },
           });
 
           axois
@@ -314,7 +314,7 @@ export default class extends FormBase {
                 return (
                   <React.Fragment key={field.key}>
                     <Row type='flex' align='middle'>
-                    <Col offset={2} span={8}>
+                      <Col offset={2} span={8}>
                         <Form.Item
                           name={[index, 'upc']}
                           style={{ marginBottom: 0 }}
@@ -378,15 +378,15 @@ export default class extends FormBase {
                         )}
                       </Col>
                     </Row>
-                    <Row type='flex' align='middle'>
-                      <Col offset={2} span={8}>
+                    <Row type='flex' align='middle' style={{borderBottom: '1px solid #666', marginBottom: 10}}>
+                      <Col offset={2} span={14}> 
                         <Form.Item
                           style={{ marginBottom: 0 }}
                           name={[index, 'sscc']}
                           label='SSCC'
                           rules={[{ required: true }]}
-                          labelCol={{ span: 9 }}
-                          wrapperCol={{ span: 15 }}>
+                          labelCol={{ span: 5, style: { flex: '0 0 21.5%', maxWidth: '21.5%' } }}
+                          wrapperCol={{ span: 19 }}>
                           <Input size='small' />
                         </Form.Item>
                       </Col>
@@ -397,7 +397,7 @@ export default class extends FormBase {
                           label='Expiration'
                           labelCol={{ span: 8 }}
                           wrapperCol={{ span: 16 }}>
-                          <DatePicker size="small" />
+                          <DatePicker size='small' />
                         </Form.Item>
                       </Col>
                     </Row>
