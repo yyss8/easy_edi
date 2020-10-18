@@ -378,7 +378,7 @@ export default class extends FormBase {
                         )}
                       </Col>
                     </Row>
-                    <Row type='flex' align='middle' style={{borderBottom: '1px solid #666', marginBottom: 10}}>
+                    <Row type='flex' align='middle'>
                       <Col offset={2} span={14}> 
                         <Form.Item
                           style={{ marginBottom: 0 }}
