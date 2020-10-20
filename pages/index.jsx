@@ -577,18 +577,13 @@ export default class extends Component {
    */
   getColumnsByType(type) {
     switch (type) {
+      case '855':
       case '850':
-        return [
+        const columns = [
           {
             title: 'PO#',
             key: 'po_number',
             dataIndex: 'po_number',
-          },
-          {
-            title: 'PO日期',
-            key: 'po_date',
-            render: (text, record) =>
-              record.date !== '' ? moment(record.date, 'YYYYMMDD').format('YYYY/MM/DD') : '无',
           },
           {
             title: 'Shipping Window',
@@ -616,11 +611,22 @@ export default class extends Component {
             dataIndex: 'ship_to',
           },
           {
-            title: '商品数量',
+            title: type === '850' ? '商品数量' : '确认数量',
             key: 'product_number',
             render: (text, record) => record.products.reduce((total, p) => total + Number(p.quantity), 0),
           },
         ];
+
+        if (type === '850') {
+          columns.splice(1, 0, {
+            title: 'PO日期',
+            key: 'po_date',
+            render: (text, record) =>
+              record.date !== '' ? moment(record.date, 'YYYYMMDD').format('YYYY/MM/DD') : '无',
+          });
+        }
+
+        return columns;
       case '754':
         return [
           {

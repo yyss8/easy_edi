@@ -239,7 +239,7 @@ class ExcelGenerator {
         product.asin,
         product.quantity,
         product.price,
-        product.action,
+        'IA',
         '', // 字段预留
         '', // 字段预留
         product.unit,

@@ -22,11 +22,6 @@ const OrderProductTable = (props) => {
       key: 'price',
     },
     {
-      title: 'Qualifier',
-      dataIndex: 'qualifier',
-      key: 'qualifier',
-    },
-    {
       title: 'ASIN',
       dataIndex: 'asin',
       key: 'asin',

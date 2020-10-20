@@ -130,20 +130,6 @@ export default class extends FormBase {
                         <InputNumber size='small' />
                       </Form.Item>
                     </Col>
-                    <Col span={5}>
-                      <Form.Item
-                        name={[index, 'action']}
-                        style={{ marginBottom: 0 }}
-                        label='Action'
-                        rules={[{ required: true }]}
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 12 }}>
-                        <Select>
-													<Select.Option value="IA">Accept</Select.Option>
-													<Select.Option value="IR">Cancel</Select.Option>
-												</Select>
-                      </Form.Item>
-                    </Col>
                   </Row>
                 );
               })}
