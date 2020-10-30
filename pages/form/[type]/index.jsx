@@ -252,7 +252,7 @@ class EdiFormView extends React.Component {
    */
   fetchSingleFile() {
     const typeMapper = {
-      753: '850',
+      753: '855',
       'label-excel': '754',
       856: 'label-excel',
       '856-ext': 'label-excel',

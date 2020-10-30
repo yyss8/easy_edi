@@ -814,27 +814,11 @@ export default class extends Component {
               )}
 
               {isEdi && this.state.type === '850' && (
-                <Dropdown
-                  overlay={
-                    <Menu>
-                      <Menu.Item>
-                        <Link href={`/form/753?fileName=${encodeURI(record.name)}`}>
-                          <a title='生成753文档'>生成753</a>
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item>
-                        <Link href={`/form/855?fileName=${encodeURI(record.name)}`}>
-                          <a title='生成855文档'>生成855</a>
-                        </Link>
-                      </Menu.Item>
-                    </Menu>
-                  }
-                  placement='bottomRight'
-                  arrow>
-                  <Button style={{ marginLeft: 8 }} size='small'>
-                    生成文档
-                  </Button>
-                </Dropdown>
+                <Link href={`/form/855?fileName=${encodeURI(record.name)}`}>
+                  <a style={{ marginLeft: 8 }} className='ant-btn ant-btn-sm' title='生成855文档'>
+                    生成855
+                  </a>
+                </Link>
               )}
 
               {isEdi && this.state.type === '754' && (
@@ -845,7 +829,7 @@ export default class extends Component {
                 </Link>
               )}
 
-              {this.state.fileType === 'archive' && this.state.type === 'label-excel' && (
+              {isArchive && this.state.type === 'label-excel' && (
                 <Dropdown
                   overlay={
                     <Menu>
@@ -869,12 +853,28 @@ export default class extends Component {
                 </Dropdown>
               )}
 
-              {this.state.fileType === 'archive' && this.state.type === '855' && (
-                <Link href={`/form/810?fileName=${encodeURI(record.name)}`}>
-                  <a title='生成发票文档' className='ant-btn ant-btn-sm' style={{ marginLeft: 8 }}>
-                    生成810
-                  </a>
-                </Link>
+              {isArchive && this.state.type === '855' && (
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item>
+                        <Link href={`/form/753?fileName=${encodeURI(record.name)}`}>
+                          <a title='生成753文档'>生成753</a>
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <Link href={`/form/810?fileName=${encodeURI(record.name)}`}>
+                          <a title='生成发票文档'>生成810</a>
+                        </Link>
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  placement='bottomRight'
+                  arrow>
+                  <Button style={{ marginLeft: 8 }} size='small'>
+                    生成文档
+                  </Button>
+                </Dropdown>
               )}
             </span>
           );

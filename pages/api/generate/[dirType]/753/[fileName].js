@@ -6,7 +6,7 @@ import { generateExcel, getFileData } from '../../../../../library/file.controll
 export default async (req, res) => {
   switch (req.method.toLowerCase()) {
     case 'post':
-      const orgData = getFileData(req.query.fileName, req.query.dirType, '850', true);
+      const orgData = getFileData(req.query.fileName, req.query.dirType, '855', true);
       const isSubmit = Number(req.query.submit) === 1;
 
       try {
