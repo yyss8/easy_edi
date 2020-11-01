@@ -261,7 +261,7 @@ class EdiFormView extends React.Component {
     };
     const { type } = this.state;
 
-    const fetchFileType = ['856', '856-ext', '810'].indexOf(type) > -1 ? 'archive' : 'edi';
+    const fetchFileType = ['856', '856-ext', '810', '753'].indexOf(type) > -1 ? 'archive' : 'edi';
 
     axios(`/api/file/${fetchFileType}/${typeMapper[type]}/${this.state.fileName}`)
       .then((response) => {
@@ -295,7 +295,7 @@ class EdiFormView extends React.Component {
               },
             ];
           }
-          
+
           this.formRef.current.setFieldsValue(data856);
         } else if (this.state.type === 'label-excel') {
           this.formRef.current.setFieldsValue({

@@ -20,6 +20,7 @@ export default async (req, res) => {
   // 获取不同文档的context.
   switch (req.query.type) {
     case '850':
+    case '855':  
     case 'label-excel':
       context.products = {};
 
@@ -45,6 +46,7 @@ export default async (req, res) => {
 
   switch (req.query.type) {
     case '850':
+    case '855':
       // 如果发送code存在则尝试获取已有地址.
       if (Boolean(data.ship_to)) {
         const toAddress = await db('ed_address')
